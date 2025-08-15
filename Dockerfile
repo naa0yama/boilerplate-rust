@@ -5,8 +5,8 @@
 ARG DEBIAN_FRONTEND=noninteractive \
 	TZ=${TZ:-Asia/Tokyo}
 
-## renovate: datasource=github-releases packageName=biomejs/biome
-ARG BIOME_VERSION=@biomejs/biome@2.1.4
+## renovate: datasource=npm packageName=biomejs/biome
+ARG BIOME_VERSION=2.1.4
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver
 ARG LEFTHOOK_VERSION=v1.12.2
 
@@ -86,7 +86,7 @@ RUN echo "**** Install Lefthook ****" && \
 RUN echo "**** Install Biome ****" && \
 	set -euxo pipefail && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o /usr/local/bin/biome \
-	"$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' https://api.github.com/repos/biomejs/biome/releases/tags/${BIOME_VERSION} | \
+	"$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' https://api.github.com/repos/biomejs/biome/releases/tags/@biomejs/biome@${BIOME_VERSION} | \
 	jq -r '.assets[] | select(.name | endswith("linux-x64")) | .browser_download_url')" && \
 	chmod +x /usr/local/bin/biome && \
 	type -p biome
