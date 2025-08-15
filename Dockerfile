@@ -5,7 +5,7 @@
 ARG DEBIAN_FRONTEND=noninteractive \
 	TZ=${TZ:-Asia/Tokyo}
 
-## renovate: datasource=github-releases packageName=biomejs/biome versioning=semver
+## renovate: datasource=github-releases packageName=biomejs/biome
 ARG BIOME_VERSION=@biomejs/biome@2.1.4
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver
 ARG LEFTHOOK_VERSION=v1.12.2
