@@ -1,0 +1,53 @@
+// For format details, see https://aka.ms/devcontainer.json. For config options, see the
+// README at: https://github.com/devcontainers/templates/tree/main/src/go
+{
+	"name": "Rust",
+	"build": {
+		"dockerfile": "../Dockerfile",
+		"args": {
+			"TZ": "${localEnv:TZ:Asia/Tokyo}"
+		}
+	},
+	"initializeCommand": "./.devcontainer/initializeCommand.sh",
+	// Features to add to the dev container. More info: https://containers.dev/features.
+	// "features": {},
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	// "forwardPorts": [],
+	// Add another local file mount.
+	"mounts": [
+		// Claude Code
+		"source=${localEnv:HOME}/.claude,target=/home/user/.claude,type=bind,consistency=cached",
+		"source=${localEnv:HOME}/.claude.json,target=/home/user/.claude.json,type=bind,consistency=cached",
+		// Git
+		"source=${localEnv:HOME}/.gitignore_global,target=/home/user/.gitignore_global,type=bind,consistency=cached"
+	],
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "go version",
+	// Configure tool-specific properties.
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				//									Rust Syntax, Rust Doc Viewer 同様の機能は rust-analyzer に含まれるので入れない
+				"acarreiro.calculate", //			Calculate
+				"Anthropic.claude-code", //			Claude Code for VSCode
+				"biomejs.biome", //					Biome
+				"EditorConfig.EditorConfig", //		EditorConfig for VS Code
+				"oderwat.indent-rainbow", //		indent-rainbow
+				"ruiquelhas.vscode-lowercase", //	lowercase
+				"ruiquelhas.vscode-uppercase", //	uppercase
+				"rust-lang.rust-analyzer", //		rust-analyzer
+				"tamasfe.even-better-toml", //		Even Better TOML
+				"usernamehw.errorlens", //			Error Lens
+				"vadimcn.vscode-lldb", //			CodeLLDB
+				"xyz.local-history", //				Local History
+				"yzhang.markdown-all-in-one" //		Markdown All in One
+			]
+		}
+	},
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	"remoteUser": "user",
+	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,consistency=delegated",
+	"workspaceFolder": "/app",
+	// Environment variables
+	"remoteEnv": {}
+}
