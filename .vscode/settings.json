@@ -1,0 +1,20 @@
+{
+    "[json]": {
+        "editor.defaultFormatter": "biomejs.biome",
+    },
+    "[jsonl]": {
+        "editor.defaultFormatter": "biomejs.biome",
+    },
+    "[markdown]": {
+        "editor.defaultFormatter": "yzhang.markdown-all-in-one",
+    },
+	"[rust]": {
+		"editor.defaultFormatter": "rust-lang.rust-analyzer",
+	},
+	/***************************************************************************
+	** Extension: rust-analyzer
+	***********/
+	"rust-analyzer.check.command": "clippy",
+	"rust-analyzer.rustfmt.rangeFormatting.enable": true,
+	"rust-analyzer.hover.documentation.enable": true,
+}
