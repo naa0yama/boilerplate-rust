@@ -5,9 +5,9 @@
 ARG DEBIAN_FRONTEND=noninteractive \
 	TZ=${TZ:-Asia/Tokyo}
 
-## renovate: datasource=github-tags packageName=biomejs/biome
+## renovate: datasource=github-releases packageName=biomejs/biome versioning=semver
 ARG BIOME_VERSION=@biomejs/biome@2.1.4
-## renovate: datasource=github-tags packageName=evilmartians/lefthook
+## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver
 ARG LEFTHOOK_VERSION=v1.12.2
 
 # retry dns and some http codes that might be transient errors
