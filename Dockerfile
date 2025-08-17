@@ -5,8 +5,8 @@
 ARG DEBIAN_FRONTEND=noninteractive \
 	TZ=${TZ:-Asia/Tokyo}
 
-## renovate: datasource=npm packageName=@biomejs/biome versioning=semver
-ARG BIOME_VERSION=2.1.4
+## renovate: datasource=github-releases packageName=edprint/dprint versioning=semver
+ARG DPRINT_VERSION=0.50.0
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver
 ARG LEFTHOOK_VERSION=v1.12.2
 
@@ -39,9 +39,9 @@ RUN echo "**** Create user ****" && \
 #- Development
 #-
 FROM base AS dev
-ARG BIOME_VERSION \
-	CURL_OPTS \
+ARG CURL_OPTS \
 	DEBIAN_FRONTEND \
+	DPRINT_VERSION \
 	LEFTHOOK_VERSION
 
 RUN echo "**** Dependencies ****" && \
@@ -70,6 +70,18 @@ RUN echo "**** Add sudo user ****" && \
 	set -euxo pipefail && \
 	echo -e "user\tALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/user
 
+RUN echo "**** Install dprint ****" && \
+	set -euxo pipefail && \
+	apt-get update && \
+	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/dprint/dprint/releases/tags/${DPRINT_VERSION} | \
+	jq -r '.assets[] | select(.name | endswith("x86_64-unknown-linux-gnu.zip")) | .browser_download_url')" && \
+	_filename="$(basename "$_download_url")" && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	unzip "${_filename}" -d /usr/local/bin/ && \
+	type -p dprint && \
+	rm -rf "./${_filename}"
+
 RUN echo "**** Install Lefthook ****" && \
 	set -euxo pipefail && \
 	apt-get update && \
@@ -82,14 +94,6 @@ RUN echo "**** Install Lefthook ****" && \
 	apt-get -y install "./${_filename}" && \
 	lefthook version --full && \
 	rm -rf "./${_filename}"
-
-RUN echo "**** Install Biome ****" && \
-	set -euxo pipefail && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o /usr/local/bin/biome \
-	"$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' https://api.github.com/repos/biomejs/biome/releases/tags/@biomejs/biome@${BIOME_VERSION} | \
-	jq -r '.assets[] | select(.name | endswith("linux-x64")) | .browser_download_url')" && \
-	chmod +x /usr/local/bin/biome && \
-	type -p biome
 
 RUN echo "**** Install nodejs ****" && \
 	set -euxo pipefail && \
