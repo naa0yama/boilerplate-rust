@@ -13,6 +13,12 @@ target
 # Contains mutation testing data
 **/mutants.out*/
 
+# Claude Code
+.claude/*.local.json
+
+# local Lefthook
+lefthook-local.yml
+
 # Local History
 .history/
 
