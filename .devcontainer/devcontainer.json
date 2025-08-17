@@ -27,20 +27,18 @@
 	"customizations": {
 		"vscode": {
 			"extensions": [
-				//									Rust Syntax, Rust Doc Viewer 同様の機能は rust-analyzer に含まれるので入れない
-				"acarreiro.calculate", //			Calculate
-				"Anthropic.claude-code", //			Claude Code for VSCode
-				"biomejs.biome", //					Biome
-				"EditorConfig.EditorConfig", //		EditorConfig for VS Code
-				"oderwat.indent-rainbow", //		indent-rainbow
-				"ruiquelhas.vscode-lowercase", //	lowercase
-				"ruiquelhas.vscode-uppercase", //	uppercase
-				"rust-lang.rust-analyzer", //		rust-analyzer
-				"tamasfe.even-better-toml", //		Even Better TOML
-				"usernamehw.errorlens", //			Error Lens
-				"vadimcn.vscode-lldb", //			CodeLLDB
-				"xyz.local-history", //				Local History
-				"yzhang.markdown-all-in-one" //		Markdown All in One
+				// 									Rust Syntax, Rust Doc Viewer 同様の機能は rust-analyzer に含まれるので入れない
+				"acarreiro.calculate", // 			Calculate
+				"Anthropic.claude-code", // 		Claude Code for VSCode
+				"dprint.dprint", // 				Dprint Code Formatter
+				"EditorConfig.EditorConfig", // 	EditorConfig for VS Code
+				"oderwat.indent-rainbow", // 		indent-rainbow
+				"ruiquelhas.vscode-lowercase", // 	lowercase
+				"ruiquelhas.vscode-uppercase", // 	uppercase
+				"rust-lang.rust-analyzer", // 		rust-analyzer
+				"usernamehw.errorlens", // 			Error Lens
+				"vadimcn.vscode-lldb", // 			CodeLLDB
+				"xyz.local-history" // 				Local History
 			]
 		}
 	},

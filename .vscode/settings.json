@@ -1,20 +1,27 @@
 {
-    "[json]": {
-        "editor.defaultFormatter": "biomejs.biome",
-    },
-    "[jsonl]": {
-        "editor.defaultFormatter": "biomejs.biome",
-    },
-    "[markdown]": {
-        "editor.defaultFormatter": "yzhang.markdown-all-in-one",
-    },
+	"[json]": {
+		"editor.defaultFormatter": "dprint.dprint"
+	},
+	"[jsonc]": {
+		"editor.formatOnSave": true,
+		"editor.defaultFormatter": "dprint.dprint"
+	},
+	"[markdown]": {
+		"editor.defaultFormatter": "dprint.dprint"
+	},
+	"[toml]": {
+		"editor.defaultFormatter": "dprint.dprint"
+	},
 	"[rust]": {
-		"editor.defaultFormatter": "rust-lang.rust-analyzer",
+		"editor.defaultFormatter": "rust-lang.rust-analyzer"
+	},
+	"[yaml]": {
+		"editor.defaultFormatter": "dprint.dprint"
 	},
 	/***************************************************************************
-	** Extension: rust-analyzer
-	***********/
+	 ** Extension: rust-analyzer
+	 ***********/
 	"rust-analyzer.check.command": "clippy",
 	"rust-analyzer.rustfmt.rangeFormatting.enable": true,
-	"rust-analyzer.hover.documentation.enable": true,
+	"rust-analyzer.hover.documentation.enable": true
 }
