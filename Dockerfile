@@ -9,6 +9,8 @@ ARG DEBIAN_FRONTEND=noninteractive \
 ARG DPRINT_VERSION=0.50.0
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver
 ARG LEFTHOOK_VERSION=v1.12.2
+## renovate: datasource=github-releases packageName=rui314/mold versioning=semver
+ARG MOLD_VERSION=v2.40.3
 
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
@@ -25,7 +27,7 @@ SHELL [ "/bin/bash", "-c" ]
 
 RUN echo "**** set Timezone ****" && \
 	set -euxo pipefail && \
-	ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
+	ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 
 RUN echo "**** Create user ****" && \
 	set -euxo pipefail && \
@@ -42,7 +44,8 @@ FROM base AS dev
 ARG CURL_OPTS \
 	DEBIAN_FRONTEND \
 	DPRINT_VERSION \
-	LEFTHOOK_VERSION
+	LEFTHOOK_VERSION \
+	MOLD_VERSION
 
 RUN echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
@@ -72,7 +75,6 @@ RUN echo "**** Add sudo user ****" && \
 
 RUN echo "**** Install dprint ****" && \
 	set -euxo pipefail && \
-	apt-get update && \
 	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
 	https://api.github.com/repos/dprint/dprint/releases/tags/${DPRINT_VERSION} | \
 	jq -r '.assets[] | select(.name | endswith("x86_64-unknown-linux-gnu.zip")) | .browser_download_url')" && \
@@ -92,10 +94,16 @@ RUN echo "**** Install Lefthook ****" && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
 	ls -lah && \
 	apt-get -y install "./${_filename}" && \
+	\
+	# Cleanup \
+	apt-get -y autoremove && \
+	apt-get -y clean && \
+	rm -rf /var/lib/apt/lists/* && \
+	\
 	lefthook version --full && \
 	rm -rf "./${_filename}"
 
-RUN echo "**** Install nodejs ****" && \
+RUN echo "**** Install nodejs for Claude Code ****" && \
 	set -euxo pipefail && \
 	mkdir -p /etc/apt/keyrings && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | \
@@ -112,6 +120,17 @@ RUN echo "**** Install nodejs ****" && \
 	apt-get -y clean && \
 	rm -rf /var/lib/apt/lists/* && \
 	node -v
+
+RUN echo "**** Install mold ****" && \
+	set -euxo pipefail && \
+	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/rui314/mold/releases/tags/${MOLD_VERSION} | \
+	jq -r '.assets[] | select(.name | endswith("-x86_64-linux.tar.gz")) | .browser_download_url')" && \
+	_filename="$(basename "$_download_url")" && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	tar -xvf "./${_filename}" --strip-components 1 -C /usr && \
+	type -p mold && \
+	rm -rf "./${_filename}"
 
 # User level settings
 USER user
