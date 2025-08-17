@@ -6,12 +6,13 @@
 root = true
 
 [*]
-indent_style = tab
-indent_size = 4
-end_of_line = lf
 charset = utf-8
-trim_trailing_whitespace = true
+end_of_line = lf
+indent_size = 4
+indent_style = tab
 insert_final_newline = true
+max_line_length = 100
+trim_trailing_whitespace = true
 
 [*.md]
 # double whitespace at end of line
@@ -19,9 +20,9 @@ insert_final_newline = true
 indent_style = space
 trim_trailing_whitespace = false
 
-[*.{json,jsonl}]
-indent_style = space
-
 [*.rs]
 indent_style = space
-max_line_length = 100
+
+[*.{yml,yaml}]
+indent_style = space
+indent_size = 2
