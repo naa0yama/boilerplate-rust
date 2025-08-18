@@ -87,6 +87,10 @@ pre-commit:
             run: cargo test
             glob: "*.rs"
 
+          - name: cargo llvm-cov
+            run: cargo llvm-cov --lcov --output-path lcov.info
+            glob: "*.rs"
+
           - name: cargo build
             run: cargo build --release
             glob: "*.rs"
