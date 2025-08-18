@@ -3,5 +3,5 @@
 version = 4
 
 [[package]]
-name = "app"
+name = "brust"
 version = "0.1.0"
