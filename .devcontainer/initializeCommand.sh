@@ -9,5 +9,3 @@ touch \
 	~/.claude.json \
 	~/.gitconfig \
 	~/.gitignore_global
-
-lefthook install

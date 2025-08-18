@@ -1,4 +1,7 @@
 {
+	"[dockerfile]": {
+		"editor.defaultFormatter": "ms-azuretools.vscode-containers"
+	},
 	"[json]": {
 		"editor.defaultFormatter": "dprint.dprint"
 	},
