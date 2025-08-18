@@ -116,7 +116,7 @@ RUN echo "**** Rust tool cargo-llvm-cov ****" && \
 	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz")) | .browser_download_url')" && \
 	_filename="$(basename "$_download_url")" && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	tar -xvf "./${_filename}" --strip-components 1 -C /usr/local/bin && \
+	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
 	type -p cargo-llvm-cov && \
 	rm -rf "./${_filename}"
 
