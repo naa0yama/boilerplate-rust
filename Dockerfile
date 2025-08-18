@@ -15,6 +15,8 @@ ARG MOLD_VERSION=v2.40.3
 # Rust tools
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver
 ARG CARGO_LLVM_COV_VERSION=v0.6.17
+## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver
+ARG SCCACHE_VERSION=v0.9.1
 
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
@@ -28,6 +30,7 @@ ARG CARGO_LLVM_COV_VERSION \
 	CURL_OPTS \
 	DEBIAN_FRONTEND \
 	MOLD_VERSION \
+	SCCACHE_VERSION \
 	TZ
 
 ENV LC_ALL=C.utf8
@@ -84,6 +87,31 @@ RUN echo "**** Install mold ****" && \
 	type -p mold && \
 	rm -rf "./${_filename}"
 
+RUN echo "**** Rust tool cargo-llvm-cov ****" && \
+	set -euxo pipefail && \
+	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/tags/${CARGO_LLVM_COV_VERSION} | \
+	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz")) | .browser_download_url')" && \
+	_filename="$(basename "$_download_url")" && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
+	type -p cargo-llvm-cov && \
+	rm -rf "./${_filename}"
+
+RUN echo "**** Rust tool sccache ****" && \
+	set -euxo pipefail && \
+	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/mozilla/sccache/releases/tags/${SCCACHE_VERSION} | \
+	jq -r '.assets[] | select(.name | startswith("sccache-v") and endswith("-x86_64-unknown-linux-musl.tar.gz")) | .browser_download_url')" && \
+	_filename="$(basename "$_download_url")" && \
+	_tmpdir=$(mktemp -q -d) && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	tar -xvf "./${_filename}" --strip-components 1 -C "${_tmpdir}" && \
+	ls -lah "${_tmpdir}" && \
+	cp -av "${_tmpdir}/sccache" /usr/local/bin/ && \
+	type -p sccache && \
+	rm -rf "./${_filename}" "${_tmpdir}"
+
 # User level settings
 USER user
 RUN echo "**** Rust component ****" && \
@@ -113,16 +141,6 @@ RUN echo "**** Rust component ****" && \
 	rustc --version
 
 USER root
-RUN echo "**** Rust tool cargo-llvm-cov ****" && \
-	set -euxo pipefail && \
-	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/tags/${CARGO_LLVM_COV_VERSION} | \
-	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz")) | .browser_download_url')" && \
-	_filename="$(basename "$_download_url")" && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
-	type -p cargo-llvm-cov && \
-	rm -rf "./${_filename}"
 
 
 #- -------------------------------------------------------------------------------------------------
