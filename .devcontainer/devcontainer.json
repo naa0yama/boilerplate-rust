@@ -34,6 +34,7 @@
 				"dprint.dprint", // 					Dprint Code Formatter
 				"EditorConfig.EditorConfig", // 		EditorConfig for VS Code
 				"ms-azuretools.vscode-containers", // 	Container Tools
+				"ms-vscode.live-server", // 			Live Preview
 				"rust-lang.rust-analyzer", // 			rust-analyzer
 				"ryanluker.vscode-coverage-gutters", // Coverage Gutters
 				"usernamehw.errorlens", // 				Error Lens
