@@ -26,5 +26,6 @@
 	 ***********/
 	"rust-analyzer.check.command": "clippy",
 	"rust-analyzer.rustfmt.rangeFormatting.enable": true,
-	"rust-analyzer.hover.documentation.enable": true
+	"rust-analyzer.hover.documentation.enable": true,
+	"coverage-gutters.manualCoverageFilePaths": ["/app/lcov.info"]
 }

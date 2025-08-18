@@ -42,6 +42,7 @@ RUN echo "**** Dependencies ****" && \
 	apt-get -y upgrade && \
 	apt-get -y install --no-install-recommends \
 	bash \
+	bash-completion \
 	ca-certificates \
 	curl \
 	git \
@@ -158,6 +159,7 @@ RUN echo "**** Install Lefthook ****" && \
 	rm -rf /var/lib/apt/lists/* && \
 	\
 	lefthook version --full && \
+	lefthook completion bash > /home/user/.local/share/bash-completion/completions/lefthook && \
 	rm -rf "./${_filename}"
 
 RUN echo "**** Install nodejs for Claude Code ****" && \
