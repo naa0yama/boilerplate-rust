@@ -12,6 +12,10 @@ ARG LEFTHOOK_VERSION=v1.12.2
 ## renovate: datasource=github-releases packageName=rui314/mold versioning=semver
 ARG MOLD_VERSION=v2.40.3
 
+# Rust tools
+## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver
+ARG CARGO_LLVM_COV_VERSION=v0.6.17
+
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 
@@ -20,7 +24,8 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 #- Builder Base
 #-
 FROM rust:1.89-trixie AS builder-base
-ARG CURL_OPTS \
+ARG CARGO_LLVM_COV_VERSION \
+	CURL_OPTS \
 	DEBIAN_FRONTEND \
 	MOLD_VERSION \
 	TZ
@@ -103,13 +108,17 @@ RUN echo "**** Rust component ****" && \
 	cargo fmt --version && \
 	rustc --version
 
-RUN echo "**** Rust tools ****" && \
-	set -euxo pipefail && \
-	cargo install \
-	cargo-llvm-cov \
-	cargo-watch
-
 USER root
+RUN echo "**** Rust tool cargo-llvm-cov ****" && \
+	set -euxo pipefail && \
+	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/tags/${CARGO_LLVM_COV_VERSION} | \
+	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz")) | .browser_download_url')" && \
+	_filename="$(basename "$_download_url")" && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	tar -xvf "./${_filename}" --strip-components 1 -C /usr/local/bin && \
+	type -p cargo-llvm-cov && \
+	rm -rf "./${_filename}"
 
 
 #- -------------------------------------------------------------------------------------------------
