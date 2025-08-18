@@ -22,10 +22,13 @@
 		"editor.defaultFormatter": "dprint.dprint"
 	},
 	/***************************************************************************
+	 ** Extension: Coverage Gutters
+	 ***********/
+	"coverage-gutters.manualCoverageFilePaths": ["/app/target/lcov.info"],
+	/***************************************************************************
 	 ** Extension: rust-analyzer
 	 ***********/
 	"rust-analyzer.check.command": "clippy",
 	"rust-analyzer.rustfmt.rangeFormatting.enable": true,
-	"rust-analyzer.hover.documentation.enable": true,
-	"coverage-gutters.manualCoverageFilePaths": ["/app/lcov.info"]
+	"rust-analyzer.testExplorer": true
 }

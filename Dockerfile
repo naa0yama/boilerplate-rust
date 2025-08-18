@@ -30,6 +30,9 @@ ARG CARGO_LLVM_COV_VERSION \
 	MOLD_VERSION \
 	TZ
 
+ENV LC_ALL=C.utf8
+ENV LANG=C.utf8
+
 SHELL [ "/bin/bash", "-c" ]
 
 RUN echo "**** set Timezone ****" && \
