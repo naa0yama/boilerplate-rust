@@ -4,6 +4,7 @@
 	"name": "Rust",
 	"build": {
 		"dockerfile": "../Dockerfile",
+		"target": "development",
 		"args": {
 			"TZ": "${localEnv:TZ:Asia/Tokyo}"
 		}

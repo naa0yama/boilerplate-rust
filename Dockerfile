@@ -17,10 +17,12 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 
 
 #- -------------------------------------------------------------------------------------------------
-#- Base
+#- Builder Base
 #-
-FROM rust:1.89.0-bookworm AS base
-ARG DEBIAN_FRONTEND \
+FROM rust:1.89-trixie AS builder-base
+ARG CURL_OPTS \
+	DEBIAN_FRONTEND \
+	MOLD_VERSION \
 	TZ
 
 SHELL [ "/bin/bash", "-c" ]
@@ -28,24 +30,6 @@ SHELL [ "/bin/bash", "-c" ]
 RUN echo "**** set Timezone ****" && \
 	set -euxo pipefail && \
 	ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
-
-RUN echo "**** Create user ****" && \
-	set -euxo pipefail && \
-	groupadd --gid 60001 user && \
-	useradd -s /bin/bash --uid 60001 --gid 60001 -m user && \
-	echo user:password | chpasswd && \
-	passwd -d user
-
-
-#- -------------------------------------------------------------------------------------------------
-#- Development
-#-
-FROM base AS dev
-ARG CURL_OPTS \
-	DEBIAN_FRONTEND \
-	DPRINT_VERSION \
-	LEFTHOOK_VERSION \
-	MOLD_VERSION
 
 RUN echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
@@ -58,8 +42,8 @@ RUN echo "**** Dependencies ****" && \
 	git \
 	gnupg \
 	jq \
+	musl-tools \
 	nano \
-	software-properties-common \
 	sudo \
 	wget \
 	&& \
@@ -69,9 +53,73 @@ RUN echo "**** Dependencies ****" && \
 	apt-get -y clean && \
 	rm -rf /var/lib/apt/lists/*
 
+RUN echo "**** Create user ****" && \
+	set -euxo pipefail && \
+	groupadd --gid 60001 user && \
+	useradd -s /bin/bash --uid 60001 --gid 60001 -m user && \
+	echo user:password | chpasswd && \
+	passwd -d user
+
 RUN echo "**** Add sudo user ****" && \
 	set -euxo pipefail && \
 	echo -e "user\tALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/user
+
+RUN echo "**** Install mold ****" && \
+	set -euxo pipefail && \
+	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/rui314/mold/releases/tags/${MOLD_VERSION} | \
+	jq -r '.assets[] | select(.name | endswith("-x86_64-linux.tar.gz")) | .browser_download_url')" && \
+	_filename="$(basename "$_download_url")" && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	tar -xvf "./${_filename}" --strip-components 1 -C /usr && \
+	type -p mold && \
+	rm -rf "./${_filename}"
+
+# User level settings
+USER user
+RUN echo "**** Rust component ****" && \
+	set -euxo pipefail && \
+	# Bash completions
+	mkdir -p                         /home/user/.local/share/bash-completion/completions && \
+	rustup completions bash cargo  > /home/user/.local/share/bash-completion/completions/cargo && \
+	rustup completions bash rustup > /home/user/.local/share/bash-completion/completions/rustup && \
+	\
+	# rustup toolchain cleanup
+	rustup component add \
+	cargo \
+	clippy \
+	llvm-tools \
+	rust-analyzer \
+	rust-docs \
+	rust-std \
+	rustc \
+	rustfmt \
+	&& \
+	rustup component list --installed && \
+	\
+	rustup target add x86_64-unknown-linux-musl && \
+	\
+	cargo clippy --version && \
+	cargo fmt --version && \
+	rustc --version
+
+RUN echo "**** Rust tools ****" && \
+	set -euxo pipefail && \
+	cargo install \
+	cargo-llvm-cov \
+	cargo-watch
+
+USER root
+
+
+#- -------------------------------------------------------------------------------------------------
+#- Development
+#-
+FROM builder-base AS development
+ARG CURL_OPTS \
+	DEBIAN_FRONTEND \
+	DPRINT_VERSION \
+	LEFTHOOK_VERSION
 
 RUN echo "**** Install dprint ****" && \
 	set -euxo pipefail && \
@@ -121,44 +169,8 @@ RUN echo "**** Install nodejs for Claude Code ****" && \
 	rm -rf /var/lib/apt/lists/* && \
 	node -v
 
-RUN echo "**** Install mold ****" && \
-	set -euxo pipefail && \
-	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/rui314/mold/releases/tags/${MOLD_VERSION} | \
-	jq -r '.assets[] | select(.name | endswith("-x86_64-linux.tar.gz")) | .browser_download_url')" && \
-	_filename="$(basename "$_download_url")" && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	tar -xvf "./${_filename}" --strip-components 1 -C /usr && \
-	type -p mold && \
-	rm -rf "./${_filename}"
-
 # User level settings
 USER user
-
-RUN echo "**** Rust tools ****" && \
-	set -euxo pipefail && \
-	# Bash completions
-	mkdir -p                         /home/user/.local/share/bash-completion/completions && \
-	rustup completions bash cargo  > /home/user/.local/share/bash-completion/completions/cargo && \
-	rustup completions bash rustup > /home/user/.local/share/bash-completion/completions/rustup && \
-	\
-	# rustup toolchain cleanup
-	rustup component add \
-	cargo \
-	clippy \
-	llvm-tools \
-	rust-analyzer \
-	rust-docs \
-	rust-std \
-	rustc \
-	rustfmt \
-	&& \
-	rustup component list --installed && \
-	\
-	cargo clippy --version && \
-	cargo fmt --version && \
-	rustc --version
-
 RUN echo "**** Install Claude Code ****" && \
 	set -euxo pipefail && \
 	mkdir -p /home/user/.local/npm && \
@@ -166,8 +178,40 @@ RUN echo "**** Install Claude Code ****" && \
 	echo -e "# local npm install\nexport PATH=\$PATH:\$HOME/.local/npm/bin" | tee -a /home/user/.bashrc && \
 	echo -e "\n# Claude Code\nalias cc=\"claude --dangerously-skip-permissions\"" | tee -a /home/user/.bashrc && \
 	npm install -g @anthropic-ai/claude-code && \
-	exec $SHELL -l && \
+	exec ${SHELL} -l && \
 	claude --version && \
 	type cc
+
+
+#- -------------------------------------------------------------------------------------------------
+#- Production
+#-
+FROM debian:bullseye-slim
+ARG DEBIAN_FRONTEND \
+	TZ
+
+SHELL [ "/bin/bash", "-c" ]
+
+RUN echo "**** set Timezone ****" && \
+	set -euxo pipefail && \
+	ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
+
+RUN echo "**** Dependencies ****" && \
+	set -euxo pipefail && \
+	apt-get update && \
+	apt-get -y install --no-install-recommends \
+	bash \
+	ca-certificates \
+	&& \
+	\
+	# Cleanup \
+	apt-get -y autoremove && \
+	apt-get -y clean && \
+	rm -rf /var/lib/apt/lists/*
+
+#COPY --from=development /usr/local/cargo/bin/myapp /usr/local/bin/myapp
+
+SHELL [ "/bin/sh", "-c" ]
+#CMD ["myapp"]
 
 # vim: set filetype=dockerfile:
