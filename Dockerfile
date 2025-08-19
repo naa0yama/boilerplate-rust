@@ -42,7 +42,12 @@ RUN echo "**** set Timezone ****" && \
 	set -euxo pipefail && \
 	ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 
-RUN echo "**** Dependencies ****" && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+	echo "**** Dependencies ****" && \
+	rm -f /etc/apt/apt.conf.d/docker-clean && \
+	echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache && \
+	echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
 	apt-get -y update && \
 	apt-get -y upgrade && \
@@ -57,13 +62,7 @@ RUN echo "**** Dependencies ****" && \
 	musl-tools \
 	nano \
 	sudo \
-	wget \
-	&& \
-	\
-	# Cleanup \
-	apt-get -y autoremove && \
-	apt-get -y clean && \
-	rm -rf /var/lib/apt/lists/*
+	wget
 
 RUN echo "**** Create user ****" && \
 	set -euxo pipefail && \
@@ -163,9 +162,10 @@ RUN echo "**** Install dprint ****" && \
 	type -p dprint && \
 	rm -rf "./${_filename}"
 
-RUN echo "**** Install Lefthook ****" && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+	echo "**** Install Lefthook ****" && \
 	set -euxo pipefail && \
-	apt-get update && \
 	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
 	https://api.github.com/repos/evilmartians/lefthook/releases/tags/${LEFTHOOK_VERSION} | \
 	jq -r '.assets[] | select(.name | endswith("_amd64.deb")) | .browser_download_url')" && \
@@ -174,42 +174,18 @@ RUN echo "**** Install Lefthook ****" && \
 	ls -lah && \
 	apt-get -y install "./${_filename}" && \
 	\
-	# Cleanup \
-	apt-get -y autoremove && \
-	apt-get -y clean && \
-	rm -rf /var/lib/apt/lists/* && \
-	\
 	lefthook version --full && \
 	lefthook completion bash > /home/user/.local/share/bash-completion/completions/lefthook && \
 	rm -rf "./${_filename}"
 
-RUN echo "**** Install nodejs for Claude Code ****" && \
-	set -euxo pipefail && \
-	mkdir -p /etc/apt/keyrings && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | \
-	gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg  && \
-	echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" | \
-	tee /etc/apt/sources.list.d/nodesource.list  && \
-	apt-get update  && \
-	apt-get -y install --no-install-recommends \
-	nodejs \
-	&& \
-	\
-	# Cleanup \
-	apt-get -y autoremove && \
-	apt-get -y clean && \
-	rm -rf /var/lib/apt/lists/* && \
-	node -v
-
 # User level settings
 USER user
+
+# Ref: https://docs.anthropic.com/en/docs/claude-code/setup#native-binary-installation-beta
 RUN echo "**** Install Claude Code ****" && \
 	set -euxo pipefail && \
-	mkdir -p /home/user/.local/npm && \
-	echo "prefix=/home/user/.local/npm" > /home/user/.npmrc && \
-	echo -e "# local npm install\nexport PATH=\$PATH:\$HOME/.local/npm/bin" | tee -a /home/user/.bashrc && \
-	echo -e "\n# Claude Code\nalias cc=\"claude --dangerously-skip-permissions\"" | tee -a /home/user/.bashrc && \
-	npm install -g @anthropic-ai/claude-code && \
+	curl -fsSL https://claude.ai/install.sh | bash && \
+	echo -e "\n# Claude Code\nexport PATH=\"\$HOME/.local/bin:\$PATH\"\nalias cc=\"claude --dangerously-skip-permissions\"" | tee -a /home/user/.bashrc && \
 	exec ${SHELL} -l && \
 	claude --version && \
 	type cc
@@ -228,18 +204,13 @@ RUN echo "**** set Timezone ****" && \
 	set -euxo pipefail && \
 	ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
 
-RUN echo "**** Dependencies ****" && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+	echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
-	apt-get update && \
 	apt-get -y install --no-install-recommends \
 	bash \
-	ca-certificates \
-	&& \
-	\
-	# Cleanup \
-	apt-get -y autoremove && \
-	apt-get -y clean && \
-	rm -rf /var/lib/apt/lists/*
+	ca-certificates
 
 #COPY --from=development /usr/local/cargo/bin/myapp /usr/local/bin/myapp
 
