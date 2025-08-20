@@ -9,7 +9,7 @@ ARG DEBIAN_FRONTEND=noninteractive \
 	USER_GID=${USER_GID:-${USER_UID}}
 
 ## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver automerge=true
-ARG DPRINT_VERSION=0.50.0
+ARG DPRINT_VERSION=0.50.1
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver automerge=true
 ARG LEFTHOOK_VERSION=v1.12.2
 ## renovate: datasource=github-releases packageName=rui314/mold versioning=semver automerge=true
