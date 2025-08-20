@@ -8,19 +8,19 @@ ARG DEBIAN_FRONTEND=noninteractive \
 	USER_UID=${USER_UID:-60001} \
 	USER_GID=${USER_GID:-${USER_UID}}
 
-## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver
+## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver automerge=true
 ARG DPRINT_VERSION=0.50.0
-## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver
+## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver automerge=true
 ARG LEFTHOOK_VERSION=v1.12.2
-## renovate: datasource=github-releases packageName=rui314/mold versioning=semver
+## renovate: datasource=github-releases packageName=rui314/mold versioning=semver automerge=true
 ARG MOLD_VERSION=v2.40.3
 
 # Rust tools
-## renovate: datasource=github-releases packageName=cargo-bins/cargo-binstall versioning=semver
+## renovate: datasource=github-releases packageName=cargo-bins/cargo-binstall versioning=semver automerge=true
 ARG CARGO_BINSTALL_VERSION=v1.14.3
-## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver
+## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
 ARG CARGO_LLVM_COV_VERSION=v0.6.17
-## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver
+## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
 ARG SCCACHE_VERSION=v0.9.1
 
 # retry dns and some http codes that might be transient errors

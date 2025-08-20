@@ -5,14 +5,16 @@
 	],
 	"packageRules": [
 		{
-			"matchUpdateTypes": [
-				"major",
-				"minor",
-				"patch"
-			],
-			"automerge": false,
-			"platformAutomerge": false,
-			"ignoreTests": false
+			"description": "Custom managers (Dockerfile) - Auto-merge disabled by default",
+			"matchManagers": ["regex"],
+			"automerge": false
+		},
+		{
+			"description": "Custom managers (Dockerfile) - Minor/patch auto-merge only if automerge=true is specified",
+			"matchManagers": ["regex"],
+			"matchStrings": ["automerge=true"],
+			"matchUpdateTypes": ["minor", "patch"],
+			"automerge": true
 		}
 	],
 	"customManagers": [
@@ -22,7 +24,7 @@
 				"^Dockerfile(.*)$"
 			],
 			"matchStrings": [
-				"## renovate: datasource=(?<datasource>(github-releases|github-tags|git-tags|npm))\\spackageName=(?<packageName>.+?)(versioning=(?<versioning>[a-z-]+?)|\\s?)+\\s(?:ENV|ARG) .+?_VERSION=(?<currentValue>.+?)\\s"
+				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+automerge=(?<automerge>true|false))?\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
 			]
 		}
 	]
