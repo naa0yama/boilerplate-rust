@@ -10,7 +10,7 @@
 		}
 	},
 	"initializeCommand": "./.devcontainer/initializeCommand.sh",
-	"postCreateCommand": "lefthook install",
+	"postCreateCommand": "./.devcontainer/postCreateCommand.sh",
 	// Features to add to the dev container. More info: https://containers.dev/features.
 	// "features": {},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
@@ -18,14 +18,11 @@
 	// Add another local file mount.
 	"mounts": [
 		// Claude Code
-		"source=${localEnv:HOME}/.claude,target=/home/user/.claude,type=bind,consistency=cached",
-		"source=${localEnv:HOME}/.claude.json,target=/home/user/.claude.json,type=bind,consistency=cached",
+		"type=bind,source=${localEnv:HOME}/.claude,target=/home/cuser/.claude,consistency=cached",
+		"type=bind,source=${localEnv:HOME}/.claude.json,target=/home/cuser/.claude.json,consistency=cached",
 		// Git
-		"source=${localEnv:HOME}/.gitignore_global,target=/home/user/.gitignore_global,type=bind,consistency=cached"
+		"type=bind,source=${localEnv:HOME}/.gitignore_global,target=/home/cuser/.gitignore_global,consistency=cached"
 	],
-	// Use 'postCreateCommand' to run commands after the container is created.
-	// "postCreateCommand": "go version",
-	// Configure tool-specific properties.
 	"customizations": {
 		"vscode": {
 			"extensions": [
