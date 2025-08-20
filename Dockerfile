@@ -3,7 +3,10 @@
 #- Global
 #-
 ARG DEBIAN_FRONTEND=noninteractive \
-	TZ=${TZ:-Asia/Tokyo}
+	TZ=${TZ:-Asia/Tokyo} \
+	USER_NAME=cuser \
+	USER_UID=${USER_UID:-60001} \
+	USER_GID=${USER_GID:-${USER_UID}}
 
 ## renovate: datasource=github-releases packageName=edprint/dprint versioning=semver
 ARG DPRINT_VERSION=0.50.0
@@ -13,6 +16,8 @@ ARG LEFTHOOK_VERSION=v1.12.2
 ARG MOLD_VERSION=v2.40.3
 
 # Rust tools
+## renovate: datasource=github-releases packageName=cargo-bins/cargo-binstall versioning=semver
+ARG CARGO_BINSTALL_VERSION=v1.14.3
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver
 ARG CARGO_LLVM_COV_VERSION=v0.6.17
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver
@@ -26,15 +31,18 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 #- Builder Base
 #-
 FROM rust:1.89-trixie AS builder-base
-ARG CARGO_LLVM_COV_VERSION \
+ARG CARGO_BINSTALL_VERSION \
+	CARGO_LLVM_COV_VERSION \
 	CURL_OPTS \
 	DEBIAN_FRONTEND \
 	MOLD_VERSION \
 	SCCACHE_VERSION \
+	USER_NAME \
+	USER_UID \
+	USER_GID \
 	TZ
 
-ENV LC_ALL=C.utf8
-ENV LANG=C.utf8
+ENV LANG=C.utf8 LC_ALL=C.utf8
 
 SHELL [ "/bin/bash", "-c" ]
 
@@ -44,6 +52,7 @@ RUN echo "**** set Timezone ****" && \
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+	\
 	echo "**** Dependencies ****" && \
 	rm -f /etc/apt/apt.conf.d/docker-clean && \
 	echo 'Binary::apt::APT::Keep-Downloaded-Packages "true";' > /etc/apt/apt.conf.d/keep-cache && \
@@ -66,14 +75,14 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 
 RUN echo "**** Create user ****" && \
 	set -euxo pipefail && \
-	groupadd --gid 60001 user && \
-	useradd -s /bin/bash --uid 60001 --gid 60001 -m user && \
-	echo user:password | chpasswd && \
-	passwd -d user
+	groupadd --gid "${USER_GID}" "${USER_NAME}" && \
+	useradd -s /bin/bash --uid "${USER_UID}" --gid "${USER_GID}" -m "${USER_NAME}" && \
+	echo "${USER_NAME}:password" | chpasswd && \
+	passwd -d "${USER_NAME}"
 
 RUN echo "**** Add sudo user ****" && \
 	set -euxo pipefail && \
-	echo -e "user\tALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/user
+	echo -e "${USER_NAME}\tALL=(ALL) NOPASSWD:ALL" > "/etc/sudoers.d/${USER_NAME}"
 
 RUN echo "**** Install mold ****" && \
 	set -euxo pipefail && \
@@ -111,8 +120,6 @@ RUN echo "**** Rust tool sccache ****" && \
 	type -p sccache && \
 	rm -rf "./${_filename}" "${_tmpdir}"
 
-# User level settings
-USER user
 RUN echo "**** Rust component ****" && \
 	set -euxo pipefail && \
 	rustup component add \
@@ -133,15 +140,38 @@ RUN echo "**** Rust component ****" && \
 	cargo fmt --version && \
 	rustc --version
 
+RUN echo "**** Rust tools cargo-binstall ****" && \
+	set -euxo pipefail && \
+	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/cargo-bins/cargo-binstall/releases/tags/${CARGO_BINSTALL_VERSION} | \
+	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tgz")) | .browser_download_url')" && \
+	_filename="$(basename "$_download_url")" && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
+	type -p cargo-binstall && \
+	rm -rf "./${_filename}"
+
+# User level settings
+USER ${USER_NAME}
+ENV CARGO_HOME=/home/${USER_NAME}/.cargo
+
+RUN echo "**** Create ${CARGO_HOME} ****" && \
+	set -euxo pipefail && \
+	mkdir -p "${CARGO_HOME}"
+
 RUN echo "**** Rust tools ****" && \
 	set -euxo pipefail && \
-	cargo install cargo-cache
+	cargo binstall --no-confirm \
+	cargo-cache \
+	cargo-modules
 
 RUN echo "**** Rust bash-completion ****" && \
 	set -euxo pipefail && \
-	mkdir -p                         /home/user/.local/share/bash-completion/completions && \
-	rustup completions bash cargo  > /home/user/.local/share/bash-completion/completions/cargo && \
-	rustup completions bash rustup > /home/user/.local/share/bash-completion/completions/rustup
+	echo "export PATH="\$CARGO_HOME/bin:\$PATH"" >> ~/.bashrc && \
+	\
+	mkdir -p                         /home/${USER_NAME}/.local/share/bash-completion/completions && \
+	rustup completions bash cargo  > /home/${USER_NAME}/.local/share/bash-completion/completions/cargo && \
+	rustup completions bash rustup > /home/${USER_NAME}/.local/share/bash-completion/completions/rustup
 
 USER root
 
@@ -168,6 +198,7 @@ RUN echo "**** Install dprint ****" && \
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+	\
 	echo "**** Install Lefthook ****" && \
 	set -euxo pipefail && \
 	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
@@ -179,17 +210,19 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	apt-get -y install "./${_filename}" && \
 	\
 	lefthook version --full && \
-	lefthook completion bash > /home/user/.local/share/bash-completion/completions/lefthook && \
 	rm -rf "./${_filename}"
 
 # User level settings
-USER user
+USER ${USER_NAME}
+RUN echo "**** add Lefthook bash-completion ****" && \
+	set -euxo pipefail && \
+	lefthook completion bash > /home/${USER_NAME}/.local/share/bash-completion/completions/lefthook
 
 # Ref: https://docs.anthropic.com/en/docs/claude-code/setup#native-binary-installation-beta
 RUN echo "**** Install Claude Code ****" && \
 	set -euxo pipefail && \
 	curl -fsSL https://claude.ai/install.sh | bash && \
-	echo -e "\n# Claude Code\nexport PATH=\"\$HOME/.local/bin:\$PATH\"\nalias cc=\"claude --dangerously-skip-permissions\"" | tee -a /home/user/.bashrc && \
+	echo -e "\n# Claude Code\nexport PATH=\"\$HOME/.local/bin:\$PATH\"\nalias cc=\"claude --dangerously-skip-permissions\"" | tee -a "/home/${USER_NAME}/.bashrc" && \
 	exec ${SHELL} -l && \
 	claude --version && \
 	type cc
@@ -210,6 +243,7 @@ RUN echo "**** set Timezone ****" && \
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+	\
 	echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
 	apt-get -y install --no-install-recommends \
