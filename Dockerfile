@@ -8,7 +8,7 @@ ARG DEBIAN_FRONTEND=noninteractive \
 	USER_UID=${USER_UID:-60001} \
 	USER_GID=${USER_GID:-${USER_UID}}
 
-## renovate: datasource=github-releases packageName=edprint/dprint versioning=semver
+## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver
 ARG DPRINT_VERSION=0.50.0
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver
 ARG LEFTHOOK_VERSION=v1.12.2
