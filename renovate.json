@@ -7,6 +7,7 @@
 		{
 			"description": "Custom managers (Dockerfile) - Auto-merge disabled by default",
 			"matchManagers": ["regex"],
+			"matchDepTypes": ["dockerfile"],
 			"automerge": false
 		},
 		{
@@ -18,14 +19,26 @@
 	],
 	"customManagers": [
 		{
+			"description": "Dockerfile dependencies with automerge=true",
 			"customType": "regex",
 			"fileMatch": [
 				"^Dockerfile(.*)$"
 			],
 			"matchStrings": [
-				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+automerge=(?<automerge>true|false))?\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
+				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s+automerge=true\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
 			],
-			"depTypeTemplate": "{{{#if (eq automerge 'true')}}}dockerfile-automerge{{{else}}}dockerfile{{{/if}}}"
+			"depTypeTemplate": "dockerfile-automerge"
+		},
+		{
+			"description": "Dockerfile dependencies with automerge=false or unspecified",
+			"customType": "regex",
+			"fileMatch": [
+				"^Dockerfile(.*)$"
+			],
+			"matchStrings": [
+				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+automerge=false)?\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
+			],
+			"depTypeTemplate": "dockerfile"
 		}
 	]
 }
