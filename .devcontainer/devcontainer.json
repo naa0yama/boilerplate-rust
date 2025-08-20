@@ -37,6 +37,7 @@
 				"ms-vscode.live-server", // 			Live Preview
 				"rust-lang.rust-analyzer", // 			rust-analyzer
 				"ryanluker.vscode-coverage-gutters", // Coverage Gutters
+				"tamasfe.even-better-toml", // 			Even Better TOML
 				"usernamehw.errorlens", // 				Error Lens
 				"vadimcn.vscode-lldb", // 				CodeLLDB
 				"xyz.local-history" // 					Local History
