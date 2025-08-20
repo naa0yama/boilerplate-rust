@@ -11,8 +11,7 @@
 		},
 		{
 			"description": "Custom managers (Dockerfile) - Auto-merge for automerge=true dependencies",
-			"matchManagers": ["regex"],
-			"matchDepNames": ["/^automerge-true:/"],
+			"matchDepTypes": ["dockerfile-automerge"],
 			"matchUpdateTypes": ["minor", "patch"],
 			"automerge": true
 		}
@@ -26,7 +25,7 @@
 			"matchStrings": [
 				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+automerge=(?<automerge>true|false))?\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
 			],
-			"depNameTemplate": "{{{#if automerge}}}automerge-{{{automerge}}}:{{{packageName}}}{{{else}}}{{{packageName}}}{{{/if}}}"
+			"depTypeTemplate": "{{{#if (eq automerge 'true')}}}dockerfile-automerge{{{else}}}dockerfile{{{/if}}}"
 		}
 	]
 }
