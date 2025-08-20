@@ -10,21 +10,32 @@
 			"automerge": false
 		},
 		{
-			"description": "Custom managers (Dockerfile) - Minor/patch auto-merge only if automerge=true is specified",
-			"matchManagers": ["regex"],
-			"matchStrings": ["automerge=true"],
+			"description": "Custom managers (Dockerfile) - Auto-merge for automerge=true dependencies",
+			"matchPackageNames": ["automerge-enabled/*"],
 			"matchUpdateTypes": ["minor", "patch"],
 			"automerge": true
 		}
 	],
 	"customManagers": [
 		{
+			"description": "Dockerfile dependencies with automerge=true",
 			"customType": "regex",
 			"fileMatch": [
 				"^Dockerfile(.*)$"
 			],
 			"matchStrings": [
-				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+automerge=(?<automerge>true|false))?\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
+				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s+automerge=true\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
+			],
+			"packageNameTemplate": "automerge-enabled/{{{packageName}}}"
+		},
+		{
+			"description": "Dockerfile dependencies with automerge=false or unspecified",
+			"customType": "regex",
+			"fileMatch": [
+				"^Dockerfile(.*)$"
+			],
+			"matchStrings": [
+				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+automerge=false)?\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
 			]
 		}
 	]
