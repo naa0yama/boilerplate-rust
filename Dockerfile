@@ -13,7 +13,7 @@ ARG DPRINT_VERSION=0.50.1
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver automerge=true
 ARG LEFTHOOK_VERSION=v1.12.3
 ## renovate: datasource=github-releases packageName=rui314/mold versioning=semver automerge=true
-ARG MOLD_VERSION=v2.40.3
+ARG MOLD_VERSION=v2.40.4
 
 # Rust tools
 ## renovate: datasource=github-releases packageName=cargo-bins/cargo-binstall versioning=semver automerge=true
