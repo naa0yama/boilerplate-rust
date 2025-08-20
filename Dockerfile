@@ -115,12 +115,6 @@ RUN echo "**** Rust tool sccache ****" && \
 USER user
 RUN echo "**** Rust component ****" && \
 	set -euxo pipefail && \
-	# Bash completions
-	mkdir -p                         /home/user/.local/share/bash-completion/completions && \
-	rustup completions bash cargo  > /home/user/.local/share/bash-completion/completions/cargo && \
-	rustup completions bash rustup > /home/user/.local/share/bash-completion/completions/rustup && \
-	\
-	# rustup toolchain cleanup
 	rustup component add \
 	cargo \
 	clippy \
@@ -138,6 +132,16 @@ RUN echo "**** Rust component ****" && \
 	cargo clippy --version && \
 	cargo fmt --version && \
 	rustc --version
+
+RUN echo "**** Rust tools ****" && \
+	set -euxo pipefail && \
+	cargo install cargo-cache
+
+RUN echo "**** Rust bash-completion ****" && \
+	set -euxo pipefail && \
+	mkdir -p                         /home/user/.local/share/bash-completion/completions && \
+	rustup completions bash cargo  > /home/user/.local/share/bash-completion/completions/cargo && \
+	rustup completions bash rustup > /home/user/.local/share/bash-completion/completions/rustup
 
 USER root
 
