@@ -21,7 +21,7 @@ ARG CARGO_BINSTALL_VERSION=v1.14.4
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
 ARG CARGO_LLVM_COV_VERSION=v0.6.18
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
-ARG SCCACHE_VERSION=v0.9.1
+ARG SCCACHE_VERSION=v0.10.0
 
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
