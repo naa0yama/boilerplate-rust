@@ -75,7 +75,7 @@ pre-commit:
             stage_fixed: true
 
           - name: cargo clippy
-            run: cargo clippy -- -D warnings
+            run: cargo clippy --all-targets --all-features -- -D warnings
             files: git diff --name-only --diff-filter=d --staged
             glob: "*.rs"
 
