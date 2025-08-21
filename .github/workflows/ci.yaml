@@ -15,6 +15,39 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
+#   0 pre-build devcontainer
+#       dprint fmt
+#       docker build
+
+#   1 fmt
+#       dprint fmt
+#         共通
+#       cargo fmt
+#         共通
+#       cargo clippy
+#         共通
+
+#   2 check
+#       cargo check
+#         全ターゲット
+
+#   3 test
+#       cargo test
+#         linux, windows, macos, rspi
+#       cargo llvm-cov
+#         linux
+
+#   4 build
+#       cargo build
+
+#   6 pre-release
+#       gen tag
+#       gen changenote
+#       build
+#       gen shahash
+#       upload
+#       draft release
+
 jobs:
   build:
     runs-on: ubuntu-latest
