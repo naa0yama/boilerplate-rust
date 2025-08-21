@@ -1,0 +1,37 @@
+name: Prebuild DevContainer
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".devcontainer/**"
+      - "Dockerfile"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  prebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Convert repository name to lowercase
+        id: repo_name
+        run: |
+          echo "lowercase=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
+
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Pre-build dev container image
+        uses: devcontainers/ci@v0.3
+        with:
+          imageName: ghcr.io/${{ steps.repo_name.outputs.lowercase }}/devcontainer
+          cacheFrom: ghcr.io/${{ steps.repo_name.outputs.lowercase }}/devcontainer
+          refFilterForPush: refs/heads/main
