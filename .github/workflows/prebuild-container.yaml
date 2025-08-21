@@ -4,6 +4,7 @@ on:
     branches: [main]
     paths:
       - ".devcontainer/**"
+      - ".github/workflows/prebuild-container.yaml"
       - "Dockerfile"
   workflow_dispatch:
 
