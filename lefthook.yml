@@ -91,9 +91,9 @@ pre-commit:
             run: cargo llvm-cov --lcov --output-path target/lcov.info
             glob: "*.rs"
 
-          - name: cargo build
-            run: cargo build --release
-            glob: "*.rs"
+    - name: cargo build
+      run: cargo build --release
+      glob: "*.rs"
 
 pre-push:
   parallel: false
