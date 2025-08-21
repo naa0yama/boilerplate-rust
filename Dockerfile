@@ -68,7 +68,6 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	git \
 	gnupg \
 	jq \
-	just \
 	musl-tools \
 	nano \
 	sudo \

@@ -15,10 +15,6 @@ on:
 env:
   CARGO_TERM_COLOR: always
 
-#   0 pre-build devcontainer
-#       dprint fmt
-#       docker build
-
 #   1 fmt
 #       dprint fmt
 #         共通
