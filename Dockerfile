@@ -68,6 +68,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	git \
 	gnupg \
 	jq \
+	just \
 	musl-tools \
 	nano \
 	sudo \
@@ -231,28 +232,28 @@ RUN echo "**** Install Claude Code ****" && \
 #- -------------------------------------------------------------------------------------------------
 #- Production
 #-
-FROM debian:bullseye-slim
-ARG DEBIAN_FRONTEND \
-	TZ
-
-SHELL [ "/bin/bash", "-c" ]
-
-RUN echo "**** set Timezone ****" && \
-	set -euxo pipefail && \
-	ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
-
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-	--mount=type=cache,target=/var/lib/apt,sharing=locked \
-	\
-	echo "**** Dependencies ****" && \
-	set -euxo pipefail && \
-	apt-get -y install --no-install-recommends \
-	bash \
-	ca-certificates
-
-#COPY --from=development /usr/local/cargo/bin/myapp /usr/local/bin/myapp
-
-SHELL [ "/bin/sh", "-c" ]
-#CMD ["myapp"]
+#FROM debian:bullseye-slim
+#ARG DEBIAN_FRONTEND \
+#	TZ
+#
+#SHELL [ "/bin/bash", "-c" ]
+#
+#RUN echo "**** set Timezone ****" && \
+#	set -euxo pipefail && \
+#	ln -snf /usr/share/zoneinfo/${TZ} /etc/localtime && echo ${TZ} > /etc/timezone
+#
+#RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+#	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+#	\
+#	echo "**** Dependencies ****" && \
+#	set -euxo pipefail && \
+#	apt-get -y install --no-install-recommends \
+#	bash \
+#	ca-certificates
+#
+##COPY --from=development /usr/local/cargo/bin/myapp /usr/local/bin/myapp
+#
+#SHELL [ "/bin/sh", "-c" ]
+##CMD ["myapp"]
 
 # vim: set filetype=dockerfile:
