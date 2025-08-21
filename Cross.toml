@@ -1,6 +1,6 @@
 [build.env]
 passthrough = [
-    "CARGO_TERM_COLOR",
+	"CARGO_TERM_COLOR",
 ]
 
 [target.x86_64-pc-windows-gnu]

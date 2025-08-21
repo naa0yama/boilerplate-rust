@@ -53,7 +53,7 @@ jobs:
       - name: Check dprint formatting
         run: |
           set -euxo pipefail
-          dprint fmt --check
+          dprint check
 
       - name: Check cargo formatting
         run: |
