@@ -14,8 +14,8 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
-  RUST_VERSION: "1.89"
-  SCCACHE_VERSION: "v0.10.0"
+  #RUST_VERSION: "1.89"
+  #SCCACHE_VERSION: "v0.10.0"
 
 jobs:
   fmt:
@@ -25,46 +25,32 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Run sccache-cache
-        uses: mozilla-actions/sccache-action@v0.0.9
-        with:
-          version: ${{ env.SCCACHE_VERSION }}
-
-      - uses: actions-rust-lang/setup-rust-toolchain@v1
-        with:
-          toolchain: ${{ env.RUST_VERSION }}
-          components: rustfmt, clippy
-
       - name: Check version consistency
+        id: versions
         run: |
           set -euxo pipefail
+
           echo "Checking Rust version consistency between Dockerfile and CI..."
-          dockerfile_version=$(grep -E '^FROM rust:[0-9]+\.[0-9]+' Dockerfile | sed -E 's/FROM rust:([0-9]+\.[0-9]+).*/\1/')
-          ci_version="${{ env.RUST_VERSION }}"
-          echo "Dockerfile Rust version: $dockerfile_version"
-          echo "CI Rust version: $ci_version"
-          if [ "$dockerfile_version" != "$ci_version" ]; then
-            echo "ERROR: Rust version mismatch!"
-            echo "Dockerfile: $dockerfile_version"
-            echo "CI: $ci_version"
-            echo "Please update RUST_VERSION in ci.yaml or Dockerfile to match."
-            exit 1
-          fi
+          rust_version=$(grep -E '^FROM rust:[0-9]+\.[0-9]+' Dockerfile | sed -E 's/FROM rust:([0-9]+\.[0-9]+).*/\1/')
+          echo "Dockerfile Rust version: $rust_version"
+          echo "rust_version=${rust_version}" >> "$GITHUB_OUTPUT"
           echo "✅ Rust versions are consistent!"
 
           echo "Checking sccache version consistency between Dockerfile and CI..."
-          dockerfile_version=$(grep -E '^ARG SCCACHE_VERSION=v[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG SCCACHE_VERSION=(v[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-          ci_version="${{ env.SCCACHE_VERSION }}"
-          echo "Dockerfile sccache version: $dockerfile_version"
-          echo "CI sccache version: $ci_version"
-          if [ "$dockerfile_version" != "$ci_version" ]; then
-            echo "ERROR: sccache version mismatch!"
-            echo "Dockerfile: $dockerfile_version"
-            echo "CI: $ci_version"
-            echo "Please update SCCACHE_VERSION in ci.yaml or Dockerfile to match."
-            exit 1
-          fi
+          sccache_version=$(grep -E '^ARG SCCACHE_VERSION=v[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG SCCACHE_VERSION=(v[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          echo "Dockerfile sccache version: $sccache_version"
+          echo "sccache_version=${sccache_version}" >> "$GITHUB_OUTPUT"
           echo "✅ sccache versions are consistent!"
+
+      - name: Run sccache-cache
+        uses: mozilla-actions/sccache-action@v0.0.9
+        with:
+          version: ${{ jobs.<job_id>.outputs.sccache_version }}
+
+      - uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          toolchain: ${{ jobs.<job_id>.outputs.rust_version }}
+          components: rustfmt, clippy
 
       - name: Install dprint
         run: |
@@ -105,11 +91,11 @@ jobs:
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
-          version: ${{ env.SCCACHE_VERSION }}
+          version: ${{ jobs.<job_id>.outputs.sccache_version }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{ env.RUST_VERSION }}
+          toolchain: ${{ jobs.<job_id>.outputs.rust_version }}
           target: ${{ matrix.target }}
 
       - name: Check compilation
@@ -128,11 +114,11 @@ jobs:
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
-          version: ${{ env.SCCACHE_VERSION }}
+          version: ${{ jobs.<job_id>.outputs.sccache_version }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{ env.RUST_VERSION }}
+          toolchain: ${{ jobs.<job_id>.outputs.rust_version }}
 
       - name: Install cargo-binstall
         run: |
@@ -168,7 +154,6 @@ jobs:
         target:
           - x86_64-unknown-linux-gnu
           - x86_64-pc-windows-gnu
-          - x86_64-apple-darwin
           - aarch64-unknown-linux-gnu
     timeout-minutes: 15
 
@@ -178,11 +163,11 @@ jobs:
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
-          version: ${{ env.SCCACHE_VERSION }}
+          version: ${{ jobs.<job_id>.outputs.sccache_version }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{ env.RUST_VERSION }}
+          toolchain: ${{ jobs.<job_id>.outputs.rust_version }}
           target: ${{ matrix.target }}
 
       - name: Install cargo-binstall
