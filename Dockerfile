@@ -120,25 +120,11 @@ RUN echo "**** Rust tool sccache ****" && \
 	type -p sccache && \
 	rm -rf "./${_filename}" "${_tmpdir}"
 
-RUN echo "**** Rust component ****" && \
+RUN --mount=type=bind,source=rust-toolchain.toml,target=/rust-toolchain.toml \
+	\
+	echo "**** Rust component ****" && \
 	set -euxo pipefail && \
-	rustup component add \
-	cargo \
-	clippy \
-	llvm-tools \
-	rust-analyzer \
-	rust-docs \
-	rust-std \
-	rustc \
-	rustfmt \
-	&& \
-	rustup component list --installed && \
-	\
-	rustup target add x86_64-unknown-linux-musl && \
-	\
-	cargo clippy --version && \
-	cargo fmt --version && \
-	rustc --version
+	cargo -V
 
 RUN echo "**** Rust tools cargo-binstall ****" && \
 	set -euxo pipefail && \
