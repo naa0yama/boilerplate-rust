@@ -26,6 +26,9 @@ jobs:
     name: fmt
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    outputs:
+      sccache: ${{ steps.versions.outputs.sccache }}
+      binary_name: ${{ steps.versions.outputs.binary_name }}
 
     steps:
       - uses: actions/checkout@v5
@@ -52,10 +55,32 @@ jobs:
           echo "sccache=${sccache_version}" >> "$GITHUB_OUTPUT"
           echo "✅ sccache versions are consistent!"
 
+          echo "Extracting binary name from Cargo.toml..."
+          # First get the package name
+          package_name=$(grep -E '^\[package\]' -A 10 Cargo.toml | grep -E '^name = "' | sed -E 's/name = "(.*)"/\1/')
+
+          # Check if there are [[bin]] sections
+          if grep -q '^\[\[bin\]\]' Cargo.toml; then
+            # Look for a bin with the same name as package (main binary)
+            main_bin=$(grep -E '^\[\[bin\]\]' -A 10 Cargo.toml | grep -E '^name = "'"$package_name"'"' | sed -E 's/name = "(.*)"/\1/')
+            if [ -n "$main_bin" ]; then
+              binary_name="$main_bin"
+            else
+              # Use the first bin found
+              binary_name=$(grep -E '^\[\[bin\]\]' -A 10 Cargo.toml | grep -E '^name = "' | head -n 1 | sed -E 's/name = "(.*)"/\1/')
+            fi
+          else
+            # No [[bin]] sections, use package name
+            binary_name="$package_name"
+          fi
+
+          echo "Binary name: $binary_name"
+          echo "binary_name=${binary_name}" >> "$GITHUB_OUTPUT"
+
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
-          version: ${{ steps.versions.outputs.sccache }}
+          version: ${{ needs.fmt.outputs.sccache }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
@@ -97,7 +122,7 @@ jobs:
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
-          version: ${{ steps.versions.outputs.sccache }}
+          version: ${{ needs.fmt.outputs.sccache }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
@@ -122,7 +147,7 @@ jobs:
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
-          version: ${{ steps.versions.outputs.sccache }}
+          version: ${{ needs.fmt.outputs.sccache }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
@@ -167,29 +192,19 @@ jobs:
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
-          version: ${{ steps.versions.outputs.sccache }}
+          version: ${{ needs.fmt.outputs.sccache }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           cache-shared-key: setup-rust-${{ runner.target }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Install cargo-binstall
-        run: |
-          set -euxo pipefail
-          curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
-
-      - name: Install cross
-        run: |
-          set -euxo pipefail
-          cargo binstall cross --no-confirm --force
-
       - name: Build release binary
         run: |
           set -euxo pipefail
-          cross build --release --target ${{ matrix.target }}
+          cargo build --release
 
       - name: Upload binary artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: binary-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/brust${{ matrix.target == 'x86_64-pc-windows-gnu' && '.exe' || '' }}
+          name: binary-${{ needs.fmt.outputs.binary_name }}
+          path: target/release/${{ needs.fmt.outputs.binary_name }}
