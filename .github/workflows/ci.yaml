@@ -146,18 +146,12 @@ jobs:
       - name: Generate coverage report
         run: |
           set -euxo pipefail
-          cargo llvm-cov --lcov --output-path lcov.info
+          cargo llvm-cov --lcov --output-path target/lcov.info
 
       - name: Upload coverage
         uses: k1LoW/octocov-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Upload coverage to artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: coverage-report
-          path: lcov.info
 
   build:
     name: build
