@@ -124,7 +124,7 @@ jobs:
       - name: Install cargo-llvm-cov
         run: |
           set -euxo pipefail
-          cargo binstall cargo-llvm-cov --no-confirm --verbose --force
+          cargo binstall cargo-llvm-cov --no-confirm --force
 
       - name: Run tests
         run: |
@@ -174,7 +174,7 @@ jobs:
       - name: Install cross
         run: |
           set -euxo pipefail
-          cargo binstall cross --no-confirm
+          cargo binstall cross --no-confirm --force
 
       - name: Build release binary
         run: |
