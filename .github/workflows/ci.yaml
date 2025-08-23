@@ -139,9 +139,9 @@ jobs:
     needs: [fmt, check]
     timeout-minutes: 15
     permissions:
-      contents: write       # For octocov to push badges to repository
-      actions: read         # For octocov to retrieve previous reports from artifacts
-      pull-requests: write  # For octocov to comment on pull requests
+      contents: write #       For octocov to push badges to repository
+      actions: read #         For octocov to retrieve previous reports from artifacts
+      pull-requests: write #  For octocov to comment on pull requests
 
     steps:
       - uses: actions/checkout@v5
