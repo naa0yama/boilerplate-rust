@@ -6,8 +6,5 @@ passthrough = [
 [target.x86_64-pc-windows-gnu]
 image = "ghcr.io/cross-rs/x86_64-pc-windows-gnu:edge"
 
-[target.x86_64-apple-darwin]
-image = "ghcr.io/cross-rs/x86_64-apple-darwin:edge"
-
 [target.aarch64-unknown-linux-gnu]
 image = "ghcr.io/cross-rs/aarch64-unknown-linux-gnu:edge"
