@@ -21,7 +21,8 @@ diff:
 push:
   if: is_default_branch
   datastores:
-    - github://${GITHUB_REPOSITORY}?branch=gh-pages
+    - github://${GITHUB_REPOSITORY}
+  message: "Update coverage badges [skip ci]"
 report:
   if: is_default_branch
   datastores:
