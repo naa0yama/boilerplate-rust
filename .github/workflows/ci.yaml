@@ -124,7 +124,7 @@ jobs:
       - name: Install cargo-llvm-cov
         run: |
           set -euxo pipefail
-          cargo binstall cargo-llvm-cov --no-confirm
+          cargo binstall cargo-llvm-cov --no-confirm --verbose
 
       - name: Run tests
         run: |
