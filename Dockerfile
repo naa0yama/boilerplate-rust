@@ -17,7 +17,7 @@ ARG MOLD_VERSION=v2.40.4
 
 # Rust tools
 ## renovate: datasource=github-releases packageName=cargo-bins/cargo-binstall versioning=semver automerge=true
-ARG CARGO_BINSTALL_VERSION=v1.14.4
+ARG CARGO_BINSTALL_VERSION=v1.15.0
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
 ARG CARGO_LLVM_COV_VERSION=v0.6.18
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
