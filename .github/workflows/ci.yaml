@@ -2,21 +2,28 @@ name: Rust CI
 
 on:
   push:
-    branches: ["main"]
-    # paths:
-    #   - "**src/**.rs"
-    #   - "**.rs"
-    #   - "Cargo.lock"
-    #   - "Cargo.toml"
+    branches: [main]
+    paths: &on_paths
+      - "**/*.rs"
+      - "**/Cargo.toml"
+      - "**/Cargo.lock"
+      - ".github/workflows/ci.yaml"
+      - "rust-toolchain.toml"
+
   pull_request:
-    branches: ["main"]
+    paths: *on_paths
   workflow_dispatch:
 
 env:
   CARGO_TERM_COLOR: always
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   fmt:
+    name: fmt
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
@@ -29,8 +36,14 @@ jobs:
           set -euxo pipefail
           echo "Checking Rust version consistency between Dockerfile and CI..."
           rust_version=$(grep -E '^FROM rust:[0-9]+\.[0-9]+' Dockerfile | sed -E 's/FROM rust:([0-9]+\.[0-9]+).*/\1/')
-          echo "Dockerfile Rust version: $rust_version"
-          echo "rust=${rust_version}" >> "$GITHUB_OUTPUT"
+          tool_version=$(grep -E '^channel = "[0-9]+\.[0-9]+"' rust-toolchain.toml | sed -E 's/channel = "([0-9]+\.[0-9]+)"/\1/')
+          if [ "$rust_version" != "$tool_version" ]; then
+            echo "ERROR: Rust version mismatch!"
+            echo "Dockerfile         : $rust_version"
+            echo "rust-toolchain.toml: $tool_version"
+            echo "Please update rust-toolchain.toml in ci.yaml or Dockerfile to match."
+            exit 1
+          fi
           echo "✅ Rust versions are consistent!"
 
           echo "Checking sccache version consistency between Dockerfile and CI..."
@@ -46,8 +59,8 @@ jobs:
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{ steps.versions.outputs.rust }}
           components: rustfmt, clippy
+          cache-shared-key: setup-rust-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install dprint
         run: |
@@ -71,18 +84,15 @@ jobs:
           cargo clippy --all-targets --all-features -- -D warnings
 
   check:
+    name: check
     runs-on: ubuntu-latest
     needs: fmt
-    strategy:
-      matrix:
-        target:
-          - x86_64-unknown-linux-gnu
-          - x86_64-pc-windows-gnu
-          - aarch64-unknown-linux-gnu
     timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
@@ -91,21 +101,23 @@ jobs:
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{ steps.versions.outputs.rust }}
-          target: ${{ matrix.target }}
+          cache-shared-key: setup-rust-${{ runner.so }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Check compilation
         run: |
           set -euxo pipefail
-          cargo check --target ${{ matrix.target }} --all-targets --all-features
+          cargo check --all-targets --all-features
 
   test:
+    name: test
     runs-on: ubuntu-latest
     needs: [fmt, check]
     timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
@@ -114,7 +126,7 @@ jobs:
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{ steps.versions.outputs.rust }}
+          cache-shared-key: setup-rust-${{ runner.target }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install cargo-binstall
         run: |
@@ -136,6 +148,11 @@ jobs:
           set -euxo pipefail
           cargo llvm-cov --lcov --output-path lcov.info
 
+      - name: Upload coverage
+        uses: k1LoW/octocov-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
       - name: Upload coverage to artifacts
         uses: actions/upload-artifact@v4
         with:
@@ -143,18 +160,15 @@ jobs:
           path: lcov.info
 
   build:
+    name: build
     runs-on: ubuntu-latest
     needs: [fmt, check, test]
-    strategy:
-      matrix:
-        target:
-          - x86_64-unknown-linux-gnu
-          - x86_64-pc-windows-gnu
-          - aarch64-unknown-linux-gnu
     timeout-minutes: 15
 
     steps:
       - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
 
       - name: Run sccache-cache
         uses: mozilla-actions/sccache-action@v0.0.9
@@ -163,8 +177,7 @@ jobs:
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          toolchain: ${{ steps.versions.outputs.rust }}
-          target: ${{ matrix.target }}
+          cache-shared-key: setup-rust-${{ runner.target }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install cargo-binstall
         run: |
