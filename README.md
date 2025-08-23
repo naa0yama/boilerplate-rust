@@ -1,5 +1,8 @@
 # Boilerplate-Rust
 
+![coverage](docs/coverage.svg)
+![coverage](docs/time.svg)
+
 Rustプロジェクトのための開発テンプレート
 
 ## 概要
@@ -8,9 +11,9 @@ Rustプロジェクトのための開発テンプレート
 
 ## 必要要件
 
-- Docker / Docker Compose
+- Docker
 - Visual Studio Code
-- VS Code Dev Containers拡張機能
+- VS Code Dev Containers 拡張機能
 
 ## セットアップ
 
