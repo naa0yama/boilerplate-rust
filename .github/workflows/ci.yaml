@@ -88,12 +88,12 @@ jobs:
           path: |
             ~/.rustup/settings.toml
             ~/.rustup/toolchains/1.*
-          key: rustup-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/rust-toolchain.toml' | slice(0, 8)) }}
+          key: rustup-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/rust-toolchain.toml' | slice(0, 8) }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           components: rustfmt, clippy
-          cache-shared-key: rcargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock' | slice(0, 8)) }}
+          cache-shared-key: rcargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock' | slice(0, 8) }}
 
       - name: rust toolchain
         run: |
@@ -139,7 +139,7 @@ jobs:
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          cache-shared-key: rcargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock' | slice(0, 8)) }}
+          cache-shared-key: rcargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock' | slice(0, 8) }}
 
       - name: Check compilation
         run: |
@@ -168,7 +168,7 @@ jobs:
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          cache-shared-key: rcargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock' | slice(0, 8)) }}
+          cache-shared-key: rcargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock' | slice(0, 8) }}
 
       - name: Install cargo-binstall
         run: |
@@ -213,7 +213,7 @@ jobs:
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
-          cache-shared-key: rcargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock' | slice(0, 8)) }}
+          cache-shared-key: rcargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock' | slice(0, 8) }}
 
       - name: Build release binary
         run: |
