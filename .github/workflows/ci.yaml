@@ -38,8 +38,8 @@ jobs:
         run: |
           set -euxo pipefail
           echo "Checking Rust version consistency between Dockerfile and CI..."
-          rust_version=$(grep -E '^FROM rust:[0-9]+\.[0-9]+' Dockerfile | sed -E 's/FROM rust:([0-9]+\.[0-9]+).*/\1/')
-          tool_version=$(grep -E '^channel = "[0-9]+\.[0-9]+"' rust-toolchain.toml | sed -E 's/channel = "([0-9]+\.[0-9]+)"/\1/')
+          rust_version=$(grep -E '^FROM rust:[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/FROM rust:([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          tool_version=$(grep -E '^channel = "[0-9]+\.[0-9]+\.[0-9]+"' rust-toolchain.toml | sed -E 's/channel = "([0-9]+\.[0-9]+\.[0-9]+)"/\1/')
           if [ "$rust_version" != "$tool_version" ]; then
             echo "ERROR: Rust version mismatch!"
             echo "Dockerfile         : $rust_version"
