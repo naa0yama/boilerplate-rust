@@ -1,8 +1,4 @@
-# Cleanup caches by a branch
-# Cleanup container
-
 name: Cleanup
-
 on:
   pull_request:
     types: [closed]
