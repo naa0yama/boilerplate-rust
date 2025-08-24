@@ -90,7 +90,7 @@ jobs:
       - name: rust toolchain
         run: |
           set -euxo pipefail
-          du -m -d 1 /usr/local/rustup/ ~/.rustup
+          du -m -d 2 ~/.rustup/ | sort -nr
 
       - name: Install dprint
         run: |
