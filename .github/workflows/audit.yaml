@@ -5,14 +5,12 @@ on:
     - cron: "0 0 */3 * *"
 
   push:
-    paths:
+    paths: &on_paths
       - "**/Cargo.toml"
       - "**/Cargo.lock"
 
   pull_request:
-    paths:
-      - "**/Cargo.toml"
-      - "**/Cargo.lock"
+    paths: *on_paths
 
   workflow_dispatch:
 

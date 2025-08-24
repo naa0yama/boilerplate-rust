@@ -30,7 +30,7 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 #- -------------------------------------------------------------------------------------------------
 #- Builder Base
 #-
-FROM rust:1.89-trixie AS builder-base
+FROM rust:1.89.0-trixie AS builder-base
 ARG CARGO_BINSTALL_VERSION \
 	CARGO_LLVM_COV_VERSION \
 	CURL_OPTS \
