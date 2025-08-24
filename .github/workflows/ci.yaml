@@ -87,6 +87,11 @@ jobs:
           components: rustfmt, clippy
           cache-shared-key: setup-rust-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: rust toolchain
+        run: |
+          set -euxo pipefail
+          du -m -d 1 /usr/local/rustup/ ~/.rustup
+
       - name: Install dprint
         run: |
           set -euxo pipefail
