@@ -47,6 +47,8 @@
 #       Prefix of commit message. Default is "[tagpr]"
 #
 [tagpr]
+	releaseBranch = main
+	vPrefix = true
 	versionFile = "Cargo.toml"
 	changelog = true
 	command = "cargo check --release"
