@@ -51,12 +51,4 @@
 	changelog = true
 	command = "cargo check --release"
 
-	templateText = """
-	## What's Changed
-
-	{{ range .Changes }}
-	- {{ . }}
-	{{ end }}
-
-	**Full Changelog**: {{ .Permalink }}
-	"""
+	template = ".github/tagpr-template.md"
