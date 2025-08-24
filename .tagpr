@@ -49,9 +49,7 @@
 [tagpr]
 	versionFile = "Cargo.toml"
 	changelog = true
-	command = [
-		"cargo check --release",
-	]
+	command = "cargo check --release"
 
 	template = """
 	## What's Changed
