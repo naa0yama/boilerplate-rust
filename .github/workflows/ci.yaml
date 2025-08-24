@@ -83,7 +83,7 @@ jobs:
           version: ${{ needs.fmt.outputs.sccache }}
 
       - name: Cache rustup
-        uses: actions/cache@v5
+        uses: actions/cache@v4
         with:
           path: |
             ~/.rustup/settings.toml
@@ -137,6 +137,14 @@ jobs:
         with:
           version: ${{ needs.fmt.outputs.sccache }}
 
+      - name: Cache rustup
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.rustup/settings.toml
+            ~/.rustup/toolchains/1.*
+          key: rustup-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/rust-toolchain.toml') }}
+
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           cache-shared-key: rcargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
@@ -165,6 +173,14 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
           version: ${{ needs.fmt.outputs.sccache }}
+
+      - name: Cache rustup
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.rustup/settings.toml
+            ~/.rustup/toolchains/1.*
+          key: rustup-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/rust-toolchain.toml') }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
@@ -210,6 +226,14 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
           version: ${{ needs.fmt.outputs.sccache }}
+
+      - name: Cache rustup
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.rustup/settings.toml
+            ~/.rustup/toolchains/1.*
+          key: rustup-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/rust-toolchain.toml') }}
 
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
