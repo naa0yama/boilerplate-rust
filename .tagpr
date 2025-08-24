@@ -50,5 +50,3 @@
 	versionFile = "Cargo.toml"
 	changelog = true
 	command = "cargo check --release"
-
-	template = ".github/tagpr-template.md"
