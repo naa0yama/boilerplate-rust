@@ -51,7 +51,7 @@
 	changelog = true
 	command = "cargo check --release"
 
-	template = """
+	templateText = """
 	## What's Changed
 
 	{{ range .Changes }}
