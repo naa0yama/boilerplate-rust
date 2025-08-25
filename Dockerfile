@@ -23,7 +23,7 @@ ARG CARGO_LLVM_COV_VERSION=v0.6.18
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
 ARG SCCACHE_VERSION=v0.10.0
 ## renovate: datasource=github-releases packageName=ziglang/zig versioning=semver automerge=true
-ARG ZIG_VERSION=0.14.0
+ARG ZIG_VERSION=0.14.1
 ## renovate: datasource=github-releases packageName=rust-cross/cargo-zigbuild versioning=semver automerge=true
 ARG ZIGBUILD_VERSION=v0.20.1
 
