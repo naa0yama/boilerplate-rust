@@ -17,9 +17,11 @@ ARG MOLD_VERSION=v2.40.4
 
 # Rust tools
 ## renovate: datasource=github-releases packageName=cargo-bins/cargo-binstall versioning=semver automerge=true
-ARG CARGO_BINSTALL_VERSION=v1.15.1
+ARG BINSTALL_VERSION=v1.15.1
+## renovate: datasource=github-releases packageName=casey/just versioning=semver automerge=true
+ARG JUST_VERSION=1.42.3
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
-ARG CARGO_LLVM_COV_VERSION=v0.6.18
+ARG LLVM_COV_VERSION=v0.6.18
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
 ARG SCCACHE_VERSION=v0.10.0
 ## renovate: datasource=github-releases packageName=ziglang/zig versioning=semver automerge=true
@@ -35,10 +37,11 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 #- Builder Base
 #-
 FROM rust:1.89.0-trixie AS builder-base
-ARG CARGO_BINSTALL_VERSION \
-	CARGO_LLVM_COV_VERSION \
+ARG BINSTALL_VERSION \
 	CURL_OPTS \
 	DEBIAN_FRONTEND \
+	JUST_VERSION \
+	LLVM_COV_VERSION \
 	MOLD_VERSION \
 	SCCACHE_VERSION \
 	ZIG_VERSION \
@@ -101,10 +104,25 @@ RUN echo "**** Install mold ****" && \
 	type -p mold && \
 	rm -rf "./${_filename}"
 
+RUN echo "**** Rust tool just ****" && \
+	set -euxo pipefail && \
+	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/casey/just/releases/tags/${JUST_VERSION} | \
+	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-musl.tar.gz")) | .browser_download_url')" && \
+	_filename="$(basename "$_download_url")" && \
+	_tmpdir=$(mktemp -q -d) && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	tar -xvf "./${_filename}" -C "${_tmpdir}" && \
+	ls -lah "${_tmpdir}" && \
+	cp -av "${_tmpdir}/just" /usr/local/bin/ && \
+	cp -av "${_tmpdir}/completions/just.bash" /usr/share/bash-completion/completions/ && \
+	type -p just && \
+	rm -rf "./${_filename}" "${_tmpdir}"
+
 RUN echo "**** Rust tool cargo-llvm-cov ****" && \
 	set -euxo pipefail && \
 	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/tags/${CARGO_LLVM_COV_VERSION} | \
+	https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/tags/${LLVM_COV_VERSION} | \
 	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz")) | .browser_download_url')" && \
 	_filename="$(basename "$_download_url")" && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
@@ -128,11 +146,11 @@ RUN echo "**** Rust tool sccache ****" && \
 
 RUN echo "**** Rust tool zig ****" && \
 	set -euxo pipefail && \
-	_filename="zig-linux-x86_64-${ZIG_VERSION}.tar.xz" && \
+	_filename="zig-x86_64-linux-${ZIG_VERSION}.tar.xz" && \
 	_tmpdir=$(mktemp -q -d) && \
 	mkdir -p /usr/local/zig && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" \
-	"https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" && \
+	"https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz" && \
 	tar -xf "./${_filename}" --strip-components 1 -C "/usr/local/zig/" && \
 	ls -lah /usr/local/zig && \
 	rm -rf "./${_filename}" "${_tmpdir}"
@@ -157,7 +175,7 @@ RUN --mount=type=bind,source=rust-toolchain.toml,target=/rust-toolchain.toml \
 RUN echo "**** Rust tools cargo-binstall ****" && \
 	set -euxo pipefail && \
 	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/cargo-bins/cargo-binstall/releases/tags/${CARGO_BINSTALL_VERSION} | \
+	https://api.github.com/repos/cargo-bins/cargo-binstall/releases/tags/${BINSTALL_VERSION} | \
 	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tgz")) | .browser_download_url')" && \
 	_filename="$(basename "$_download_url")" && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
