@@ -7,3 +7,4 @@ edition = "2024"
 strip = "symbols"
 
 [dependencies]
+clap = { version = "4.5.45", features = ["derive"] }
