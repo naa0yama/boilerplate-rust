@@ -8,8 +8,9 @@ codeToTestRatio:
   code:
     - "**/*.rs"
   test:
-    - "**/*_test.go"
+    - "**/tests/**.rs"
 coverage:
+  acceptable: current >= 40%
   badge:
     path: docs/coverage.svg
   if: true
