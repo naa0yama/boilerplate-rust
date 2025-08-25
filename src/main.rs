@@ -12,6 +12,35 @@ struct Args {
 
 fn main() {
     let args = Args::parse();
-    let name = sayhello(args.name);
-    println!("{}, new world!!", name);
+    run(args.name);
+}
+
+pub fn run(name: String) {
+    let greeting = sayhello(name);
+    println!("{}, new world!!", greeting);
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_run_with_default_name() {
+        run("Youre".to_string());
+    }
+
+    #[test]
+    fn test_run_with_custom_name() {
+        run("Alice".to_string());
+    }
+
+    #[test]
+    fn test_run_with_empty_name() {
+        run("".to_string());
+    }
+
+    #[test]
+    fn test_run_with_japanese_name() {
+        run("世界".to_string());
+    }
 }
