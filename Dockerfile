@@ -22,6 +22,8 @@ ARG CARGO_BINSTALL_VERSION=v1.15.1
 ARG CARGO_LLVM_COV_VERSION=v0.6.18
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
 ARG SCCACHE_VERSION=v0.10.0
+## renovate: datasource=github-releases packageName=rust-cross/cargo-zigbuild versioning=semver automerge=true
+ARG ZIGBUILD_VERSION=v0.20.0
 
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
@@ -37,6 +39,7 @@ ARG CARGO_BINSTALL_VERSION \
 	DEBIAN_FRONTEND \
 	MOLD_VERSION \
 	SCCACHE_VERSION \
+	ZIGBUILD_VERSION \
 	USER_NAME \
 	USER_UID \
 	USER_GID \
@@ -120,6 +123,17 @@ RUN echo "**** Rust tool sccache ****" && \
 	type -p sccache && \
 	rm -rf "./${_filename}" "${_tmpdir}"
 
+RUN echo "**** Rust tool cargo-zigbuild ****" && \
+	set -euxo pipefail && \
+	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/rust-cross/cargo-zigbuild/releases/tags/${ZIGBUILD_VERSION} | \
+	jq -r '.assets[] | select(.name | startswith("cargo-zigbuild-v") and endswith("x86_64-unknown-linux-musl.tar.gz")) | .browser_download_url')" && \
+	_filename="$(basename "$_download_url")" && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
+	type -p cargo-zigbuild && \
+	rm -rf "./${_filename}"
+
 RUN --mount=type=bind,source=rust-toolchain.toml,target=/rust-toolchain.toml \
 	\
 	echo "**** Rust component ****" && \
@@ -147,9 +161,12 @@ RUN echo "**** Create ${CARGO_HOME} ****" && \
 
 RUN echo "**** Rust tools ****" && \
 	set -euxo pipefail && \
-	cargo binstall --no-confirm \
+	cargo binstall --no-confirm --locked \
 	cargo-cache \
-	cargo-modules
+	cargo-modules \
+	&& \
+	cargo cache --version && \
+	cargo modules --version
 
 RUN echo "**** Rust bash-completion ****" && \
 	set -euxo pipefail && \
