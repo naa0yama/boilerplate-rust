@@ -22,6 +22,8 @@ ARG CARGO_BINSTALL_VERSION=v1.15.1
 ARG CARGO_LLVM_COV_VERSION=v0.6.18
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
 ARG SCCACHE_VERSION=v0.10.0
+## renovate: datasource=github-releases packageName=ziglang/zig versioning=semver automerge=true
+ARG ZIG_VERSION=0.14.0
 ## renovate: datasource=github-releases packageName=rust-cross/cargo-zigbuild versioning=semver automerge=true
 ARG ZIGBUILD_VERSION=v0.20.0
 
@@ -39,6 +41,7 @@ ARG CARGO_BINSTALL_VERSION \
 	DEBIAN_FRONTEND \
 	MOLD_VERSION \
 	SCCACHE_VERSION \
+	ZIG_VERSION \
 	ZIGBUILD_VERSION \
 	USER_NAME \
 	USER_UID \
@@ -123,6 +126,17 @@ RUN echo "**** Rust tool sccache ****" && \
 	type -p sccache && \
 	rm -rf "./${_filename}" "${_tmpdir}"
 
+RUN echo "**** Rust tool zig ****" && \
+	set -euxo pipefail && \
+	_filename="zig-linux-x86_64-${ZIG_VERSION}.tar.xz" && \
+	_tmpdir=$(mktemp -q -d) && \
+	mkdir -p /usr/local/zig && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" \
+	"https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" && \
+	tar -xf "./${_filename}" --strip-components 1 -C "/usr/local/zig/" && \
+	ls -lah /usr/local/zig && \
+	rm -rf "./${_filename}" "${_tmpdir}"
+
 RUN echo "**** Rust tool cargo-zigbuild ****" && \
 	set -euxo pipefail && \
 	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
@@ -154,6 +168,12 @@ RUN echo "**** Rust tools cargo-binstall ****" && \
 # User level settings
 USER ${USER_NAME}
 ENV CARGO_HOME=/home/${USER_NAME}/.cargo
+
+RUN echo "**** PATH add zig ****" && \
+	set -euxo pipefail && \
+	echo -e "# Add PATH ziglang\nexport PATH="/usr/local/zig:\$PATH"" >> ~/.bashrc && \
+	exec ${SHELL} -l && \
+	zig version
 
 RUN echo "**** Create ${CARGO_HOME} ****" && \
 	set -euxo pipefail && \
