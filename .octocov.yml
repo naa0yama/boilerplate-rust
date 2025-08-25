@@ -7,8 +7,11 @@ comment:
 codeToTestRatio:
   code:
     - "**/*.rs"
+    - "!**/tests/**/*.rs"
+    - "!**/*test*.rs"
   test:
-    - "**/tests/**.rs"
+    - "**/tests/**/*.rs"
+    - "**/*test*.rs"
 coverage:
   acceptable: current >= 40%
   badge:
