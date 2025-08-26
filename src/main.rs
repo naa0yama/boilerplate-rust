@@ -1,5 +1,4 @@
 pub mod libs;
-use crate::libs::hello::sayhello;
 use clap::Parser;
 
 #[derive(Parser)]
@@ -32,6 +31,7 @@ fn main() {
 }
 
 pub fn run(name: String) {
+    use crate::libs::hello::sayhello;
     let greeting = sayhello(name);
     println!("{}, new world!!", greeting);
 }
