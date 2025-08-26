@@ -194,11 +194,6 @@ jobs:
           set -euxo pipefail
           cargo binstall cargo-llvm-cov --no-confirm --force
 
-      - name: Run tests
-        run: |
-          set -euxo pipefail
-          cargo test --release
-
       - name: Generate coverage report
         run: |
           set -euxo pipefail
