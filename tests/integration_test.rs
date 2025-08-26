@@ -45,3 +45,19 @@ fn test_cli_with_empty_name() {
         .success()
         .stdout("Hi, , new world!!\n");
 }
+
+#[test]
+fn test_cli_version_flag() {
+    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let output = cmd.arg("--version").output().unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    assert!(stdout.starts_with("brust version"));
+}
+
+#[test]
+fn test_cli_version_short_flag() {
+    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let output = cmd.arg("-V").output().unwrap();
+    let stdout = String::from_utf8(output.stdout).unwrap();
+    assert!(stdout.starts_with("brust version"));
+}
