@@ -37,4 +37,4 @@ cross-build target:
 
 # dprint formatting (supports check mode)
 dprint *args="":
-	dprint fmt {{args}}
+	dprint {{args}}

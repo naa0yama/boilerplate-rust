@@ -64,7 +64,7 @@ pre-commit:
         parallel: true
         jobs:
           - name: dprint fmt
-            run: just dprint "--staged"
+            run: just dprint "fmt --staged"
             files: git diff --name-only --diff-filter=d --staged
             glob: "*.{json,jsonc,md,toml,yml,yaml}"
 

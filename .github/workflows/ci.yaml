@@ -99,7 +99,7 @@ jobs:
       - name: Check dprint formatting
         run: |
           set -euxo pipefail
-          just dprint
+          just dprint "check"
 
       - name: Check cargo formatting
         run: |
