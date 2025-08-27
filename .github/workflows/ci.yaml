@@ -30,6 +30,8 @@ jobs:
     outputs:
       sccache: ${{ steps.versions.outputs.sccache }}
       binary_name: ${{ steps.versions.outputs.binary_name }}
+      package_name: ${{ steps.versions.outputs.package_name }}
+      just: ${{ steps.versions.outputs.just }}
 
     steps:
       - uses: actions/checkout@v5
