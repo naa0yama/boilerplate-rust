@@ -97,7 +97,7 @@ jobs:
         uses: mozilla-actions/sccache-action@v0.0.9
         with:
           disable_annotations: true
-          version: ${{ needs.fmt.outputs.sccache }}
+          version: ${{ steps.versions.outputs.sccache }}
 
       - name: Cache rustup
         uses: actions/cache@v4
@@ -115,13 +115,12 @@ jobs:
       - name: Install dprint
         uses: taiki-e/install-action@v2
         with:
-          tool: dprint@${{ needs.fmt.outputs.dprint }}
+          tool: dprint@${{ steps.versions.outputs.dprint }}
 
       - name: Install just
-        run: |
-          set -euxo pipefail
-          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --tag ${{ needs.fmt.outputs.just }} --to ~/.local/bin
-          echo "$HOME/.local/bin" >> $GITHUB_PATH
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just@${{ steps.versions.outputs.just }}
 
       - name: Check dprint formatting
         run: |
