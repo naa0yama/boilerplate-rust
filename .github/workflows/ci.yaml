@@ -37,60 +37,34 @@ jobs:
     steps:
       - uses: actions/checkout@v5
 
-      - name: Check version consistency
-        id: versions
+      - name: Check Rust version consistency
         run: |
-          set -euxo pipefail
-          echo "Checking Rust version consistency between Dockerfile and CI..."
           rust_version=$(grep -E '^FROM rust:[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/FROM rust:([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           tool_version=$(grep -E '^channel = "[0-9]+\.[0-9]+\.[0-9]+"' rust-toolchain.toml | sed -E 's/channel = "([0-9]+\.[0-9]+\.[0-9]+)"/\1/')
           if [ "$rust_version" != "$tool_version" ]; then
-            echo "ERROR: Rust version mismatch!"
-            echo "Dockerfile         : $rust_version"
-            echo "rust-toolchain.toml: $tool_version"
-            echo "Please update rust-toolchain.toml in ci.yaml or Dockerfile to match."
+            echo "ERROR: Rust version mismatch! Dockerfile: $rust_version, rust-toolchain.toml: $tool_version"
             exit 1
           fi
-          echo "✅ Rust versions are consistent!"
 
-          echo "Checking sccache version consistency between Dockerfile and CI..."
-          sccache_version=$(grep -E '^ARG SCCACHE_VERSION=v[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG SCCACHE_VERSION=(v[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-          echo "Dockerfile sccache version: $sccache_version"
-          echo "sccache=${sccache_version}" >> "$GITHUB_OUTPUT"
-          echo "✅ sccache versions are consistent!"
-
-          echo "Checking dprint version consistency between Dockerfile and CI..."
-          dprint_version=$(grep -E '^ARG DPRINT_VERSION=[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG DPRINT_VERSION=([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-          echo "Dockerfile dprint version: $dprint_version"
-          echo "dprint=${dprint_version}" >> "$GITHUB_OUTPUT"
-          echo "✅ dprint versions are consistent!"
-
-          echo "Checking just version consistency between Dockerfile and CI..."
-          just_version=$(grep -E '^ARG JUST_VERSION=[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG JUST_VERSION=([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-          echo "Dockerfile just version: $just_version"
-          echo "just=${just_version}" >> "$GITHUB_OUTPUT"
-          echo "✅ just versions are consistent!"
-
-          echo "Extracting binary name from Cargo.toml..."
-          # First get the package name
+      - name: Extract tool versions
+        id: versions
+        run: |
+          sccache_version=$(grep -E '^ARG SCCACHE_VERSION=v?[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG SCCACHE_VERSION=(v?[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          dprint_version=$(grep -E '^ARG DPRINT_VERSION=v?[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG DPRINT_VERSION=(v?[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          just_version=$(grep -E '^ARG JUST_VERSION=v?[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG JUST_VERSION=(v?[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           package_name=$(grep -E '^\[package\]' -A 10 Cargo.toml | grep -E '^name = "' | sed -E 's/name = "(.*)"/\1/')
 
-          # Check if there are [[bin]] sections
           if grep -q '^\[\[bin\]\]' Cargo.toml; then
-            # Look for a bin with the same name as package (main binary)
             main_bin=$(grep -E '^\[\[bin\]\]' -A 10 Cargo.toml | grep -E '^name = "'"$package_name"'"' | sed -E 's/name = "(.*)"/\1/')
-            if [ -n "$main_bin" ]; then
-              binary_name="$main_bin"
-            else
-              # Use the first bin found
-              binary_name=$(grep -E '^\[\[bin\]\]' -A 10 Cargo.toml | grep -E '^name = "' | head -n 1 | sed -E 's/name = "(.*)"/\1/')
-            fi
+            binary_name=${main_bin:-$(grep -E '^\[\[bin\]\]' -A 10 Cargo.toml | grep -E '^name = "' | head -n 1 | sed -E 's/name = "(.*)"/\1/')}
           else
-            # No [[bin]] sections, use package name
             binary_name="$package_name"
           fi
 
-          echo "Binary name: $binary_name"
+          echo "sccache=${sccache_version}" >> "$GITHUB_OUTPUT"
+          echo "dprint=${dprint_version}" >> "$GITHUB_OUTPUT"
+          echo "just=${just_version}" >> "$GITHUB_OUTPUT"
+          echo "package_name=${package_name}" >> "$GITHUB_OUTPUT"
           echo "binary_name=${binary_name}" >> "$GITHUB_OUTPUT"
 
       - name: Run sccache-cache
@@ -166,6 +140,11 @@ jobs:
         with:
           cache-shared-key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
+      - name: Install just
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just@${{ needs.fmt.outputs.just }}
+
       - name: Check compilation
         run: |
           set -euxo pipefail
@@ -203,15 +182,15 @@ jobs:
         with:
           cache-shared-key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
-      - name: Install cargo-binstall
-        run: |
-          set -euxo pipefail
-          curl -L --proto '=https' --tlsv1.2 -sSf https://raw.githubusercontent.com/cargo-bins/cargo-binstall/main/install-from-binstall-release.sh | bash
+      - name: Install just
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just@${{ needs.fmt.outputs.just }}
 
       - name: Install cargo-llvm-cov
-        run: |
-          set -euxo pipefail
-          cargo binstall cargo-llvm-cov --no-confirm --force
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-llvm-cov
 
       - name: Generate coverage report
         run: |
@@ -250,6 +229,11 @@ jobs:
       - uses: actions-rust-lang/setup-rust-toolchain@v1
         with:
           cache-shared-key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
+
+      - name: Install just
+        uses: taiki-e/install-action@v2
+        with:
+          tool: just@${{ needs.fmt.outputs.just }}
 
       - name: Build release binary
         run: |
