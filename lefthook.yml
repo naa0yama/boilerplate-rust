@@ -64,18 +64,18 @@ pre-commit:
         parallel: true
         jobs:
           - name: dprint fmt
-            run: dprint fmt --staged
+            run: just dprint "--staged"
             files: git diff --name-only --diff-filter=d --staged
             glob: "*.{json,jsonc,md,toml,yml,yaml}"
 
           - name: cargo fmt check
-            run: cargo fmt -- --check
+            run: just cargo-fmt
             files: git diff --name-only --diff-filter=d --staged
             glob: "*.rs"
             stage_fixed: true
 
           - name: cargo clippy
-            run: cargo clippy --all-targets --all-features -- -D warnings
+            run: just cargo-clippy
             files: git diff --name-only --diff-filter=d --staged
             glob: "*.rs"
 
@@ -84,15 +84,15 @@ pre-commit:
         parallel: true
         jobs:
           - name: cargo test
-            run: cargo test
+            run: just cargo-test
             glob: "*.rs"
 
           - name: cargo llvm-cov
-            run: cargo llvm-cov --lcov --output-path target/lcov.info
+            run: just cargo-llvm-cov
             glob: "*.rs"
 
     - name: cargo build
-      run: cargo build --release
+      run: just cargo-build release
       glob: "*.rs"
 
 pre-push:

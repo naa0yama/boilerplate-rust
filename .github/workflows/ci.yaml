@@ -56,6 +56,12 @@ jobs:
           echo "sccache=${sccache_version}" >> "$GITHUB_OUTPUT"
           echo "✅ sccache versions are consistent!"
 
+          echo "Checking just version consistency between Dockerfile and CI..."
+          just_version=$(grep -E '^ARG JUST_VERSION=[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG JUST_VERSION=([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          echo "Dockerfile just version: $just_version"
+          echo "just=${just_version}" >> "$GITHUB_OUTPUT"
+          echo "✅ just versions are consistent!"
+
           echo "Extracting binary name from Cargo.toml..."
           # First get the package name
           package_name=$(grep -E '^\[package\]' -A 10 Cargo.toml | grep -E '^name = "' | sed -E 's/name = "(.*)"/\1/')
@@ -103,20 +109,26 @@ jobs:
           curl -fsSL https://dprint.dev/install.sh | sh
           echo "$HOME/.dprint/bin" >> $GITHUB_PATH
 
+      - name: Install just
+        run: |
+          set -euxo pipefail
+          curl --proto '=https' --tlsv1.2 -sSf https://just.systems/install.sh | bash -s -- --tag ${{ needs.fmt.outputs.just }} --to ~/.local/bin
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+
       - name: Check dprint formatting
         run: |
           set -euxo pipefail
-          dprint check
+          just dprint
 
       - name: Check cargo formatting
         run: |
           set -euxo pipefail
-          cargo fmt -- --check
+          just cargo-fmt
 
       - name: Run clippy
         run: |
           set -euxo pipefail
-          cargo clippy --all-targets --all-features -- -D warnings
+          just cargo-clippy
 
   check:
     name: check
@@ -150,7 +162,7 @@ jobs:
       - name: Check compilation
         run: |
           set -euxo pipefail
-          cargo check --all-targets --all-features
+          just cargo-check
 
   test:
     name: test
@@ -197,7 +209,7 @@ jobs:
       - name: Generate coverage report
         run: |
           set -euxo pipefail
-          cargo llvm-cov --lcov --output-path target/lcov.info
+          just cargo-llvm-cov
 
       - name: Upload coverage
         uses: k1LoW/octocov-action@v1
@@ -235,7 +247,7 @@ jobs:
       - name: Build release binary
         run: |
           set -euxo pipefail
-          cargo build --release
+          just cargo-build release
 
       - name: Upload binary artifacts
         uses: actions/upload-artifact@v4
