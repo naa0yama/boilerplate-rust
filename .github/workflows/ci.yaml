@@ -28,10 +28,11 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     outputs:
-      sccache: ${{ steps.versions.outputs.sccache }}
       binary_name: ${{ steps.versions.outputs.binary_name }}
-      package_name: ${{ steps.versions.outputs.package_name }}
+      dprint: ${{ steps.versions.outputs.dprint }}
       just: ${{ steps.versions.outputs.just }}
+      package_name: ${{ steps.versions.outputs.package_name }}
+      sccache: ${{ steps.versions.outputs.sccache }}
 
     steps:
       - uses: actions/checkout@v5
@@ -57,6 +58,12 @@ jobs:
           echo "Dockerfile sccache version: $sccache_version"
           echo "sccache=${sccache_version}" >> "$GITHUB_OUTPUT"
           echo "✅ sccache versions are consistent!"
+
+          echo "Checking dprint version consistency between Dockerfile and CI..."
+          dprint_version=$(grep -E '^ARG DPRINT_VERSION=[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG DPRINT_VERSION=([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
+          echo "Dockerfile dprint version: $dprint_version"
+          echo "dprint=${dprint_version}" >> "$GITHUB_OUTPUT"
+          echo "✅ dprint versions are consistent!"
 
           echo "Checking just version consistency between Dockerfile and CI..."
           just_version=$(grep -E '^ARG JUST_VERSION=[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG JUST_VERSION=([0-9]+\.[0-9]+\.[0-9]+).*/\1/')
@@ -106,10 +113,9 @@ jobs:
           cache-shared-key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
       - name: Install dprint
-        run: |
-          set -euxo pipefail
-          curl -fsSL https://dprint.dev/install.sh | sh
-          echo "$HOME/.dprint/bin" >> $GITHUB_PATH
+        uses: taiki-e/install-action@v2
+        with:
+          tool: dprint@${{ needs.fmt.outputs.dprint }}
 
       - name: Install just
         run: |
