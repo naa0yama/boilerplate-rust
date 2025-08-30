@@ -25,14 +25,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   release:
+    name: Build and Release
     needs: tagpr
     if: needs.tagpr.outputs.tag != ''
-    runs-on: ubuntu-latest
-    steps:
-      - name: Check out source code
-        uses: actions/checkout@v5
-
-      - name: Run release action
-        uses: ./.github/actions/release
-        with:
-          tag: ${{ needs.tagpr.outputs.tag }}
+    uses: ./.github/workflows/release.yaml
+    with:
+      tag: ${{ needs.tagpr.outputs.tag }}
+    secrets: inherit
