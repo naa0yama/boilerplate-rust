@@ -17,7 +17,7 @@ runs:
     - name: Run sccache-cache
       uses: mozilla-actions/sccache-action@v0.0.9
       with:
-        sccache_disable_annotations: ${{ inputs.sccache_annotations }}
+        disable_annotations: ${{ inputs.sccache_annotations }}
         version: ${{ inputs.sccache }}
 
     - name: Cache rustup
@@ -30,5 +30,4 @@ runs:
 
     - uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
-        components: rustfmt, clippy
         cache-shared-key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
