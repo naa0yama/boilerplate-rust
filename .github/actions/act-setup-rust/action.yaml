@@ -2,6 +2,10 @@
 name: "Setup Rust"
 description: "Setup rust"
 inputs:
+  just:
+    description: "just version"
+    required: true
+    default: ""
   sccache:
     description: "sccache version"
     required: true
@@ -31,3 +35,8 @@ runs:
     - uses: actions-rust-lang/setup-rust-toolchain@v1
       with:
         cache-shared-key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
+
+    - name: Install just
+      uses: taiki-e/install-action@v2
+      with:
+        tool: just@${{ inputs.just }}
