@@ -12,7 +12,9 @@
 	"initializeCommand": "./.devcontainer/initializeCommand.sh",
 	"postStartCommand": "./.devcontainer/postStartCommand.sh",
 	// Features to add to the dev container. More info: https://containers.dev/features.
-	// "features": {},
+	"features": {
+		"ghcr.io/devcontainers/features/github-cli:1": {}
+	},
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
 	// Add another local file mount.
@@ -21,7 +23,9 @@
 		"type=bind,source=${localEnv:HOME}/.claude,target=/home/cuser/.claude,consistency=cached",
 		"type=bind,source=${localEnv:HOME}/.claude.json,target=/home/cuser/.claude.json,consistency=cached",
 		// Git
-		"type=bind,source=${localEnv:HOME}/.gitignore_global,target=/home/cuser/.gitignore_global,consistency=cached"
+		"type=bind,source=${localEnv:HOME}/.gitignore_global,target=/home/cuser/.gitignore_global,consistency=cached",
+		// GitHub
+		"type=bind,source=${localEnv:HOME}/.config/gh,target=/home/cuser/.config/gh,consistency=cached"
 	],
 	"customizations": {
 		"vscode": {
@@ -33,6 +37,7 @@
 				"ms-azuretools.vscode-containers", // 	Container Tools
 				"ms-vscode.live-server", // 			Live Preview
 				"nefrob.vscode-just-syntax", // 		vscode-just
+				"redhat.vscode-yaml", // 				YAML
 				"rust-lang.rust-analyzer", // 			rust-analyzer
 				"ryanluker.vscode-coverage-gutters", // Coverage Gutters
 				"tamasfe.even-better-toml", // 			Even Better TOML

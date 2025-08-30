@@ -2,7 +2,7 @@
 set -euxo pipefail
 
 # dirs from mounts
-mkdir -p ~/.claude/
+mkdir -p ~/.claude/ ~/.config/gh
 
 # files from mounts
 touch \

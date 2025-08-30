@@ -31,10 +31,10 @@ cargo-llvm-cov:
 cargo-test *args="":
 	cargo test {{args}}
 
-# cross build for specific target
-cross-build target:
-	cargo build --target {{ target }} --release
-
 # dprint formatting (supports check mode)
 dprint *args="":
 	dprint {{args}}
+
+# cross build for specific target
+zigbuild target="x86_64-unknown-linux-gnu":
+	cargo zigbuild --release --target {{ target }} --release --verbose
