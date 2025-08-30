@@ -1,0 +1,34 @@
+# yaml-language-server: $schema=https://www.schemastore.org/github-action.json
+name: "Setup Rust"
+description: "Setup rust"
+inputs:
+  sccache:
+    description: "sccache version"
+    required: true
+    default: ""
+  sccache_disable_annotations:
+    description: "sccache disable_annotations"
+    required: false
+    default: "false"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Run sccache-cache
+      uses: mozilla-actions/sccache-action@v0.0.9
+      with:
+        sccache_disable_annotations: ${{ inputs.sccache_annotations }}
+        version: ${{ inputs.sccache }}
+
+    - name: Cache rustup
+      uses: actions/cache@v4
+      with:
+        path: |
+          ~/.rustup/settings.toml
+          ~/.rustup/toolchains/1.*
+        key: v0-rust-rustup-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/rust-toolchain.toml') }}
+
+    - uses: actions-rust-lang/setup-rust-toolchain@v1
+      with:
+        components: rustfmt, clippy
+        cache-shared-key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
