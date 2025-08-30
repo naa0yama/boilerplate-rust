@@ -7,6 +7,7 @@ on:
       - "**/*.rs"
       - "**/Cargo.toml"
       - "**/Cargo.lock"
+      - ".github/actions/act-setup-rust/action.yaml"
       - ".github/workflows/ci.yaml"
       - "rust-toolchain.toml"
 
@@ -70,6 +71,7 @@ jobs:
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
         with:
+          just: ${{ steps.versions.outputs.just }}
           sccache: ${{ steps.versions.outputs.sccache }}
           sccache_disable_annotations: true
 
@@ -77,11 +79,6 @@ jobs:
         uses: taiki-e/install-action@v2
         with:
           tool: dprint@${{ steps.versions.outputs.dprint }}
-
-      - name: Install just
-        uses: taiki-e/install-action@v2
-        with:
-          tool: just@${{ steps.versions.outputs.just }}
 
       - name: Check dprint formatting
         run: |
@@ -112,13 +109,9 @@ jobs:
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
         with:
+          just: ${{ needs.fmt.outputs.just }}
           sccache: ${{ needs.fmt.outputs.sccache }}
           sccache_disable_annotations: true
-
-      - name: Install just
-        uses: taiki-e/install-action@v2
-        with:
-          tool: just@${{ needs.fmt.outputs.just }}
 
       - name: Check compilation
         run: |
@@ -143,12 +136,8 @@ jobs:
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
         with:
+          just: ${{ needs.fmt.outputs.just }}
           sccache: ${{ needs.fmt.outputs.sccache }}
-
-      - name: Install just
-        uses: taiki-e/install-action@v2
-        with:
-          tool: just@${{ needs.fmt.outputs.just }}
 
       - name: Install cargo-llvm-cov
         uses: taiki-e/install-action@v2
@@ -179,12 +168,8 @@ jobs:
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
         with:
+          just: ${{ needs.fmt.outputs.just }}
           sccache: ${{ needs.fmt.outputs.sccache }}
-
-      - name: Install just
-        uses: taiki-e/install-action@v2
-        with:
-          tool: just@${{ needs.fmt.outputs.just }}
 
       - name: Build release binary
         run: |
