@@ -5,11 +5,13 @@ on:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
   workflow_call:
-    inputs:
+    inputs: &workflow_inputs
       tag:
         description: "Release tag"
         required: true
         type: string
+  workflow_dispatch:
+    inputs: *workflow_inputs
 
 concurrency:
   group: release-${{ inputs.tag || github.ref_name }}
@@ -28,7 +30,6 @@ jobs:
     if: always() && (needs.build.result == 'success')
     permissions:
       contents: write
-      discussions: write
 
     steps:
       - name: Checkout repository

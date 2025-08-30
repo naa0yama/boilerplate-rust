@@ -9,7 +9,6 @@ on:
     paths: &on_paths
       - "**/Cargo.toml"
       - "**/Cargo.lock"
-
   pull_request:
     paths: *on_paths
 
