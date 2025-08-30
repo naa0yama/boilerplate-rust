@@ -28,6 +28,8 @@ jobs:
     name: Build and Release
     needs: tagpr
     if: needs.tagpr.outputs.tag != ''
+    permissions:
+      contents: write
     uses: ./.github/workflows/release.yaml
     with:
       tag: ${{ needs.tagpr.outputs.tag }}
