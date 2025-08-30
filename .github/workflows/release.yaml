@@ -4,12 +4,53 @@ on:
   push:
     tags:
       - "v[0-9]+.[0-9]+.[0-9]+"
-jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v5
+  workflow_call:
+    inputs:
+      tag:
+        description: "Release tag"
+        required: true
+        type: string
 
-      - uses: ./.github/actions/release
+concurrency:
+  group: release-${{ inputs.tag || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  build:
+    uses: ./.github/workflows/release-build.yaml
+    with:
+      tag: ${{ inputs.tag || github.ref_name }}
+
+  release:
+    name: Create Release
+    needs: build
+    runs-on: ubuntu-latest
+    if: always() && (needs.build.result == 'success')
+    permissions:
+      contents: write
+      discussions: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v5
+
+      - name: Create GitHub Release
+        uses: ./.github/actions/create-release
+        id: create-release
         with:
-          tag: ${{ github.ref_name }}
+          tag: ${{ inputs.tag || github.ref_name }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          draft: false
+          prerelease: ${{ contains(inputs.tag || github.ref_name, 'alpha') || contains(inputs.tag || github.ref_name, 'beta') || contains(inputs.tag || github.ref_name, 'rc') }}
+
+      - name: Notify on failure
+        if: failure()
+        run: |
+          echo "::error::Release creation failed for tag ${{ inputs.tag || github.ref_name }}"
+          echo "Check the build job and artifact availability"
+          exit 1
+
+      - name: Release success notification
+        run: |
+          echo "✅ Release ${{ inputs.tag || github.ref_name }} published successfully!"
+          echo "🔗 Release URL: ${{ steps.create-release.outputs.url }}"
