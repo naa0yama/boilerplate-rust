@@ -2,11 +2,14 @@
 name: Prebuild DevContainer
 on:
   push:
-    branches: [main]
-    paths:
+    branches:
+      - main
+    paths: &on_paths
       - ".devcontainer/**"
       - ".github/workflows/prebuild-container.yaml"
       - "Dockerfile"
+  pull_request:
+    paths: *on_paths
   workflow_dispatch:
 
 permissions:
