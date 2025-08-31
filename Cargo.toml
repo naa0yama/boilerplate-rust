@@ -3,8 +3,12 @@ name = "brust"
 version = "0.1.0"
 edition = "2024"
 
+[profile.dev]
+opt-level = 1 #		開発時のコンパイル速度向上
+
 [profile.release]
 strip = "symbols"
+debug = 1 #			リリースビルドでもスタックトレース可能に
 
 [dependencies]
 clap = { version = "4.5.45", features = ["derive"] }
