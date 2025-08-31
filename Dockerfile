@@ -17,7 +17,7 @@ ARG MOLD_VERSION=v2.40.4
 
 # Rust tools
 ## renovate: datasource=github-releases packageName=cargo-bins/cargo-binstall versioning=semver automerge=true
-ARG BINSTALL_VERSION=v1.15.1
+ARG BINSTALL_VERSION=v1.15.3
 ## renovate: datasource=github-releases packageName=casey/just versioning=semver automerge=true
 ARG JUST_VERSION=1.42.4
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
