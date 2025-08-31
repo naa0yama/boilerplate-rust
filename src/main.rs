@@ -21,9 +21,15 @@ const APP_VERSION: &str = concat!(
 );
 
 fn main() {
+    use tracing_subscriber::{filter::EnvFilter, fmt};
+    fmt()
+        .with_env_filter(
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
+        )
+        .init();
     let args = Args::parse();
     if args.version {
-        print!("{}", APP_VERSION);
+        tracing::info!("{}", APP_VERSION);
         std::process::exit(0);
     }
 
@@ -33,30 +39,68 @@ fn main() {
 pub fn run(name: String) {
     use crate::libs::hello::sayhello;
     let greeting = sayhello(name);
-    println!("{}, new world!!", greeting);
+    tracing::info!("{}, new world!!", greeting);
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use tracing::subscriber::with_default;
+    use tracing_mock::{expect, subscriber};
 
     #[test]
     fn test_run_with_default_name() {
-        run("Youre".to_string());
+        let (subscriber, handle) = subscriber::mock()
+            .event(expect::event().with_fields(expect::msg("Hi, Youre, new world!!")))
+            .only()
+            .run_with_handle();
+
+        with_default(subscriber, || {
+            run("Youre".to_string());
+        });
+
+        handle.assert_finished();
     }
 
     #[test]
     fn test_run_with_custom_name() {
-        run("Alice".to_string());
+        let (subscriber, handle) = subscriber::mock()
+            .event(expect::event().with_fields(expect::msg("Hi, Alice, new world!!")))
+            .only()
+            .run_with_handle();
+
+        with_default(subscriber, || {
+            run("Alice".to_string());
+        });
+
+        handle.assert_finished();
     }
 
     #[test]
     fn test_run_with_empty_name() {
-        run("".to_string());
+        let (subscriber, handle) = subscriber::mock()
+            .event(expect::event().with_fields(expect::msg("Hi, , new world!!")))
+            .only()
+            .run_with_handle();
+
+        with_default(subscriber, || {
+            run("".to_string());
+        });
+
+        handle.assert_finished();
     }
 
     #[test]
     fn test_run_with_japanese_name() {
-        run("世界".to_string());
+        let (subscriber, handle) = subscriber::mock()
+            .event(expect::event().with_fields(expect::msg("Hi, 世界, new world!!")))
+            .only()
+            .run_with_handle();
+
+        with_default(subscriber, || {
+            run("世界".to_string());
+        });
+
+        handle.assert_finished();
     }
 }
