@@ -11,6 +11,12 @@ on:
   pull_request:
     paths: *on_paths
   workflow_dispatch:
+    inputs:
+      no_cache:
+        description: "Disable cache for container build"
+        required: true
+        default: false
+        type: boolean
 
 permissions:
   contents: read
@@ -42,3 +48,4 @@ jobs:
           imageName: ghcr.io/${{ steps.repo_name.outputs.lowercase }}/devcontainer
           cacheFrom: ghcr.io/${{ steps.repo_name.outputs.lowercase }}/devcontainer
           refFilterForPush: refs/heads/main
+          noCache: ${{ github.event.inputs.no_cache == 'true' }}
