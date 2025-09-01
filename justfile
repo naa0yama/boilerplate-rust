@@ -11,6 +11,10 @@
 cargo-build profile="debug":
 	cargo build {{ if profile == "release" { "--release" } else { "" } }}
 
+# cargo build --timings
+cargo-build-timings:
+	cargo build --timings
+
 # cargo check
 cargo-check:
 	cargo check --all-targets --all-features
