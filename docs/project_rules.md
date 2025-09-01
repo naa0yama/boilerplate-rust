@@ -208,6 +208,7 @@ project-name/
 ├── .gitignore                          # Git除外設定
 ├── .octocov.yml                        # カバレッジレポート設定
 ├── .tagpr                              # タグ&リリース設定
+├── ast-rules/                          # ast-grep プロジェクトルール
 ├── build.rs                            # ビルドスクリプト
 ├── Cargo.lock                          # 依存関係ロックファイル
 ├── Cargo.toml                          # プロジェクト設定と依存関係
@@ -218,7 +219,8 @@ project-name/
 ├── LICENSE                             # ライセンスファイル
 ├── README.md                           # プロジェクト説明
 ├── renovate.json                       # 依存関係自動更新
-└── rust-toolchain.toml                 # Rust toolchain バージョン固定
+├── rust-toolchain.toml                 # Rust toolchain バージョン固定
+└── sgconfig.yml                        # ast-grep 設定ファイル
 ```
 
 ### 3.2 モジュール設計
@@ -341,6 +343,7 @@ just dprint check        # dprint formatting check
 
 # 静的解析
 just cargo-clippy        # clippy with strict warnings
+just project-rules-check # ast-grep project rules check
 
 # テスト実行
 just cargo-test          # unit & integration tests
@@ -467,9 +470,30 @@ tracing::info!("Process completed successfully");
 
 ### 8.2 デバッグ手法
 
-- `println!`デバッグは開発時のみ
-- 本番コードは`log`クレート使用
+- `println!` デバッグは開発時のみ
+- 本番コードは `tracing` クレート使用を必須
 - 複雑なバグは二分探索でprint debug
+- ast-grepにより自動的に `tracing` 以外の出力を検知
+
+### 8.3 ログ出力の自動検知(ast-grep)
+
+出力方法を自動検知し、 `tracing` 使用を促します
+
+#### 適切な例外の指定
+
+正当な理由がある場合は、該当行に無視コメントを追加:
+
+```rust
+// Cargo ビルドスクリプトでの正当用途
+// ast-grep-ignore: no-println-debug
+println!("cargo:rustc-env=GIT_HASH={}", git_hash.trim());
+```
+
+#### 無視コメントの種類
+
+- `// ast-grep-ignore` - 次の行のすべて診断を無視
+- `// ast-grep-ignore: rule-id` - 特定のルールのみ無視
+- `// ast-grep-ignore: rule-1, rule-2` - 複数ルールを無視
 
 ## 9. パフォーマンス最適化
 
@@ -564,6 +588,7 @@ std = [] # no-std対応の場合
 
 - [ ] `lefthook run pre-commit --all-files`実行済み
 - [ ] `cargo clippy`警告なし
+- [ ] `just project-rules-check`エラーなし
 - [ ] テスト追加・更新
 - [ ] ドキュメント更新
 - [ ] エラーハンドリング適切

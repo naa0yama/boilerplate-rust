@@ -19,9 +19,9 @@ cargo-build-timings:
 cargo-check:
 	cargo check --all-targets --all-features
 
-# cargo clippy (supports strict warnings)
+# cargo clippy (configured in Cargo.toml [lints] section)
 cargo-clippy:
-	cargo clippy --all-targets --all-features -- -D warnings -D clippy::all
+	cargo clippy --all-targets --all-features
 
 # cargo formatting (supports check mode)
 cargo-fmt:
@@ -49,3 +49,12 @@ zigbuild-all:
 	cargo zigbuild --release --target aarch64-unknown-linux-gnu
 	cargo zigbuild --release --target x86_64-pc-windows-gnu
 	cargo zigbuild --release --target x86_64-unknown-linux-gnu
+
+# ast-grep project rules check
+project-rules-check:
+	sg scan --error
+
+# comprehensive lint check (combines clippy and project rules)
+lint-all:
+	just cargo-clippy
+	just project-rules-check
