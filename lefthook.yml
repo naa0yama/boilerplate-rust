@@ -79,6 +79,11 @@ pre-commit:
             files: git diff --name-only --diff-filter=d --staged
             glob: "*.rs"
 
+          - name: project rules check
+            run: just project-rules-check
+            files: git diff --name-only --diff-filter=d --staged
+            glob: "*.rs"
+
     - name: tests
       group:
         parallel: true

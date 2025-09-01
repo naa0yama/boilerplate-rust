@@ -1,0 +1,6 @@
+id: no-use-alias
+language: rust
+message: "use 文でのエイリアス(as) は禁止 (project_rules.md 2.2)"
+severity: error
+rule:
+  pattern: use $_ as $_;

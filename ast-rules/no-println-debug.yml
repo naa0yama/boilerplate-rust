@@ -1,0 +1,34 @@
+id: no-println-debug
+language: rust
+message: "標準出力デバッグは開発時のみ、本番コードでは tracing 使用 (project_rules.md 8.2)"
+note: "tracing::debug!(), tracing::info!() などを使用してください"
+severity: warning
+rule:
+  any:
+    # 標準出力系
+    - pattern: println!($$$)
+    - pattern: print!($$$)
+    - pattern: eprint!($$$)
+    - pattern: eprintln!($$$)
+    - pattern: dbg!($$$)
+
+    # log クレート (qualified path)
+    - pattern: log::info!($$$)
+    - pattern: log::debug!($$$)
+    - pattern: log::warn!($$$)
+    - pattern: log::error!($$$)
+    - pattern: log::trace!($$$)
+
+    # slog (第1引数がloggerの特殊形式)
+    - pattern: info!($LOGGER, $$$)
+    - pattern: debug!($LOGGER, $$$)
+    - pattern: warn!($LOGGER, $$$)
+    - pattern: error!($LOGGER, $$$)
+    - pattern: trace!($LOGGER, $$$)
+    - pattern: crit!($LOGGER, $$$)
+
+    # env_logger, simple_logger, stderrlog, fern, simplelog, flexi_logger は
+    # すべて log クレートのバックエンドのため、log:: パターンでカバー済み
+  not:
+    inside:
+      kind: declaration_list

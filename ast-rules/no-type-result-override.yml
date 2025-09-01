@@ -1,0 +1,6 @@
+id: no-type-result-override
+language: rust
+message: "型名の上書き(type Result<T> = ...)は禁止 (project_rules.md 2.2)"
+severity: error
+rule:
+  pattern: type Result<$_> = $_;

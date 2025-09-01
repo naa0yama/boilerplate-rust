@@ -33,10 +33,10 @@ fn main() {
         std::process::exit(0);
     }
 
-    run(args.name);
+    run(&args.name);
 }
 
-pub fn run(name: String) {
+pub fn run(name: &str) {
     use crate::libs::hello::sayhello;
     let greeting = sayhello(name);
     tracing::info!("{}, new world!!", greeting);
@@ -44,7 +44,7 @@ pub fn run(name: String) {
 
 #[cfg(test)]
 mod tests {
-    use super::*;
+    use super::run;
     use tracing::subscriber::with_default;
     use tracing_mock::{expect, subscriber};
 
@@ -56,7 +56,7 @@ mod tests {
             .run_with_handle();
 
         with_default(subscriber, || {
-            run("Youre".to_string());
+            run("Youre");
         });
 
         handle.assert_finished();
@@ -70,7 +70,7 @@ mod tests {
             .run_with_handle();
 
         with_default(subscriber, || {
-            run("Alice".to_string());
+            run("Alice");
         });
 
         handle.assert_finished();
@@ -84,7 +84,7 @@ mod tests {
             .run_with_handle();
 
         with_default(subscriber, || {
-            run("".to_string());
+            run("");
         });
 
         handle.assert_finished();
@@ -98,7 +98,7 @@ mod tests {
             .run_with_handle();
 
         with_default(subscriber, || {
-            run("世界".to_string());
+            run("世界");
         });
 
         handle.assert_finished();

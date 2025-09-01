@@ -1,8 +1,7 @@
-use assert_cmd::Command;
-use predicates::prelude::*;
-
 #[test]
 fn test_cli_with_custom_name() {
+    use assert_cmd::Command;
+    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("--name")
         .arg("Alice")
@@ -13,6 +12,8 @@ fn test_cli_with_custom_name() {
 
 #[test]
 fn test_cli_with_short_flag() {
+    use assert_cmd::Command;
+    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("-n")
         .arg("Bob")
@@ -23,6 +24,8 @@ fn test_cli_with_short_flag() {
 
 #[test]
 fn test_cli_version_flag() {
+    use assert_cmd::Command;
+    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("--version")
         .assert()
@@ -32,6 +35,8 @@ fn test_cli_version_flag() {
 
 #[test]
 fn test_cli_version_short_flag() {
+    use assert_cmd::Command;
+    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("-V")
         .assert()
