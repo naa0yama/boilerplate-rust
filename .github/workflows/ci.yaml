@@ -10,6 +10,7 @@ on:
       - "**/Cargo.lock"
       - ".github/actions/act-setup-rust/action.yaml"
       - ".github/workflows/ci.yaml"
+      - "ast-rules/**.yml"
       - "rust-toolchain.toml"
   pull_request:
     paths: *on_paths
