@@ -35,9 +35,83 @@ pedantic = { level = "deny", priority = -1 }
 nursery = { level = "warn", priority = -1 }
 cargo = { level = "warn", priority = -1 }
 
+# 安全性の基礎 - メモリ安全性
+redundant_clone = "deny" #                       不要なclone()呼び出しを検出(パフォーマンス低下防止)
+needless_borrowed_reference = "warn" #           &ref xパターンを検出(借用の理解不足を防止)
+rc_mutex = "deny" #                              Rc<Mutex<T>>を検出(Arc<Mutex<T>>推奨でスレッド安全性確保)
+
+# 安全性の基礎 - エラーハンドリング
+unwrap_used = { level = "deny", priority = 1 } # unwrap()禁止(パニック防止、適切なエラー処理強制)
+expect_used = { level = "warn", priority = 1 } # expect()警告(テスト以外では?演算子推奨)
+panic = { level = "warn", priority = 1 } #       panic! 使用警告(回復可能エラーの適切処理推奨)
+question_mark = "warn" #                         ?演算子使用推奨(冗長なmatch文の簡略化)
+
+# 安全性の基礎 - 型安全性
+cast_possible_truncation = "warn" #              値切り捨てが起こるキャストを警告(データ損失防止)
+cast_precision_loss = "warn" #                   精度損失が起こるキャストを警告(浮動小数点精度保持)
+
+# パフォーマンス最適化 - イテレータとコレクション
+needless_collect = "deny" #                      不要な.collect()を検出(中間コレクション生成回避)
+manual_find_map = "warn" #                       .find().map()を.find_map()で最適化提案
+unnecessary_to_owned = "warn" #                  不要なto_owned()呼び出しを検出(所有権移動回避)
+single_element_loop = "warn" #                   1要素ループをif文で最適化提案
+
+# パフォーマンス最適化 - 文字列処理
+inefficient_to_string = "warn" #                 非効率なto_string()を検出(直接変換推奨)
+str_to_string = "warn" #                         &str.to_string()を検出(String::from推奨)
+string_to_string = "warn" #                      String.to_string()を検出(clone推奨)
+format_in_format_args = "warn" #                 format!内のformat!を検出(直接引数推奨)
+
+# パフォーマンス最適化 - メモリ効率
+box_collection = "warn" #                        Box<Vec<T>>等を検出(直接使用推奨)
+large_enum_variant = "warn" #                    大きなenum variantを検出(Box化推奨)
+trivial_regex = "warn" #                         単純文字列比較でregex使用を検出
+
+# コード組織 - API設計とコンベンション
+wrong_self_convention = "deny" #                 self引数の命名規則違反を検出(to_*/as_*/into_*)
+should_implement_trait = "warn" #                標準トレイト実装推奨(Display, From等)
+missing_errors_doc = "warn" #                    エラー条件のドキュメント不足を警告
+missing_panics_doc = "warn" #                    パニック条件のドキュメント不足を警告
+missing_safety_doc = "warn" #                    unsafe関数のSAFETYドキュメント不足を警告
+
+# コード組織 - 複雑性管理
+cognitive_complexity = "warn" #                  認知的複雑性が高い関数を警告
+too_many_lines = "warn" #                        長すぎる関数を警告
+too_many_arguments = "warn" #                    引数が多すぎる関数を警告
+type_complexity = "warn" #                       複雑すぎる型定義を警告
+
+# コード組織 - モジュール設計
+module_name_repetitions = "warn" #               モジュール名の重複を警告
+wildcard_imports = "warn" #                      ワイルドカードインポート使用を警告
+pub_underscore_fields = "deny" #                 pub _field使用を禁止(設計問題)
+large_stack_arrays = "warn" #                    大きなスタック配列を警告
+
+# セキュリティ・品質 - デバッグとTODO管理
+dbg_macro = "deny" #                             dbg!マクロを本番コードで禁止
+todo = "warn" #                                  TODO残留を警告
+unimplemented = "warn" #                         unimplemented!残留を警告
+unreachable = "warn" #                           unreachable!使用を警告
+
+# セキュリティ・品質 - 数値とメモリ安全性
+float_cmp = "warn" #                             浮動小数点の直接比較を警告
+arithmetic_side_effects = "warn" #               整数演算オーバーフローリスクを警告
+as_conversions = "warn" #                        asキャストの危険性を警告
+indexing_slicing = "warn" #                      範囲外アクセスリスクを警告
+
+# セキュリティ・品質 - API安全性
+empty_drop = "deny" #                            空のDrop実装を禁止
+mem_forget = "deny" #                            mem::forget使用を禁止
+exit = "warn" #                                  process::exit使用を警告
+create_dir = "warn" #                            create_dirよりcreate_dir_all推奨
+
 # 例外設定（プロジェクトの性質上許可するもの）
 multiple-crate-versions = "allow"
 cargo-common-metadata = "allow"
+# ビルドスクリプトでは必要な場合のみexpect/unwrapを許可
+# build.rs内のみの例外は各行に #[allow] を個別追加
+
+# テストコード用のlint設定を作成するためのマーカー（実際の設定は[[test]]で個別適用）
 
 [lints.rust]
 warnings = "deny"
+missing_debug_implementations = "warn" #         Debugトレイト未実装を警告

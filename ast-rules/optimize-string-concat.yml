@@ -1,0 +1,29 @@
+id: optimize-string-concat
+language: rust
+message: "非効率な文字列結合が検出されました"
+note: "文字列結合にはformat!()やString::from() + &strを使用してください"
+severity: warning
+rule:
+  any:
+    # .to_string() + の組み合わせ
+    - pattern: $A.to_string() + $B
+    # String::new() + push_str の組み合わせをループ内で使用
+    - all:
+        - pattern: $VAR.push_str($$$)
+        - inside:
+            any:
+              - kind: for_expression
+              - kind: while_expression
+        - precedes:
+            pattern: let $VAR = String::new()
+  not:
+    any:
+      # ignoreコメントがある場合は除外
+      - precedes:
+          regex: '//\\s*ast-grep-ignore'
+      # テストモジュール内は例外
+      - inside:
+          all:
+            - kind: mod_item
+            - has:
+                regex: 'cfg\\(\\s*test\\s*\\)'

@@ -1,0 +1,17 @@
+id: unsafe-needs-safety-comment
+language: rust
+message: "unsafeブロックにはSAFETYコメントが必要です (project_rules.md 10.1)"
+note: "unsafe { ... }の前に// SAFETY: <理由>コメントを追加してください"
+severity: error
+rule:
+  all:
+    # unsafeブロックをマッチ
+    - pattern: unsafe { $$$BODY }
+    # 前にSAFETYコメントがない場合
+    - not:
+        precedes:
+          any:
+            - regex: "//\\s*SAFETY:"
+            - regex: "/\\*\\s*SAFETY:"
+            - kind: block_comment
+              regex: "SAFETY:"

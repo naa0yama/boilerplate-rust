@@ -22,6 +22,7 @@ const APP_VERSION: &str = concat!(
 
 fn main() {
     use tracing_subscriber::{filter::EnvFilter, fmt};
+    // ast-grep-ignore: no-ignored-result
     fmt()
         .with_env_filter(
             EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
@@ -30,12 +31,17 @@ fn main() {
     let args = Args::parse();
     if args.version {
         tracing::info!("{}", APP_VERSION);
+        #[allow(clippy::exit)] // CLIアプリケーションでの正当な使用
         std::process::exit(0);
     }
 
     run(&args.name);
 }
 
+/// アプリケーションのメイン処理を実行
+///
+/// # Arguments
+/// * `name` - 挨拶対象の名前
 pub fn run(name: &str) {
     use crate::libs::hello::sayhello;
     let greeting = sayhello(name);
