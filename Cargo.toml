@@ -16,6 +16,7 @@ strip = "symbols"
 debug = 1 #			リリースビルドでもスタックトレース可能に
 
 [dependencies]
+anyhow = "1.0"
 clap = { version = "4.5.45", features = ["derive"] }
 reqwest = { version = "0.12.23", default-features = false, features = ["json", "rustls-tls"] }
 serde = { version = "1.0.219", features = ["derive"] }
@@ -45,6 +46,9 @@ unwrap_used = { level = "deny", priority = 1 } # unwrap()禁止(パニック防�
 expect_used = { level = "warn", priority = 1 } # expect()警告(テスト以外では?演算子推奨)
 panic = { level = "warn", priority = 1 } #       panic! 使用警告(回復可能エラーの適切処理推奨)
 question_mark = "warn" #                         ?演算子使用推奨(冗長なmatch文の簡略化)
+match_result_ok = "warn" #                       Result.ok()によるエラー無視を警告
+result_unit_err = "warn" #                       Result<T, ()>の使用を警告(適切なエラー型使用推奨)
+result_large_err = "warn" #                      大きなエラー型の使用を警告(Box化推奨)
 
 # 安全性の基礎 - 型安全性
 cast_possible_truncation = "warn" #              値切り捨てが起こるキャストを警告(データ損失防止)
