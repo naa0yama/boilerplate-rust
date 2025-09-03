@@ -20,7 +20,7 @@ rule:
         follows:
           any:
             # ///コメント
-            - regex: '///.*'
+            - regex: "///.*"
             # /** */コメント
             - regex: '/\\*\\*.*\\*/'
   not:

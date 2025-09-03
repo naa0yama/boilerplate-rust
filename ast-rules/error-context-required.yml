@@ -10,11 +10,11 @@ rule:
     # Result<T, E>を返しそうな操作
     - any:
         # ファイル操作
-        - regex: '(fs::|File::|OpenOptions::)'
+        - regex: "(fs::|File::|OpenOptions::)"
         # ネットワーク操作
-        - regex: '(connect|bind|listen|send|recv)'
+        - regex: "(connect|bind|listen|send|recv)"
         # パース操作
-        - regex: '(parse|from_str|deserialize)'
+        - regex: "(parse|from_str|deserialize)"
     # contextメソッドが使われていない
     - not:
         regex: '\\.(context|with_context)\\(.*\\)'

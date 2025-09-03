@@ -11,12 +11,12 @@ rule:
         - inside:
             all:
               - kind: function_item
-              - regex: '(security|crypto|auth|token|key|password|salt|nonce|iv)'
+              - regex: "(security|crypto|auth|token|key|password|salt|nonce|iv)"
         # 変数名がセキュリティ関連
         - inside:
             all:
               - kind: let_declaration
-              - regex: '(security|crypto|auth|token|key|password|salt|nonce|iv)'
+              - regex: "(security|crypto|auth|token|key|password|salt|nonce|iv)"
     # 標準ライブラリの非セキュア乱数使用
     - any:
         - pattern: std::thread_rng()
@@ -34,4 +34,4 @@ rule:
             - has:
                 regex: 'cfg\\(\\s*test\\s*\\)'
       # 既にセキュアな生成器を使用している場合
-      - regex: 'OsRng|ChaCha20Rng|CryptoRng'
+      - regex: "OsRng|ChaCha20Rng|CryptoRng"
