@@ -1,0 +1,32 @@
+id: avoid-nested-matches
+language: rust
+message: "深くネストしたmatch文は可読性を低下させます"
+note: "関数分割やif let、?演算子の使用を検討してください"
+severity: warning
+rule:
+  all:
+    # 外側のmatch
+    - kind: match_expression
+    # 内側にもmatch
+    - has:
+        all:
+          - kind: match_arm
+          - has:
+              kind: match_expression
+              # さらに内側にもmatch（3層以上）
+              has:
+                all:
+                  - kind: match_arm
+                  - has:
+                      kind: match_expression
+  not:
+    any:
+      # ignoreコメントがある場合は除外
+      - precedes:
+          regex: '//\\s*ast-grep-ignore'
+      # テストモジュール内は例外
+      - inside:
+          all:
+            - kind: mod_item
+            - has:
+                regex: 'cfg\\(\\s*test\\s*\\)'

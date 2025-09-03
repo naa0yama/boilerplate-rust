@@ -16,8 +16,12 @@ ARG LEFTHOOK_VERSION=v1.12.3
 ARG MOLD_VERSION=v2.40.4
 
 # Rust tools
-## renovate: datasource=github-releases packageName=cargo-bins/cargo-binstall versioning=semver automerge=true
-ARG BINSTALL_VERSION=v1.15.1
+## renovate: datasource=github-releases packageName=ast-grep/ast-grep versioning=semver automerge=true
+ARG AST_GREP_VERSION=0.39.4
+## renovate: datasource=github-tags packageName=matthiaskrgr/cargo-cache versioning=semver automerge=true
+ARG CACHE_VERSION=0.8.3
+## renovate: datasource=github-tags packageName=regexident/cargo-modules versioning=semver automerge=true
+ARG MODULES_VERSION=v0.24.3
 ## renovate: datasource=github-releases packageName=casey/just versioning=semver automerge=true
 ARG JUST_VERSION=1.42.4
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
@@ -37,7 +41,9 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 #- Builder Base
 #-
 FROM rust:1.89.0-trixie AS builder-base
-ARG BINSTALL_VERSION \
+ARG AST_GREP_VERSION \
+	CACHE_VERSION \
+	MODULES_VERSION \
 	CURL_OPTS \
 	DEBIAN_FRONTEND \
 	JUST_VERSION \
@@ -95,23 +101,46 @@ RUN echo "**** Add sudo user ****" && \
 
 RUN echo "**** Install mold ****" && \
 	set -euxo pipefail && \
-	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/rui314/mold/releases/tags/${MOLD_VERSION} | \
-	jq -r '.assets[] | select(.name | endswith("-x86_64-linux.tar.gz")) | .browser_download_url')" && \
+	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/rui314/mold/releases/tags/${MOLD_VERSION})" && \
+	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("-x86_64-linux.tar.gz"))')" && \
+	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
+	_digest="$(echo "$_asset" | jq -r '.digest')" && \
+	_sha256="${_digest#sha256:}" && \
 	_filename="$(basename "$_download_url")" && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
 	tar -xvf "./${_filename}" --strip-components 1 -C /usr && \
 	type -p mold && \
 	rm -rf "./${_filename}"
 
+RUN echo "**** Rust tool ast-grep ****" && \
+	set -euxo pipefail && \
+	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/ast-grep/ast-grep/releases/tags/${AST_GREP_VERSION})" && \
+	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("x86_64-unknown-linux-gnu.zip"))')" && \
+	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
+	_digest="$(echo "$_asset" | jq -r '.digest')" && \
+	_sha256="${_digest#sha256:}" && \
+	_filename="$(basename "$_download_url")" && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
+	unzip "./${_filename}" -d "/usr/local/bin/" && \
+	type -p ast-grep sg && \
+	rm -rf "./${_filename}"
+
 RUN echo "**** Rust tool just ****" && \
 	set -euxo pipefail && \
-	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/casey/just/releases/tags/${JUST_VERSION} | \
-	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-musl.tar.gz")) | .browser_download_url')" && \
+	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/casey/just/releases/tags/${JUST_VERSION})" && \
+	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-musl.tar.gz"))')" && \
+	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
+	_digest="$(echo "$_asset" | jq -r '.digest')" && \
+	_sha256="${_digest#sha256:}" && \
 	_filename="$(basename "$_download_url")" && \
 	_tmpdir=$(mktemp -q -d) && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
 	tar -xvf "./${_filename}" -C "${_tmpdir}" && \
 	ls -lah "${_tmpdir}" && \
 	cp -av "${_tmpdir}/just" /usr/local/bin/ && \
@@ -121,11 +150,15 @@ RUN echo "**** Rust tool just ****" && \
 
 RUN echo "**** Rust tool cargo-llvm-cov ****" && \
 	set -euxo pipefail && \
-	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/tags/${LLVM_COV_VERSION} | \
-	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz")) | .browser_download_url')" && \
+	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/tags/${LLVM_COV_VERSION})" && \
+	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz"))')" && \
+	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
+	_digest="$(echo "$_asset" | jq -r '.digest')" && \
+	_sha256="${_digest#sha256:}" && \
 	_filename="$(basename "$_download_url")" && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
 	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
 	type -p cargo-llvm-cov && \
 	rm -rf "./${_filename}"
@@ -157,11 +190,15 @@ RUN echo "**** Rust tool zig ****" && \
 
 RUN echo "**** Rust tool cargo-zigbuild ****" && \
 	set -euxo pipefail && \
-	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/rust-cross/cargo-zigbuild/releases/tags/${ZIGBUILD_VERSION} | \
-	jq -r '.assets[] | select(.name | startswith("cargo-zigbuild-v") and endswith("x86_64-unknown-linux-musl.tar.gz")) | .browser_download_url')" && \
+	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/rust-cross/cargo-zigbuild/releases/tags/${ZIGBUILD_VERSION})" && \
+	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | startswith("cargo-zigbuild-v") and endswith("x86_64-unknown-linux-musl.tar.gz"))')" && \
+	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
+	_digest="$(echo "$_asset" | jq -r '.digest')" && \
+	_sha256="${_digest#sha256:}" && \
 	_filename="$(basename "$_download_url")" && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
 	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
 	type -p cargo-zigbuild && \
 	rm -rf "./${_filename}"
@@ -171,17 +208,6 @@ RUN --mount=type=bind,source=rust-toolchain.toml,target=/rust-toolchain.toml \
 	echo "**** Rust component ****" && \
 	set -euxo pipefail && \
 	cargo -V
-
-RUN echo "**** Rust tools cargo-binstall ****" && \
-	set -euxo pipefail && \
-	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/cargo-bins/cargo-binstall/releases/tags/${BINSTALL_VERSION} | \
-	jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tgz")) | .browser_download_url')" && \
-	_filename="$(basename "$_download_url")" && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
-	type -p cargo-binstall && \
-	rm -rf "./${_filename}"
 
 # User level settings
 USER ${USER_NAME}
@@ -197,11 +223,15 @@ RUN echo "**** Create ${CARGO_HOME} ****" && \
 	set -euxo pipefail && \
 	mkdir -p "${CARGO_HOME}"
 
-RUN echo "**** Rust tools ****" && \
+RUN --mount=type=cache,target=/home/cuser/.cache/sccache,sharing=locked,uid=${USER_UID},gid=${USER_GID} \
+	--mount=type=cache,target=/home/cuser/.cargo/registry,sharing=locked,uid=${USER_UID},gid=${USER_GID} \
+	\
+	echo "**** Rust tools ****" && \
 	set -euxo pipefail && \
-	cargo binstall --no-confirm --locked \
-	cargo-cache \
-	cargo-modules \
+	cargo install \
+	cargo-cache@${CACHE_VERSION} \
+	cargo-llvm-cov@${LLVM_COV_VERSION#v} \
+	cargo-modules@${MODULES_VERSION#v} \
 	&& \
 	cargo cache --version && \
 	cargo modules --version

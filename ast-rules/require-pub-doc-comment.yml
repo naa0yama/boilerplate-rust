@@ -1,0 +1,39 @@
+id: require-pub-doc-comment
+language: rust
+message: "public関数にはドキュメントコメントが必要です"
+note: "/// で始まるドキュメントコメントを関数の直前に追加してください"
+severity: warning
+rule:
+  all:
+    # function_itemのkindを指定
+    - kind: function_item
+    # public関数を検出
+    - any:
+        # pub fn
+        - pattern: pub fn $NAME($$$) $BODY
+        # pub async fn
+        - pattern: pub async fn $NAME($$$) $BODY
+        # pub const fn
+        - pattern: pub const fn $NAME($$$) $BODY
+    # ドキュメントコメントがない
+    - not:
+        follows:
+          any:
+            # ///コメント
+            - regex: '///.*'
+            # /** */コメント
+            - regex: '/\\*\\*.*\\*/'
+  not:
+    any:
+      # ignoreコメントがある場合は除外
+      - precedes:
+          regex: '//\\s*ast-grep-ignore'
+      # テストモジュール内は例外
+      - inside:
+          all:
+            - kind: mod_item
+            - has:
+                regex: 'cfg\\(\\s*test\\s*\\)'
+      # traitの実装は例外
+      - inside:
+          kind: impl_item

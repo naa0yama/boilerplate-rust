@@ -1,0 +1,24 @@
+id: no-unwrap-in-production
+language: rust
+message: "本番コードでunwrap()の使用は禁止されています (project_rules.md 2.3)"
+note: "unwrap()の代わりに.expect()、.unwrap_or()、?演算子、またはmatch文を使用してください"
+severity: error
+rule:
+  all:
+    # unwrap()呼び出しを検出
+    - pattern: $VAR.unwrap()
+    # src/以下のファイルのみ対象
+    - inside:
+        kind: source_file
+    # 除外条件
+    - not:
+        any:
+          # テストコードは除外
+          - inside:
+              all:
+                - kind: mod_item
+                - has:
+                    regex: 'cfg\\(\\s*test\\s*\\)'
+          # 既存のignoreコメントがある行は除外
+          - precedes:
+              regex: '//\\s*ast-grep-ignore'

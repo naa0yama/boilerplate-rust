@@ -1,3 +1,5 @@
+#![allow(clippy::unwrap_used)] // テストコードではunwrapを許可
+
 #[test]
 fn test_cli_with_custom_name() {
     use assert_cmd::Command;
