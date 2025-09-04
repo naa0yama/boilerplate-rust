@@ -13,4 +13,4 @@ jobs:
     timeout-minutes: 5
 
     steps:
-      - uses: actions/labeler@v5
+      - uses: actions/labeler@v6
