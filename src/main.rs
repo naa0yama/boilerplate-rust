@@ -7,6 +7,9 @@ struct Args {
     /// Name of the person to greet
     #[arg(short, long, default_value = "Youre")]
     name: String,
+    /// Gender for greeting (man, woman)
+    #[arg(short, long)]
+    gender: Option<String>,
     #[arg(long, short = 'V', help = "Print version")]
     version: bool,
 }
@@ -35,16 +38,36 @@ fn main() {
         std::process::exit(0);
     }
 
-    run(&args.name);
+    run(&args.name, args.gender.as_deref());
 }
 
 /// アプリケーションのメイン処理を実行
 ///
 /// # Arguments
 /// * `name` - 挨拶対象の名前
-pub fn run(name: &str) {
-    use crate::libs::hello::sayhello;
-    let greeting = sayhello(name);
+/// * `gender` - 性別オプション（None, Some("man"), Some("woman"), その他）
+pub fn run(name: &str, gender: Option<&str>) {
+    use crate::libs::hello::{GreetingError, sayhello};
+
+    let greeting = match sayhello(name, gender) {
+        Ok(Ok(msg)) => msg,
+        Ok(Err(GreetingError::UnknownGender)) => {
+            // This case should not occur with current implementation
+            format!("Hi, {name}")
+        }
+        Ok(Err(GreetingError::InvalidGender(invalid_gender))) => {
+            tracing::warn!(
+                "Invalid gender '{}' specified, using default greeting",
+                invalid_gender
+            );
+            format!("Hi, {name} (invalid gender: {invalid_gender})")
+        }
+        Err(e) => {
+            tracing::error!("Failed to generate greeting: {:?}", e);
+            format!("Hi, {name}")
+        }
+    };
+
     tracing::info!("{}, new world!!", greeting);
 }
 
@@ -62,7 +85,7 @@ mod tests {
             .run_with_handle();
 
         with_default(subscriber, || {
-            run("Youre");
+            run("Youre", None);
         });
 
         handle.assert_finished();
@@ -76,7 +99,7 @@ mod tests {
             .run_with_handle();
 
         with_default(subscriber, || {
-            run("Alice");
+            run("Alice", None);
         });
 
         handle.assert_finished();
@@ -90,7 +113,7 @@ mod tests {
             .run_with_handle();
 
         with_default(subscriber, || {
-            run("");
+            run("", None);
         });
 
         handle.assert_finished();
@@ -104,7 +127,58 @@ mod tests {
             .run_with_handle();
 
         with_default(subscriber, || {
-            run("世界");
+            run("世界", None);
+        });
+
+        handle.assert_finished();
+    }
+
+    #[test]
+    fn test_run_with_gender_man() {
+        let (subscriber, handle) = subscriber::mock()
+            .event(expect::event().with_fields(expect::msg("Hi, Mr. John, new world!!")))
+            .only()
+            .run_with_handle();
+
+        with_default(subscriber, || {
+            run("John", Some("man"));
+        });
+
+        handle.assert_finished();
+    }
+
+    #[test]
+    fn test_run_with_gender_woman() {
+        let (subscriber, handle) = subscriber::mock()
+            .event(expect::event().with_fields(expect::msg("Hi, Ms. Alice, new world!!")))
+            .only()
+            .run_with_handle();
+
+        with_default(subscriber, || {
+            run("Alice", Some("woman"));
+        });
+
+        handle.assert_finished();
+    }
+
+    #[test]
+    fn test_run_with_invalid_gender() {
+        use tracing_mock::expect;
+
+        let (subscriber, handle) = subscriber::mock()
+            .event(
+                expect::event()
+                    .with_target(env!("CARGO_PKG_NAME"))
+                    .at_level(tracing::Level::WARN),
+            )
+            .event(
+                expect::event()
+                    .with_fields(expect::msg("Hi, Bob (invalid gender: other), new world!!")),
+            )
+            .run_with_handle();
+
+        with_default(subscriber, || {
+            run("Bob", Some("other"));
         });
 
         handle.assert_finished();

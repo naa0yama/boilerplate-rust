@@ -1,6 +1,6 @@
 id: unsafe-needs-safety-comment
 language: rust
-message: "unsafeブロックにはSAFETYコメントが必要です (project_rules.md 10.1)"
+message: "unsafeブロックにはSAFETYコメントが必要です (project_rules.md 11.1)"
 note: "unsafe { ... }の前に// SAFETY: <理由>コメントを追加してください"
 severity: error
 rule:

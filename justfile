@@ -52,7 +52,7 @@ zigbuild-all:
 
 # ast-grep project rules check
 project-rules-check:
-	sg scan --error
+	sg scan --error --color never
 
 # comprehensive lint check (combines clippy and project rules)
 lint-all:
