@@ -1,6 +1,6 @@
 id: no-wildcard-import
 language: rust
-message: "ワイルドカードインポート禁止 (project_rules.md 2.2)"
+message: "ワイルドカードインポート禁止 (project_rules.md 3.2)"
 note: "use hoge::prelude::*; は禁止です。std:: のみ例外的に許可されます"
 severity: info
 rule:

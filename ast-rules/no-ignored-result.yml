@@ -1,6 +1,6 @@
 id: no-ignored-result
 language: rust
-message: "Result型の戻り値が無視されています (project_rules.md 2.3)"
+message: "Result型の戻り値が無視されています (project_rules.md 3.3)"
 note: "Result<T, E>を返す関数の結果は必ず処理してください: .expect(), .unwrap_or(), match, ?演算子"
 severity: error
 rule:

@@ -1,6 +1,6 @@
 id: no-println-debug
 language: rust
-message: "標準出力デバッグは開発時のみ、本番コードでは tracing 使用 (project_rules.md 8.2)"
+message: "標準出力デバッグは開発時のみ、本番コードでは tracing 使用 (project_rules.md 9.2)"
 note: "tracing::debug!(), tracing::info!() などを使用してください"
 severity: warning
 rule:

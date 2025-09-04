@@ -147,3 +147,36 @@ lefthook run pre-commit
 - [The Rust Programming Language 日本語版](https://doc.rust-jp.rs/book-ja/)
 - [Developing inside a Container](https://code.visualstudio.com/docs/devcontainers/containers)
 - [Cargo Documentation](https://doc.rust-lang.org/cargo/)
+
+## Repository 設定
+
+- [ ] General
+  - [ ] Features
+    - [ ] Wikis disable
+    - [ ] Sponsorships disable
+    - [ ] Discussions disable
+    - [ ] Projects disable
+  - [ ] Pull Requests
+    - [ ] Allow merge commits
+      - [ ] Default message
+      - [ ] Pull request title
+      - [ ] Pull request title and description
+    - [ ] Allow squash merging
+      - [ ] Default message
+      - [ ] Pull request title
+      - [ ] Pull request title and commit details
+      - [ ] Pull request title and description
+    - [ ] Allow rebase merging
+    - [ ] Always suggest updating pull request branches Loading
+    - [ ] Allow auto-merge
+    - [ ] Automatically delete head branches Loading
+  - [ ] Issues
+    - [ ] Auto-close issues with merged linked pull requests
+- [ ] Rulesets
+  - [ ] New branch ruleset
+  - [ ] New tag ruleset
+  - [ ] Import a ruleset
+- [ ] Actions General
+  - [ ] Workflow permissions
+    - [ ] Read repository contents and packages permissions
+    - [ ] Allow GitHub Actions to create and approve pull requests

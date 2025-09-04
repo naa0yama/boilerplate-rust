@@ -1,6 +1,6 @@
 id: no-unwrap-in-production
 language: rust
-message: "本番コードでunwrap()の使用は禁止されています (project_rules.md 2.3)"
+message: "本番コードでunwrap()の使用は禁止されています (project_rules.md 3.3)"
 note: "unwrap()の代わりに.expect()、.unwrap_or()、?演算子、またはmatch文を使用してください"
 severity: error
 rule:

@@ -1,6 +1,6 @@
 id: no-file-level-external-use
 language: rust
-message: "ファイル先頭での use 文は標準ライブラリ以外禁止 (project_rules.md 2.2)"
+message: "ファイル先頭での use 文は標準ライブラリ以外禁止 (project_rules.md 3.2)"
 note: "関数内での use か、std:: で始まるパッケージのみ許可されます"
 severity: info
 rule:
