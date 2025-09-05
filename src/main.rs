@@ -51,10 +51,6 @@ pub fn run(name: &str, gender: Option<&str>) {
 
     let greeting = match sayhello(name, gender) {
         Ok(Ok(msg)) => msg,
-        Ok(Err(GreetingError::UnknownGender)) => {
-            // This case should not occur with current implementation
-            format!("Hi, {name}")
-        }
         Ok(Err(GreetingError::InvalidGender(invalid_gender))) => {
             tracing::warn!(
                 "Invalid gender '{}' specified, using default greeting",
@@ -62,8 +58,9 @@ pub fn run(name: &str, gender: Option<&str>) {
             );
             format!("Hi, {name} (invalid gender: {invalid_gender})")
         }
-        Err(e) => {
-            tracing::error!("Failed to generate greeting: {:?}", e);
+        Ok(Err(GreetingError::UnknownGender)) | Err(_) => {
+            // Fallback for any unexpected cases
+            tracing::error!("Unexpected error in greeting generation, using default");
             format!("Hi, {name}")
         }
     };
