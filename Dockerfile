@@ -25,7 +25,7 @@ ARG MODULES_VERSION=v0.24.3
 ## renovate: datasource=github-releases packageName=casey/just versioning=semver automerge=true
 ARG JUST_VERSION=1.42.4
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
-ARG LLVM_COV_VERSION=v0.6.18
+ARG LLVM_COV_VERSION=v0.6.19
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
 ARG SCCACHE_VERSION=v0.10.0
 ## renovate: datasource=github-releases packageName=ziglang/zig versioning=semver automerge=true
