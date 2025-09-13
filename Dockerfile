@@ -17,7 +17,7 @@ ARG MOLD_VERSION=v2.40.4
 
 # Rust tools
 ## renovate: datasource=github-releases packageName=ast-grep/ast-grep versioning=semver automerge=true
-ARG AST_GREP_VERSION=0.39.4
+ARG AST_GREP_VERSION=0.39.5
 ## renovate: datasource=github-tags packageName=matthiaskrgr/cargo-cache versioning=semver automerge=true
 ARG CACHE_VERSION=0.8.3
 ## renovate: datasource=github-tags packageName=regexident/cargo-modules versioning=semver automerge=true
