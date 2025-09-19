@@ -71,7 +71,7 @@ jobs:
           sccache: ${{ steps.versions.outputs.sccache }}
 
       - name: Install cargo-zigbuild
-        uses: taiki-e/install-action@0aa4f22591557b744fe31e55dbfcdfea74a073f7 # v2
+        uses: taiki-e/install-action@056c0cf25f54702ec6dde8b9c8a0387b857627ab # v2
         with:
           tool: cargo-zigbuild@${{ steps.versions.outputs.zigbuild }}
 
