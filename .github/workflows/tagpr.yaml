@@ -5,22 +5,30 @@ on:
     branches:
       - main
 
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   tagpr:
+    name: tagpr
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     outputs:
       tag: ${{ steps.tagpr.outputs.tag }}
     permissions:
-      contents: write
-      pull-requests: write
-      issues: write
+      contents: write # Required to create tags and update files
+      pull-requests: write # Required to create and update pull requests
+      issues: write # Required to manage release issues
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
-          persist-credentials: true
+          persist-credentials: false
 
       - id: tagpr
-        uses: Songmu/tagpr@v1
+        uses: Songmu/tagpr@7191605433b03e11b313dbbc0efb80185170de4b # v1.9.0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -29,8 +37,9 @@ jobs:
     needs: tagpr
     if: needs.tagpr.outputs.tag != ''
     permissions:
-      contents: write
+      contents: write # Required to create releases and tags
     uses: ./.github/workflows/release.yaml
     with:
       tag: ${{ needs.tagpr.outputs.tag }}
-    secrets: inherit
+    secrets:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

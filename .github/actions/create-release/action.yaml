@@ -30,7 +30,7 @@ runs:
   using: "composite"
   steps:
     - name: Download all artifacts
-      uses: actions/download-artifact@v5
+      uses: actions/download-artifact@634f93cb2916e3fdff6788551b99b062d0335ce0 # v5.0.0
       with:
         path: ./artifacts
         pattern: "*-${{ inputs.tag }}-*"
@@ -65,6 +65,8 @@ runs:
 
     - name: Prepare release assets
       shell: bash
+      env:
+        TAG: ${{ inputs.tag }}
       run: |
         set -euxo pipefail
         mkdir -p release-assets
@@ -88,11 +90,11 @@ runs:
 
           # Create compressed archive based on platform
           if [[ "$target" == *windows* ]]; then
-            zip_name="${binary_name%.*}-${{ inputs.tag }}-${target}.zip"
+            zip_name="${binary_name%.*}-${TAG}-${target}.zip"
             echo "Creating ZIP: $zip_name"
             zip -j "release-assets/$zip_name" "$file"
           else
-            tar_name="${binary_name}-${{ inputs.tag }}-${target}.tar.gz"
+            tar_name="${binary_name}-${TAG}-${target}.tar.gz"
             echo "Creating TAR: $tar_name"
             tar -czf "release-assets/$tar_name" -C "$(dirname "$file")" "$(basename "$file")"
           fi
@@ -110,12 +112,14 @@ runs:
     - name: Generate release notes
       shell: bash
       id: release-notes
+      env:
+        TAG: ${{ inputs.tag }}
       run: |
         set -euo pipefail
 
         # Create release notes with artifact information
-        cat > release_notes.md << 'EOF'
-        ## 🚀 Release ${{ inputs.tag }}
+        cat > release_notes.md << EOF
+        ## 🚀 Release ${TAG}
 
         This release includes pre-built binaries for multiple platforms:
 
@@ -176,7 +180,7 @@ runs:
         cat release_notes.md
 
     - name: Create GitHub Release
-      uses: softprops/action-gh-release@v2
+      uses: softprops/action-gh-release@6cbd405e2c4e67a21c47fa9e383d020e4e28b836 # v2.3.3
       id: create-release
       with:
         tag_name: ${{ inputs.tag }}
@@ -191,14 +195,19 @@ runs:
 
     - name: Release summary
       shell: bash
+      env:
+        TAG: ${{ inputs.tag }}
+        RELEASE_URL: ${{ steps.create-release.outputs.url }}
+        DRAFT: ${{ inputs.draft }}
+        PRERELEASE: ${{ inputs.prerelease }}
       run: |
-        echo "✅ Release ${{ inputs.tag }} created successfully!"
+        printf "✅ Release %s created successfully!\n" "${TAG}"
         echo "📦 Assets uploaded: $(ls -1 release-assets/ | wc -l)"
-        echo "🔗 Release URL: ${{ steps.create-release.outputs.url }}"
+        printf "🔗 Release URL: %s\n" "${RELEASE_URL}"
 
         echo "## 📋 Release Summary" >> $GITHUB_STEP_SUMMARY
-        echo "- **Tag**: ${{ inputs.tag }}" >> $GITHUB_STEP_SUMMARY
+        printf "- **Tag**: %s\n" "${TAG}" >> $GITHUB_STEP_SUMMARY
         echo "- **Assets**: $(ls -1 release-assets/ | wc -l)" >> $GITHUB_STEP_SUMMARY
-        echo "- **Release URL**: ${{ steps.create-release.outputs.url }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Draft**: ${{ inputs.draft }}" >> $GITHUB_STEP_SUMMARY
-        echo "- **Prerelease**: ${{ inputs.prerelease }}" >> $GITHUB_STEP_SUMMARY
+        printf "- **Release URL**: %s\n" "${RELEASE_URL}" >> $GITHUB_STEP_SUMMARY
+        printf "- **Draft**: %s\n" "${DRAFT}" >> $GITHUB_STEP_SUMMARY
+        printf "- **Prerelease**: %s\n" "${PRERELEASE}" >> $GITHUB_STEP_SUMMARY

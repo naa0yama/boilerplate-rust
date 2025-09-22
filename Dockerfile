@@ -8,8 +8,12 @@ ARG DEBIAN_FRONTEND=noninteractive \
 	USER_UID=${USER_UID:-60001} \
 	USER_GID=${USER_GID:-${USER_UID}}
 
+## renovate: datasource=github-releases packageName=rhysd/actionlint versioning=semver automerge=true
+ARG ACTIONLINT_VERSION=v1.7.7
 ## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver automerge=true
 ARG DPRINT_VERSION=0.50.1
+## renovate: datasource=github-releases packageName=suzuki-shunsuke/ghalint versioning=semver automerge=true
+ARG GHALINT_VERSION=v1.5.3
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver automerge=true
 ARG LEFTHOOK_VERSION=v1.12.3
 ## renovate: datasource=github-releases packageName=rui314/mold versioning=semver automerge=true
@@ -32,6 +36,8 @@ ARG SCCACHE_VERSION=v0.10.0
 ARG ZIG_VERSION=0.15.1
 ## renovate: datasource=github-releases packageName=rust-cross/cargo-zigbuild versioning=semver automerge=true
 ARG ZIGBUILD_VERSION=v0.20.1
+## renovate: datasource=github-releases packageName=zizmorcore/zizmor versioning=semver automerge=true
+ARG ZIZMOR_VERSION=v1.13.0
 
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
@@ -43,15 +49,16 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 FROM rust:1.89.0-trixie AS builder-base
 ARG AST_GREP_VERSION \
 	CACHE_VERSION \
-	MODULES_VERSION \
 	CURL_OPTS \
 	DEBIAN_FRONTEND \
 	JUST_VERSION \
 	LLVM_COV_VERSION \
+	MODULES_VERSION \
 	MOLD_VERSION \
 	SCCACHE_VERSION \
 	ZIG_VERSION \
 	ZIGBUILD_VERSION \
+	ZIZMOR_VERSION \
 	USER_NAME \
 	USER_UID \
 	USER_GID \
@@ -228,10 +235,11 @@ RUN --mount=type=cache,target=/home/cuser/.cache/sccache,sharing=locked,uid=${US
 	\
 	echo "**** Rust tools ****" && \
 	set -euxo pipefail && \
-	cargo install \
+	cargo install --locked \
 	cargo-cache@${CACHE_VERSION} \
 	cargo-llvm-cov@${LLVM_COV_VERSION#v} \
 	cargo-modules@${MODULES_VERSION#v} \
+	zizmor@${ZIZMOR_VERSION#v} \
 	&& \
 	cargo cache --version && \
 	cargo modules --version
@@ -251,10 +259,48 @@ USER root
 #- Development
 #-
 FROM builder-base AS development
-ARG CURL_OPTS \
+ARG ACTIONLINT_VERSION \
+	CURL_OPTS \
+	GHALINT_VERSION \
 	DEBIAN_FRONTEND \
 	DPRINT_VERSION \
 	LEFTHOOK_VERSION
+
+RUN echo "**** Install actionlint ****" && \
+	set -euxo pipefail && \
+	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/rhysd/actionlint/releases/tags/${ACTIONLINT_VERSION})" && \
+	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("_linux_amd64.tar.gz"))')" && \
+	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
+	# _digest="$(echo "$_asset" | jq -r '.digest')" && \
+	# _sha256="${_digest#sha256:}" && \
+	_filename="$(basename "$_download_url")" && \
+	_tmpdir=$(mktemp -q -d) && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	# echo "${_sha256}  ${_filename}" | sha256sum -c - && \
+	tar -xvf "./${_filename}" -C "${_tmpdir}" && \
+	ls -lah "${_tmpdir}" && \
+	cp -av "${_tmpdir}/actionlint" /usr/local/bin/ && \
+	type -p actionlint && \
+	rm -rf "./${_filename}" "${_tmpdir}"
+
+RUN echo "**** Install ghalint ****" && \
+	set -euxo pipefail && \
+	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
+	https://api.github.com/repos/suzuki-shunsuke/ghalint/releases/tags/${GHALINT_VERSION})" && \
+	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("_linux_amd64.tar.gz"))')" && \
+	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
+	_digest="$(echo "$_asset" | jq -r '.digest')" && \
+	_sha256="${_digest#sha256:}" && \
+	_filename="$(basename "$_download_url")" && \
+	_tmpdir=$(mktemp -q -d) && \
+	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
+	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
+	tar -xvf "./${_filename}" -C "${_tmpdir}" && \
+	ls -lah "${_tmpdir}" && \
+	cp -av "${_tmpdir}/ghalint" /usr/local/bin/ && \
+	type -p ghalint && \
+	rm -rf "./${_filename}" "${_tmpdir}"
 
 RUN echo "**** Install dprint ****" && \
 	set -euxo pipefail && \
