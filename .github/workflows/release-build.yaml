@@ -12,19 +12,24 @@ on:
         description: "List of built artifacts"
         value: ${{ jobs.build-matrix.outputs.artifacts }}
 
-env:
-  CARGO_TERM_COLOR: always
-  SCCACHE_GHA_ENABLED: "true"
+permissions: {}
 
 concurrency:
   group: release-build-${{ inputs.tag }}
   cancel-in-progress: true
+
+env:
+  CARGO_TERM_COLOR: always
+  SCCACHE_GHA_ENABLED: "true"
 
 jobs:
   build-matrix:
     name: build-${{ matrix.target }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read # Required to checkout the repository
+      actions: write # Required to upload artifacts
     outputs:
       artifacts: ${{ steps.collect-artifacts.outputs.artifacts }}
     strategy:
@@ -41,7 +46,9 @@ jobs:
             os: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Extract tool versions
         id: versions
@@ -71,37 +78,51 @@ jobs:
           sccache: ${{ steps.versions.outputs.sccache }}
 
       - name: Install cargo-zigbuild
-        uses: taiki-e/install-action@v2
+        uses: taiki-e/install-action@d6912b47771be2c443ec90dbb3d28e023987e782 # v2.62.1
         with:
           tool: cargo-zigbuild@${{ steps.versions.outputs.zigbuild }}
 
       - name: Build release binary
+        env:
+          TARGET: ${{ matrix.target }}
         run: |
           set -euxo pipefail
           # Disable mold for cross-compilation (zigbuild handles linking)
           unset RUSTFLAGS
-          cargo zigbuild --release --target ${{ matrix.target }} --verbose
+          cargo zigbuild --release --target "${TARGET}" --verbose
 
       - name: Set binary extension
         id: binary-ext
+        env:
+          TARGET: ${{ matrix.target }}
         run: |
-          if [[ "${{ matrix.target }}" == *windows* ]]; then
+          if [[ "${TARGET}" == *windows* ]]; then
             echo "ext=.exe" >> "$GITHUB_OUTPUT"
           else
             echo "ext=" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upload binary artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        env:
+          BINARY_NAME: ${{ steps.versions.outputs.binary_name }}
+          TAG: ${{ inputs.tag }}
+          TARGET: ${{ matrix.target }}
+          BINARY_EXT: ${{ steps.binary-ext.outputs.ext }}
         with:
-          name: ${{ steps.versions.outputs.binary_name }}-${{ inputs.tag }}-${{ matrix.target }}
-          path: target/${{ matrix.target }}/release/${{ steps.versions.outputs.binary_name }}${{ steps.binary-ext.outputs.ext }}
+          name: ${{ env.BINARY_NAME }}-${{ env.TAG }}-${{ env.TARGET }}
+          path: target/${{ env.TARGET }}/release/${{ env.BINARY_NAME }}${{ env.BINARY_EXT }}
           if-no-files-found: error
           retention-days: 7
 
       - name: Collect artifact info
         id: collect-artifacts
+        env:
+          BINARY_NAME: ${{ steps.versions.outputs.binary_name }}
+          TAG: ${{ inputs.tag }}
+          TARGET: ${{ matrix.target }}
+          BINARY_EXT: ${{ steps.binary-ext.outputs.ext }}
         run: |
-          artifact_name="${{ steps.versions.outputs.binary_name }}-${{ inputs.tag }}-${{ matrix.target }}"
-          binary_path="target/${{ matrix.target }}/release/${{ steps.versions.outputs.binary_name }}${{ steps.binary-ext.outputs.ext }}"
+          artifact_name="${BINARY_NAME}-${TAG}-${TARGET}"
+          binary_path="target/${TARGET}/release/${BINARY_NAME}${BINARY_EXT}"
           echo "artifacts=${artifact_name}:${binary_path}" >> "$GITHUB_OUTPUT"

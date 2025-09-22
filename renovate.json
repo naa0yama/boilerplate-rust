@@ -2,43 +2,5 @@
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
 	"extends": [
 		"local>naa0yama/renovate-config"
-	],
-	"packageRules": [
-		{
-			"description": "Custom managers (Dockerfile) - Auto-merge disabled by default",
-			"matchManagers": ["regex"],
-			"matchDepTypes": ["dockerfile"],
-			"automerge": false
-		},
-		{
-			"description": "Custom managers (Dockerfile) - Auto-merge for automerge=true dependencies",
-			"matchDepTypes": ["dockerfile-automerge"],
-			"matchUpdateTypes": ["minor", "patch"],
-			"automerge": true
-		}
-	],
-	"customManagers": [
-		{
-			"description": "Dockerfile dependencies with automerge=true",
-			"customType": "regex",
-			"fileMatch": [
-				"^Dockerfile(.*)$"
-			],
-			"matchStrings": [
-				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?\\s+automerge=true\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
-			],
-			"depTypeTemplate": "dockerfile-automerge"
-		},
-		{
-			"description": "Dockerfile dependencies with automerge=false or unspecified",
-			"customType": "regex",
-			"fileMatch": [
-				"^Dockerfile(.*)$"
-			],
-			"matchStrings": [
-				"## renovate: datasource=(?<datasource>\\S+)\\s+packageName=(?<packageName>\\S+)(?:\\s+versioning=(?<versioning>\\S+))?(?:\\s+automerge=false)?\\s*\\nARG \\S+_VERSION=(?<currentValue>\\S+)"
-			],
-			"depTypeTemplate": "dockerfile"
-		}
 	]
 }

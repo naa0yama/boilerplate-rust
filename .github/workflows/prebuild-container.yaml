@@ -4,12 +4,15 @@ on:
   push:
     branches:
       - main
-    paths: &on_paths
+    paths:
       - ".devcontainer/**"
       - ".github/workflows/prebuild-container.yaml"
       - "Dockerfile"
   pull_request:
-    paths: *on_paths
+    paths:
+      - ".devcontainer/**"
+      - ".github/workflows/prebuild-container.yaml"
+      - "Dockerfile"
   workflow_dispatch:
     inputs:
       no_cache:
@@ -19,16 +22,25 @@ on:
         type: boolean
 
 permissions:
-  contents: read
-  packages: write
+  contents: read # Required to checkout the repository
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ startsWith(github.ref, 'refs/pull/') }}
 
 jobs:
   prebuild:
+    name: prebuild
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    permissions:
+      contents: read # Required to checkout the repository
+      packages: write # Required to push container images to registry
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
+        with:
+          persist-credentials: false
 
       - name: Convert repository owner/repo to lowercase
         id: repo_name
@@ -36,14 +48,14 @@ jobs:
           echo "lowercase=${GITHUB_REPOSITORY,,}" >> $GITHUB_OUTPUT
 
       - name: Login to GitHub Container Registry
-        uses: docker/login-action@v3
+        uses: docker/login-action@184bdaa0721073962dff0199f1fb9940f07167d1 # v3.5.0
         with:
           registry: ghcr.io
           username: ${{ github.repository_owner }}
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Pre-build dev container image
-        uses: devcontainers/ci@v0.3
+        uses: devcontainers/ci@8bf61b26e9c3a98f69cb6ce2f88d24ff59b785c6 # v0.3.1900000417
         with:
           imageName: ghcr.io/${{ steps.repo_name.outputs.lowercase }}/devcontainer
           cacheFrom: ghcr.io/${{ steps.repo_name.outputs.lowercase }}/devcontainer
