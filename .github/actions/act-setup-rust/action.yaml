@@ -25,7 +25,7 @@ runs:
         version: ${{ inputs.sccache }}
 
     - name: Cache rustup
-      uses: actions/cache@0400d5f644dc74513175e3cd8d07132dd4860809 # v4
+      uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4
       with:
         path: |
           ~/.rustup/settings.toml
@@ -37,6 +37,6 @@ runs:
         cache-shared-key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install just
-      uses: taiki-e/install-action@6f69ec9970ed0c500b1b76d648e05c4c7e0e5671 # v2
+      uses: taiki-e/install-action@4575ae687efd0e2c78240087f26013fb2484987f # v2
       with:
         tool: just@${{ inputs.just }}
