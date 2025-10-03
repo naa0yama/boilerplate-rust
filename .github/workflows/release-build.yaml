@@ -41,7 +41,7 @@ jobs:
             os: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v5
+      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
 
       - name: Extract tool versions
         id: versions
@@ -71,7 +71,7 @@ jobs:
           sccache: ${{ steps.versions.outputs.sccache }}
 
       - name: Install cargo-zigbuild
-        uses: taiki-e/install-action@v2
+        uses: taiki-e/install-action@bf2f998095ccb464eb8b85eeb95a460ccd744ec4 # v2
         with:
           tool: cargo-zigbuild@${{ steps.versions.outputs.zigbuild }}
 
@@ -92,7 +92,7 @@ jobs:
           fi
 
       - name: Upload binary artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: ${{ steps.versions.outputs.binary_name }}-${{ inputs.tag }}-${{ matrix.target }}
           path: target/${{ matrix.target }}/release/${{ steps.versions.outputs.binary_name }}${{ steps.binary-ext.outputs.ext }}
