@@ -7,6 +7,19 @@
 	echo ""
 	just --list
 
+# GitHub Action lint (actionlint)
+lint-actionlint *files="":
+	actionlint {{files}}
+
+# GitHub Action lint (ghalint)
+lint-ghalint:
+	ghalint run
+	ghalint run-action
+
+# GitHub Action lint (zizmor)
+lint-zizmor *files="":
+	zizmor --persona=pedantic {{ if files == "" { ".github/" } else { files } }}
+
 # cargo build
 cargo-build profile="debug":
 	cargo build {{ if profile == "release" { "--release" } else { "" } }}
@@ -58,3 +71,9 @@ project-rules-check:
 lint-all:
 	just cargo-clippy
 	just project-rules-check
+
+# GitHub Action lints
+lint-gh:
+	just lint-actionlint
+	just lint-ghalint
+	just lint-zizmor

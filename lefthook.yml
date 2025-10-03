@@ -84,6 +84,11 @@ pre-commit:
             files: git diff --name-only --diff-filter=d --staged
             glob: "*.rs"
 
+          - name: GitHub workflow check
+            run: just lint-gh
+            files: git diff --name-only --diff-filter=d --staged
+            glob: "{.github/actions/*/action.{yml,yaml},.github/workflows/*.{yml,yaml}}"
+
     - name: tests
       group:
         parallel: true

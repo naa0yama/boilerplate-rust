@@ -150,6 +150,40 @@ lefthook run pre-commit
 
 ## Repository 設定
 
+- SSH/GPG Key をマシンに置かない
+- ロックファイルを使う
+- GitHub ActionsでSHA pinを行う(pinnact と Enforce SHA Pinningの設定)
+- renovate/dependabotはminimumReleaseAge/cooldownでアップデートを1週間遅らせる
+- commit は secretlint を通す
+- GH Actionsは zizmor を通す
+- フィッシング耐性が低いMFAは使わない
+- 生tokenをローカルに置かない
+- [CodeQL](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql) の有効化
+- GitHub は 2FA 必須
+- Permissions - 最小権限の原則
+- Renovate/Dependabot - 依存関係の自動更新
+- Secret Scanning - 秘密情報の漏洩防止
+- Branch/Push Protection - 不正な変更防止
+- CODEOWNERS - レビュー必須化
+- Sanitize User Input - 環境変数経由など
+- pull_request_target to pull_request - 権限昇格を防ぐ
+- actionlint - YAML 検証
+- Workflow Run Approval - フォークからの PR 実行承認
+- Environment Protection Rules - デプロイ環境の保護
+- pinact - Action の SHA 固定
+- Commit Signing - なりすまし防止
+- Audit Logs - 監査ログ監視
+- OSSF Scorecards - セキュリティ評価
+- Artifact Attestations - 成果物の証明
+- SLSA: Supply-chain Levels for Software Artifacts
+
+- User
+  - Security / Advanced Security
+    - [secret scanning](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning)
+    - パブリックレポジトリー
+    - GitHub Secret Protection が有効になっている GitHub Team 上の Organization 所有リポジトリ
+      - [Push protection](https://docs.github.com/ja/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/push-protection-for-users)
+
 - [ ] General
   - [ ] Features
     - [ ] Wikis disable
