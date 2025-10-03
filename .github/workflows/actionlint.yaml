@@ -37,7 +37,7 @@ jobs:
           set -euo pipefail
 
           bash <(curl "https://raw.githubusercontent.com/rhysd/actionlint/${ACTIONLINT_VERSION}/scripts/download-actionlint.bash")
-          ./actionlint -verbose -format "$(cat .github/workflows/actionlint-format.txt)" | results.sarif
+          ./actionlint -verbose -format "$(cat .github/workflows/actionlint-format.txt)" | tee results.sarif
         shell: bash
 
       - name: Upload to GitHub security events
