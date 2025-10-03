@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1@sha256:dabfc0969b935b2080555ace70ee69a5261af8a8f1b4df97b9e7fbcf6722eddf
 #- -------------------------------------------------------------------------------------------------
 #- Global
 #-
@@ -15,13 +15,13 @@ ARG DPRINT_VERSION=0.50.1
 ## renovate: datasource=github-releases packageName=suzuki-shunsuke/ghalint versioning=semver automerge=true
 ARG GHALINT_VERSION=v1.5.3
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver automerge=true
-ARG LEFTHOOK_VERSION=v1.12.3
+ARG LEFTHOOK_VERSION=v1.13.4
 ## renovate: datasource=github-releases packageName=rui314/mold versioning=semver automerge=true
 ARG MOLD_VERSION=v2.40.4
 
 # Rust tools
 ## renovate: datasource=github-releases packageName=ast-grep/ast-grep versioning=semver automerge=true
-ARG AST_GREP_VERSION=0.39.4
+ARG AST_GREP_VERSION=0.39.5
 ## renovate: datasource=github-tags packageName=matthiaskrgr/cargo-cache versioning=semver automerge=true
 ARG CACHE_VERSION=0.8.3
 ## renovate: datasource=github-tags packageName=regexident/cargo-modules versioning=semver automerge=true
@@ -29,7 +29,7 @@ ARG MODULES_VERSION=v0.24.3
 ## renovate: datasource=github-releases packageName=casey/just versioning=semver automerge=true
 ARG JUST_VERSION=1.42.4
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
-ARG LLVM_COV_VERSION=v0.6.18
+ARG LLVM_COV_VERSION=v0.6.19
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
 ARG SCCACHE_VERSION=v0.10.0
 ## renovate: datasource=github-releases packageName=ziglang/zig versioning=semver automerge=true
@@ -46,7 +46,7 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 #- -------------------------------------------------------------------------------------------------
 #- Builder Base
 #-
-FROM rust:1.89.0-trixie AS builder-base
+FROM rust:1.89.0-trixie@sha256:57407b378b2b6e07b48a6135a20c87cc22ea6e249c0acf6cb1833ead3cf116e9 AS builder-base
 ARG AST_GREP_VERSION \
 	CACHE_VERSION \
 	CURL_OPTS \
