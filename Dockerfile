@@ -40,7 +40,7 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 #- -------------------------------------------------------------------------------------------------
 #- Builder Base
 #-
-FROM rust:1.89.0-trixie@sha256:57407b378b2b6e07b48a6135a20c87cc22ea6e249c0acf6cb1833ead3cf116e9 AS builder-base
+FROM rust:1.90.0-trixie@sha256:512d81e488da6ba3e88637340fa84decd29293185d48e4708468e1b1d3bb20a9 AS builder-base
 ARG AST_GREP_VERSION \
 	CACHE_VERSION \
 	MODULES_VERSION \
