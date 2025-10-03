@@ -1,4 +1,4 @@
-# syntax=docker/dockerfile:1
+# syntax=docker/dockerfile:1@sha256:dabfc0969b935b2080555ace70ee69a5261af8a8f1b4df97b9e7fbcf6722eddf
 #- -------------------------------------------------------------------------------------------------
 #- Global
 #-
@@ -11,7 +11,7 @@ ARG DEBIAN_FRONTEND=noninteractive \
 ## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver automerge=true
 ARG DPRINT_VERSION=0.50.2
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver automerge=true
-ARG LEFTHOOK_VERSION=v1.13.1
+ARG LEFTHOOK_VERSION=v1.13.4
 ## renovate: datasource=github-releases packageName=rui314/mold versioning=semver automerge=true
 ARG MOLD_VERSION=v2.40.4
 
@@ -40,7 +40,7 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 #- -------------------------------------------------------------------------------------------------
 #- Builder Base
 #-
-FROM rust:1.89.0-trixie AS builder-base
+FROM rust:1.89.0-trixie@sha256:57407b378b2b6e07b48a6135a20c87cc22ea6e249c0acf6cb1833ead3cf116e9 AS builder-base
 ARG AST_GREP_VERSION \
 	CACHE_VERSION \
 	MODULES_VERSION \
