@@ -266,8 +266,15 @@ ARG ACTIONLINT_VERSION \
 	DPRINT_VERSION \
 	LEFTHOOK_VERSION
 
-RUN echo "**** Install actionlint ****" && \
+RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
+	--mount=type=cache,target=/var/lib/apt,sharing=locked \
+	\
+	echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
+	apt-get -y install --no-install-recommends \
+	shellcheck \
+	&& \
+	echo "**** Install actionlint ****" && \
 	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
 	https://api.github.com/repos/rhysd/actionlint/releases/tags/${ACTIONLINT_VERSION})" && \
 	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("_linux_amd64.tar.gz"))')" && \

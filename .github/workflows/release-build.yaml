@@ -65,11 +65,13 @@ jobs:
             binary_name="$package_name"
           fi
 
-          echo "sccache=${sccache_version}" >> "$GITHUB_OUTPUT"
-          echo "just=${just_version}" >> "$GITHUB_OUTPUT"
-          echo "zigbuild=${zigbuild_version}" >> "$GITHUB_OUTPUT"
-          echo "package_name=${package_name}" >> "$GITHUB_OUTPUT"
-          echo "binary_name=${binary_name}" >> "$GITHUB_OUTPUT"
+          {
+            echo "sccache=${sccache_version}"
+            echo "just=${just_version}"
+            echo "zigbuild=${zigbuild_version}"
+            echo "package_name=${package_name}"
+            echo "binary_name=${binary_name}"
+          } >> "$GITHUB_OUTPUT"
 
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust

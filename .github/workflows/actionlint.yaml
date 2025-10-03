@@ -25,6 +25,8 @@ jobs:
       contents: read # Required to checkout the repository
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    env:
+      ACTIONLINT_VERSION: 03d0035246f3e81f36aed592ffb4bebf33a03106 # v1.7.7
     steps:
       - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
         with:
@@ -32,7 +34,7 @@ jobs:
 
       - name: Check workflow files
         run: |
-          bash <(curl https://raw.githubusercontent.com/rhysd/actionlint/main/scripts/download-actionlint.bash)
+          bash <(curl "https://raw.githubusercontent.com/rhysd/actionlint/${ACTIONLINT_VERSION}/scripts/download-actionlint.bash")
           ./actionlint -verbose -format "$(cat .github/workflows/actionlint-format.txt)" | tee results.sarif
         shell: bash
 

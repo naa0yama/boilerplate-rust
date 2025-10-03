@@ -25,7 +25,7 @@ jobs:
       - name: Convert repository name to lowercase
         id: repo_name
         run: |
-          echo "lowercase=${GITHUB_REPOSITORY##*/}" | tr '[:upper:]' '[:lower:]' >> $GITHUB_OUTPUT
+          echo "lowercase=${GITHUB_REPOSITORY##*/}" | tr '[:upper:]' '[:lower:]' >> "$GITHUB_OUTPUT"
 
       - name: Cleanup Cache
         run: |
