@@ -11,7 +11,7 @@ ARG DEBIAN_FRONTEND=noninteractive \
 ## renovate: datasource=github-releases packageName=rhysd/actionlint versioning=semver automerge=true
 ARG ACTIONLINT_VERSION=v1.7.7
 ## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver automerge=true
-ARG DPRINT_VERSION=0.50.1
+ARG DPRINT_VERSION=0.50.2
 ## renovate: datasource=github-releases packageName=suzuki-shunsuke/ghalint versioning=semver automerge=true
 ARG GHALINT_VERSION=v1.5.3
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver automerge=true
