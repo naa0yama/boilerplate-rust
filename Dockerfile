@@ -15,7 +15,7 @@ ARG DPRINT_VERSION=0.50.2
 ## renovate: datasource=github-releases packageName=suzuki-shunsuke/ghalint versioning=semver automerge=true
 ARG GHALINT_VERSION=v1.5.3
 ## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver automerge=true
-ARG LEFTHOOK_VERSION=v1.13.5
+ARG LEFTHOOK_VERSION=v1.13.6
 ## renovate: datasource=github-releases packageName=rui314/mold versioning=semver automerge=true
 ARG MOLD_VERSION=v2.40.4
 
