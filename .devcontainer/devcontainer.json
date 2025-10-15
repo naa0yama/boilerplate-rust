@@ -21,7 +21,6 @@
 	"mounts": [
 		// Claude Code
 		"type=bind,source=${localEnv:HOME}/.claude,target=/home/cuser/.claude,consistency=cached",
-		"type=bind,source=${localEnv:HOME}/.claude.json,target=/home/cuser/.claude.json,consistency=cached",
 		// Git
 		"type=bind,source=${localEnv:HOME}/.gitignore_global,target=/home/cuser/.gitignore_global,consistency=cached",
 		// GitHub
