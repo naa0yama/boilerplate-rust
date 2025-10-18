@@ -9,7 +9,7 @@ ARG DEBIAN_FRONTEND=noninteractive \
 	USER_GID=${USER_GID:-${USER_UID}}
 
 ## renovate: datasource=github-releases packageName=rhysd/actionlint versioning=semver automerge=true
-ARG ACTIONLINT_VERSION=v1.7.7
+ARG ACTIONLINT_VERSION=v1.7.8
 ## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver automerge=true
 ARG DPRINT_VERSION=0.50.2
 ## renovate: datasource=github-releases packageName=suzuki-shunsuke/ghalint versioning=semver automerge=true
