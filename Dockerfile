@@ -9,7 +9,7 @@ ARG DEBIAN_FRONTEND=noninteractive \
 	USER_GID=${USER_GID:-${USER_UID}}
 
 ## renovate: datasource=github-releases packageName=rhysd/actionlint versioning=semver automerge=true
-ARG ACTIONLINT_VERSION=v1.7.7
+ARG ACTIONLINT_VERSION=v1.7.8
 ## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver automerge=true
 ARG DPRINT_VERSION=0.50.2
 ## renovate: datasource=github-releases packageName=suzuki-shunsuke/ghalint versioning=semver automerge=true
@@ -29,15 +29,15 @@ ARG MODULES_VERSION=v0.24.3
 ## renovate: datasource=github-releases packageName=casey/just versioning=semver automerge=true
 ARG JUST_VERSION=1.43.0
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
-ARG LLVM_COV_VERSION=v0.6.20
+ARG LLVM_COV_VERSION=v0.6.21
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
-ARG SCCACHE_VERSION=v0.10.0
+ARG SCCACHE_VERSION=v0.11.0
 ## renovate: datasource=github-releases packageName=ziglang/zig versioning=semver automerge=true
 ARG ZIG_VERSION=0.15.1
 ## renovate: datasource=github-releases packageName=rust-cross/cargo-zigbuild versioning=semver automerge=true
 ARG ZIGBUILD_VERSION=v0.20.1
 ## renovate: datasource=github-releases packageName=zizmorcore/zizmor versioning=semver automerge=true
-ARG ZIZMOR_VERSION=v1.14.2
+ARG ZIZMOR_VERSION=v1.15.2
 
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
