@@ -10,10 +10,6 @@ on:
         description: "Release tag"
         required: true
         type: string
-    secrets:
-      GITHUB_TOKEN:
-        description: "GitHub token for creating releases"
-        required: true
   workflow_dispatch:
     inputs:
       tag:
@@ -32,6 +28,7 @@ jobs:
     uses: ./.github/workflows/release-build.yaml
     permissions:
       contents: read # Required to call another workflow
+      actions: write # Required to upload artifacts
     with:
       tag: ${{ inputs.tag || github.ref_name }}
 
