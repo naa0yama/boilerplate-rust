@@ -25,7 +25,7 @@ ARG AST_GREP_VERSION=0.39.6
 ## renovate: datasource=github-tags packageName=matthiaskrgr/cargo-cache versioning=semver automerge=true
 ARG CACHE_VERSION=0.8.3
 ## renovate: datasource=github-tags packageName=regexident/cargo-modules versioning=semver automerge=true
-ARG MODULES_VERSION=v0.24.3
+ARG MODULES_VERSION=v0.25.0
 ## renovate: datasource=github-releases packageName=casey/just versioning=semver automerge=true
 ARG JUST_VERSION=1.43.0
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
