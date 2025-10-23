@@ -38,6 +38,7 @@ jobs:
     if: needs.tagpr.outputs.tag != ''
     permissions:
       contents: write # Required to create releases and tags
+      actions: write # Required for build job to upload artifacts
     uses: ./.github/workflows/release.yaml
     with:
       tag: ${{ needs.tagpr.outputs.tag }}
