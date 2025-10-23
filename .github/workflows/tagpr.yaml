@@ -41,5 +41,3 @@ jobs:
     uses: ./.github/workflows/release.yaml
     with:
       tag: ${{ needs.tagpr.outputs.tag }}
-    secrets:
-      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
