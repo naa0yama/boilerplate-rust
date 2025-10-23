@@ -22,7 +22,8 @@ jobs:
   actionlint:
     name: actionlint
     permissions:
-      contents: read # Required to checkout the repository
+      contents: read # to check out the code
+      security-events: write # for uploading the SARIF report
     runs-on: ubuntu-latest
     timeout-minutes: 5
     env:
