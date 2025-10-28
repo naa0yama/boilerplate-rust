@@ -92,7 +92,7 @@ jobs:
           sccache_disable_annotations: true
 
       - name: Install dprint
-        uses: taiki-e/install-action@e43a5023a747770bfcb71ae048541a681714b951 # v2.62.33
+        uses: taiki-e/install-action@80466ef8efa80486cdfbddf929453a4f3565c791 # v2.62.34
         with:
           tool: dprint@${{ steps.versions.outputs.dprint }}
 
@@ -160,7 +160,7 @@ jobs:
           sccache: ${{ needs.fmt.outputs.sccache }}
 
       - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@e43a5023a747770bfcb71ae048541a681714b951 # v2.62.33
+        uses: taiki-e/install-action@80466ef8efa80486cdfbddf929453a4f3565c791 # v2.62.34
         with:
           tool: cargo-llvm-cov
 
