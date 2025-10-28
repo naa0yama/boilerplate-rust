@@ -31,7 +31,7 @@ ARG JUST_VERSION=1.43.0
 ## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
 ARG LLVM_COV_VERSION=v0.6.21
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
-ARG SCCACHE_VERSION=v0.11.0
+ARG SCCACHE_VERSION=v0.12.0
 ## renovate: datasource=github-releases packageName=ziglang/zig versioning=semver automerge=true
 ARG ZIG_VERSION=0.15.1
 ## renovate: datasource=github-releases packageName=rust-cross/cargo-zigbuild versioning=semver automerge=true
