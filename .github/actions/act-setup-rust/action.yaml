@@ -37,6 +37,6 @@ runs:
         cache-shared-key: cargo-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/Cargo.lock') }}
 
     - name: Install just
-      uses: taiki-e/install-action@80466ef8efa80486cdfbddf929453a4f3565c791 # v2.62.34
+      uses: taiki-e/install-action@2cdf2d81f4edfc3b41d5ddf56083c70b48ac2475 # v2.62.35
       with:
         tool: just@${{ inputs.just }}
