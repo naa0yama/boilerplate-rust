@@ -23,5 +23,11 @@ disallowed-methods = [
 	# "std::env::set_var", # set_varの使用を禁止する例
 ]
 
+# テストコード用の除外設定
+allow-unwrap-in-tests = true
+allow-print-in-tests = true
+allow-dbg-in-tests = true
+allow-expect-in-tests = true
+
 # MSRV (Minimum Supported Rust Version) 設定
 # msrv = "1.70.0"

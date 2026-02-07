@@ -4,6 +4,44 @@
 - Use half-width brackets instead of full-width brackets in the Japanese explanations output.
 - When writing Japanese and half-width alphanumeric characters or codes in one sentence, please enclose the half-width alphanumeric characters in backquotes and leave half-width spaces before and after them.
 
-## Project Rules
+## Commands
 
-Various project rules, such as coding standards, are listed in [project_rules](./docs/project_rules.md)
+All tasks use `mise run <task>`:
+
+| Task                  | Command                  |
+| --------------------- | ------------------------ |
+| Build                 | `mise run build`         |
+| Test                  | `mise run test`          |
+| TDD watch             | `mise run test:watch`    |
+| Doc tests             | `mise run test:doc`      |
+| Format                | `mise run fmt`           |
+| Format check          | `mise run fmt:check`     |
+| Lint (clippy)         | `mise run clippy`        |
+| Lint strict           | `mise run clippy:strict` |
+| AST rules             | `mise run ast-grep`      |
+| Pre-commit (required) | `mise run pre-commit`    |
+| Coverage              | `mise run coverage`      |
+| Deny (licenses/deps)  | `mise run deny`          |
+
+## Commit Convention
+
+Conventional Commits: `<type>: <description>` or `<type>(<scope>): <description>`
+
+Allowed types: feat, update, fix, style, refactor, docs, perf, test, build, ci, chore, remove, revert
+
+## Workflow
+
+1. Write tests (for new features / bug fixes)
+2. Implement
+3. Run `mise run test` — all tests must pass
+4. Stage only the relevant files
+5. Run `mise run pre-commit` (runs fmt:check, clippy:strict, ast-grep)
+6. If errors, fix → re-stage → re-run `mise run pre-commit`
+
+## Key Coding Rules
+
+- **Imports**: Only `std` / `crate` / `super` allowed at file top-level. External crates must use full path or function-scoped `use`. No aliases (`as`), no wildcards (`*`).
+- **Error handling**: Never use bare `?`. Always add `.context()` or `.with_context()`.
+- **Logging**: Use `tracing` crate, not `println!` / `dbg!`.
+- **Tests**: Arrange / Act / Assert pattern. Unit tests in `#[cfg(test)] mod tests`, integration tests in `tests/`. `#![allow(clippy::unwrap_used)]` is permitted in test code.
+- See [docs/project_rules.md](./docs/project_rules.md) for full details.

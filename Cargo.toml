@@ -31,18 +31,18 @@ tracing-mock = "=0.1.0-beta.1"
 
 [lints.clippy]
 # project_rules.md に基づくlint設定（priority=-1で個別設定を優先）
-all = { level = "deny", priority = -1 }
-pedantic = { level = "deny", priority = -1 }
+all = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
 nursery = { level = "warn", priority = -1 }
 cargo = { level = "warn", priority = -1 }
 
 # 安全性の基礎 - メモリ安全性
-redundant_clone = "deny" #                       不要なclone()呼び出しを検出(パフォーマンス低下防止)
+redundant_clone = "warn" #                       不要なclone()呼び出しを検出(パフォーマンス低下防止)
 needless_borrowed_reference = "warn" #           &ref xパターンを検出(借用の理解不足を防止)
-rc_mutex = "deny" #                              Rc<Mutex<T>>を検出(Arc<Mutex<T>>推奨でスレッド安全性確保)
+rc_mutex = "warn" #                              Rc<Mutex<T>>を検出(Arc<Mutex<T>>推奨でスレッド安全性確保)
 
 # 安全性の基礎 - エラーハンドリング
-unwrap_used = { level = "deny", priority = 1 } # unwrap()禁止(パニック防止、適切なエラー処理強制)
+unwrap_used = { level = "warn", priority = 1 } # unwrap()警告(パニック防止、適切なエラー処理強制)
 expect_used = { level = "warn", priority = 1 } # expect()警告(テスト以外では?演算子推奨)
 panic = { level = "warn", priority = 1 } #       panic! 使用警告(回復可能エラーの適切処理推奨)
 question_mark = "warn" #                         ?演算子使用推奨(冗長なmatch文の簡略化)
@@ -55,7 +55,7 @@ cast_possible_truncation = "warn" #              値切り捨てが起こるキ�
 cast_precision_loss = "warn" #                   精度損失が起こるキャストを警告(浮動小数点精度保持)
 
 # パフォーマンス最適化 - イテレータとコレクション
-needless_collect = "deny" #                      不要な.collect()を検出(中間コレクション生成回避)
+needless_collect = "warn" #                      不要な.collect()を検出(中間コレクション生成回避)
 manual_find_map = "warn" #                       .find().map()を.find_map()で最適化提案
 unnecessary_to_owned = "warn" #                  不要なto_owned()呼び出しを検出(所有権移動回避)
 single_element_loop = "warn" #                   1要素ループをif文で最適化提案
@@ -72,7 +72,7 @@ large_enum_variant = "warn" #                    大きなenum variantを検出(
 trivial_regex = "warn" #                         単純文字列比較でregex使用を検出
 
 # コード組織 - API設計とコンベンション
-wrong_self_convention = "deny" #                 self引数の命名規則違反を検出(to_*/as_*/into_*)
+wrong_self_convention = "warn" #                 self引数の命名規則違反を検出(to_*/as_*/into_*)
 should_implement_trait = "warn" #                標準トレイト実装推奨(Display, From等)
 missing_errors_doc = "warn" #                    エラー条件のドキュメント不足を警告
 missing_panics_doc = "warn" #                    パニック条件のドキュメント不足を警告
@@ -87,11 +87,11 @@ type_complexity = "warn" #                       複雑すぎる型定義を警�
 # コード組織 - モジュール設計
 module_name_repetitions = "warn" #               モジュール名の重複を警告
 wildcard_imports = "warn" #                      ワイルドカードインポート使用を警告
-pub_underscore_fields = "deny" #                 pub _field使用を禁止(設計問題)
+pub_underscore_fields = "warn" #                 pub _field使用を警告(設計問題)
 large_stack_arrays = "warn" #                    大きなスタック配列を警告
 
 # セキュリティ・品質 - デバッグとTODO管理
-dbg_macro = "deny" #                             dbg!マクロを本番コードで禁止
+dbg_macro = "warn" #                             dbg!マクロを本番コードで警告
 todo = "warn" #                                  TODO残留を警告
 unimplemented = "warn" #                         unimplemented!残留を警告
 unreachable = "warn" #                           unreachable!使用を警告
@@ -103,19 +103,23 @@ as_conversions = "warn" #                        asキャストの危険性を�
 indexing_slicing = "warn" #                      範囲外アクセスリスクを警告
 
 # セキュリティ・品質 - API安全性
-empty_drop = "deny" #                            空のDrop実装を禁止
-mem_forget = "deny" #                            mem::forget使用を禁止
+empty_drop = "warn" #                            空のDrop実装を警告
+mem_forget = "warn" #                            mem::forget使用を警告
 exit = "warn" #                                  process::exit使用を警告
 create_dir = "warn" #                            create_dirよりcreate_dir_all推奨
+
+# セキュリティ・品質 - unsafeブロック
+undocumented_unsafe_blocks = "warn" #            unsafeブロックにSAFETYコメント必須
+
+# セキュリティ・品質 - 出力制御
+print_stdout = "warn" #                          println!/print!の使用を警告(tracing推奨)
+print_stderr = "warn" #                          eprintln!/eprint!の使用を警告(tracing推奨)
 
 # 例外設定（プロジェクトの性質上許可するもの）
 multiple-crate-versions = "allow"
 cargo-common-metadata = "allow"
-# ビルドスクリプトでは必要な場合のみexpect/unwrapを許可
-# build.rs内のみの例外は各行に #[allow] を個別追加
-
-# テストコード用のlint設定を作成するためのマーカー（実際の設定は[[test]]で個別適用）
 
 [lints.rust]
-warnings = "deny"
+warnings = "warn"
 missing_debug_implementations = "warn" #         Debugトレイト未実装を警告
+missing_docs = "warn" #                          pub項目のドキュメント不足を警告

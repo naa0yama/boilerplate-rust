@@ -11,6 +11,7 @@ on:
       - ".github/actions/act-setup-rust/action.yaml"
       - ".github/workflows/ci.yaml"
       - "ast-rules/**.yml"
+      - "mise.toml"
       - "rust-toolchain.toml"
   pull_request:
     paths:
@@ -20,6 +21,7 @@ on:
       - ".github/actions/act-setup-rust/action.yaml"
       - ".github/workflows/ci.yaml"
       - "ast-rules/**.yml"
+      - "mise.toml"
       - "rust-toolchain.toml"
   workflow_dispatch:
 
@@ -42,8 +44,6 @@ jobs:
       contents: read # Required to checkout the repository
     outputs:
       binary_name: ${{ steps.versions.outputs.binary_name }}
-      dprint: ${{ steps.versions.outputs.dprint }}
-      just: ${{ steps.versions.outputs.just }}
       package_name: ${{ steps.versions.outputs.package_name }}
       sccache: ${{ steps.versions.outputs.sccache }}
 
@@ -65,8 +65,6 @@ jobs:
         id: versions
         run: |
           sccache_version=$(grep -E '^ARG SCCACHE_VERSION=v?[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG SCCACHE_VERSION=(v?[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-          dprint_version=$(grep -E '^ARG DPRINT_VERSION=v?[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG DPRINT_VERSION=(v?[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-          just_version=$(grep -E '^ARG JUST_VERSION=v?[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG JUST_VERSION=(v?[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           package_name=$(grep -E '^\[package\]' -A 10 Cargo.toml | grep -E '^name = "' | sed -E 's/name = "(.*)"/\1/')
 
           if grep -q '^\[\[bin\]\]' Cargo.toml; then
@@ -78,8 +76,6 @@ jobs:
 
           {
             echo "sccache=${sccache_version}";
-            echo "dprint=${dprint_version}";
-            echo "just=${just_version}";
             echo "package_name=${package_name}";
             echo "binary_name=${binary_name}";
           } >> "$GITHUB_OUTPUT"
@@ -87,29 +83,20 @@ jobs:
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
         with:
-          just: ${{ steps.versions.outputs.just }}
           sccache: ${{ steps.versions.outputs.sccache }}
           sccache_disable_annotations: true
 
-      - name: Install dprint
-        uses: taiki-e/install-action@41ef8c65f4034ff24ab1cc2cef52f3000bcf9523 # v2.62.40
-        with:
-          tool: dprint@${{ steps.versions.outputs.dprint }}
+      - uses: jdx/mise-action@v2
 
-      - name: Check dprint formatting
+      - name: Check formatting
         run: |
           set -euxo pipefail
-          just dprint "check"
-
-      - name: Check cargo formatting
-        run: |
-          set -euxo pipefail
-          just cargo-fmt
+          mise run fmt:check
 
       - name: Run clippy
         run: |
           set -euxo pipefail
-          just cargo-clippy
+          mise run clippy:strict
 
   check:
     name: check
@@ -128,14 +115,15 @@ jobs:
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
         with:
-          just: ${{ needs.fmt.outputs.just }}
           sccache: ${{ needs.fmt.outputs.sccache }}
           sccache_disable_annotations: true
+
+      - uses: jdx/mise-action@v2
 
       - name: Check compilation
         run: |
           set -euxo pipefail
-          just cargo-check
+          mise run check
 
   test:
     name: test
@@ -156,18 +144,14 @@ jobs:
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
         with:
-          just: ${{ needs.fmt.outputs.just }}
           sccache: ${{ needs.fmt.outputs.sccache }}
 
-      - name: Install cargo-llvm-cov
-        uses: taiki-e/install-action@41ef8c65f4034ff24ab1cc2cef52f3000bcf9523 # v2.62.40
-        with:
-          tool: cargo-llvm-cov
+      - uses: jdx/mise-action@v2
 
       - name: Generate coverage report
         run: |
           set -euxo pipefail
-          just cargo-llvm-cov
+          mise run coverage
 
       - name: Upload coverage
         uses: k1LoW/octocov-action@73d561f65d59e66899ed5c87e4621a913b5d5c20 # v1.5.0
@@ -191,13 +175,14 @@ jobs:
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
         with:
-          just: ${{ needs.fmt.outputs.just }}
           sccache: ${{ needs.fmt.outputs.sccache }}
+
+      - uses: jdx/mise-action@v2
 
       - name: Build release binary
         run: |
           set -euxo pipefail
-          just cargo-build release
+          mise run build:release
 
       - name: Upload binary artifacts
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
