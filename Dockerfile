@@ -8,36 +8,20 @@ ARG DEBIAN_FRONTEND=noninteractive \
 	USER_UID=${USER_UID:-60001} \
 	USER_GID=${USER_GID:-${USER_UID}}
 
-## renovate: datasource=github-releases packageName=rhysd/actionlint versioning=semver automerge=true
-ARG ACTIONLINT_VERSION=v1.7.8
-## renovate: datasource=github-releases packageName=dprint/dprint versioning=semver automerge=true
-ARG DPRINT_VERSION=0.50.2
-## renovate: datasource=github-releases packageName=suzuki-shunsuke/ghalint versioning=semver automerge=true
-ARG GHALINT_VERSION=v1.5.3
-## renovate: datasource=github-releases packageName=evilmartians/lefthook versioning=semver automerge=true
-ARG LEFTHOOK_VERSION=v1.13.6
 ## renovate: datasource=github-releases packageName=rui314/mold versioning=semver automerge=true
 ARG MOLD_VERSION=v2.40.4
 
 # Rust tools
-## renovate: datasource=github-releases packageName=ast-grep/ast-grep versioning=semver automerge=true
-ARG AST_GREP_VERSION=0.39.7
 ## renovate: datasource=github-tags packageName=matthiaskrgr/cargo-cache versioning=semver automerge=true
 ARG CACHE_VERSION=0.8.3
 ## renovate: datasource=github-tags packageName=regexident/cargo-modules versioning=semver automerge=true
 ARG MODULES_VERSION=v0.25.0
-## renovate: datasource=github-releases packageName=casey/just versioning=semver automerge=true
-ARG JUST_VERSION=1.43.0
-## renovate: datasource=github-releases packageName=taiki-e/cargo-llvm-cov versioning=semver automerge=true
-ARG LLVM_COV_VERSION=v0.6.21
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
 ARG SCCACHE_VERSION=v0.12.0
 ## renovate: datasource=github-releases packageName=ziglang/zig versioning=semver automerge=true
 ARG ZIG_VERSION=0.15.1
 ## renovate: datasource=github-releases packageName=rust-cross/cargo-zigbuild versioning=semver automerge=true
 ARG ZIGBUILD_VERSION=v0.20.1
-## renovate: datasource=github-releases packageName=zizmorcore/zizmor versioning=semver automerge=true
-ARG ZIZMOR_VERSION=v1.16.0
 
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
@@ -47,18 +31,14 @@ ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 #- Builder Base
 #-
 FROM rust:1.89.0-trixie@sha256:57407b378b2b6e07b48a6135a20c87cc22ea6e249c0acf6cb1833ead3cf116e9 AS builder-base
-ARG AST_GREP_VERSION \
-	CACHE_VERSION \
+ARG CACHE_VERSION \
 	CURL_OPTS \
 	DEBIAN_FRONTEND \
-	JUST_VERSION \
-	LLVM_COV_VERSION \
 	MODULES_VERSION \
 	MOLD_VERSION \
 	SCCACHE_VERSION \
 	ZIG_VERSION \
 	ZIGBUILD_VERSION \
-	ZIZMOR_VERSION \
 	USER_NAME \
 	USER_UID \
 	USER_GID \
@@ -119,55 +99,6 @@ RUN echo "**** Install mold ****" && \
 	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
 	tar -xvf "./${_filename}" --strip-components 1 -C /usr && \
 	type -p mold && \
-	rm -rf "./${_filename}"
-
-RUN echo "**** Rust tool ast-grep ****" && \
-	set -euxo pipefail && \
-	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/ast-grep/ast-grep/releases/tags/${AST_GREP_VERSION})" && \
-	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("x86_64-unknown-linux-gnu.zip"))')" && \
-	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
-	_digest="$(echo "$_asset" | jq -r '.digest')" && \
-	_sha256="${_digest#sha256:}" && \
-	_filename="$(basename "$_download_url")" && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
-	unzip "./${_filename}" -d "/usr/local/bin/" && \
-	type -p ast-grep sg && \
-	rm -rf "./${_filename}"
-
-RUN echo "**** Rust tool just ****" && \
-	set -euxo pipefail && \
-	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/casey/just/releases/tags/${JUST_VERSION})" && \
-	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-musl.tar.gz"))')" && \
-	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
-	_digest="$(echo "$_asset" | jq -r '.digest')" && \
-	_sha256="${_digest#sha256:}" && \
-	_filename="$(basename "$_download_url")" && \
-	_tmpdir=$(mktemp -q -d) && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
-	tar -xvf "./${_filename}" -C "${_tmpdir}" && \
-	ls -lah "${_tmpdir}" && \
-	cp -av "${_tmpdir}/just" /usr/local/bin/ && \
-	cp -av "${_tmpdir}/completions/just.bash" /usr/share/bash-completion/completions/ && \
-	type -p just && \
-	rm -rf "./${_filename}" "${_tmpdir}"
-
-RUN echo "**** Rust tool cargo-llvm-cov ****" && \
-	set -euxo pipefail && \
-	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/taiki-e/cargo-llvm-cov/releases/tags/${LLVM_COV_VERSION})" && \
-	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("-x86_64-unknown-linux-gnu.tar.gz"))')" && \
-	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
-	_digest="$(echo "$_asset" | jq -r '.digest')" && \
-	_sha256="${_digest#sha256:}" && \
-	_filename="$(basename "$_download_url")" && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
-	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
-	type -p cargo-llvm-cov && \
 	rm -rf "./${_filename}"
 
 RUN echo "**** Rust tool sccache ****" && \
@@ -237,9 +168,7 @@ RUN --mount=type=cache,target=/home/cuser/.cache/sccache,sharing=locked,uid=${US
 	set -euxo pipefail && \
 	cargo install --locked \
 	cargo-cache@${CACHE_VERSION} \
-	cargo-llvm-cov@${LLVM_COV_VERSION#v} \
 	cargo-modules@${MODULES_VERSION#v} \
-	zizmor@${ZIZMOR_VERSION#v} \
 	&& \
 	cargo cache --version && \
 	cargo modules --version
@@ -259,12 +188,9 @@ USER root
 #- Development
 #-
 FROM builder-base AS development
-ARG ACTIONLINT_VERSION \
-	CURL_OPTS \
-	GHALINT_VERSION \
+ARG CURL_OPTS \
 	DEBIAN_FRONTEND \
-	DPRINT_VERSION \
-	LEFTHOOK_VERSION
+	USER_NAME
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	--mount=type=cache,target=/var/lib/apt,sharing=locked \
@@ -272,75 +198,22 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
 	apt-get -y install --no-install-recommends \
-	shellcheck \
-	&& \
-	echo "**** Install actionlint ****" && \
-	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/rhysd/actionlint/releases/tags/${ACTIONLINT_VERSION})" && \
-	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("_linux_amd64.tar.gz"))')" && \
-	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
-	# _digest="$(echo "$_asset" | jq -r '.digest')" && \
-	# _sha256="${_digest#sha256:}" && \
-	_filename="$(basename "$_download_url")" && \
-	_tmpdir=$(mktemp -q -d) && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	# echo "${_sha256}  ${_filename}" | sha256sum -c - && \
-	tar -xvf "./${_filename}" -C "${_tmpdir}" && \
-	ls -lah "${_tmpdir}" && \
-	cp -av "${_tmpdir}/actionlint" /usr/local/bin/ && \
-	type -p actionlint && \
-	rm -rf "./${_filename}" "${_tmpdir}"
-
-RUN echo "**** Install ghalint ****" && \
-	set -euxo pipefail && \
-	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/suzuki-shunsuke/ghalint/releases/tags/${GHALINT_VERSION})" && \
-	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("_linux_amd64.tar.gz"))')" && \
-	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
-	_digest="$(echo "$_asset" | jq -r '.digest')" && \
-	_sha256="${_digest#sha256:}" && \
-	_filename="$(basename "$_download_url")" && \
-	_tmpdir=$(mktemp -q -d) && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
-	tar -xvf "./${_filename}" -C "${_tmpdir}" && \
-	ls -lah "${_tmpdir}" && \
-	cp -av "${_tmpdir}/ghalint" /usr/local/bin/ && \
-	type -p ghalint && \
-	rm -rf "./${_filename}" "${_tmpdir}"
-
-RUN echo "**** Install dprint ****" && \
-	set -euxo pipefail && \
-	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/dprint/dprint/releases/tags/${DPRINT_VERSION} | \
-	jq -r '.assets[] | select(.name | endswith("x86_64-unknown-linux-gnu.zip")) | .browser_download_url')" && \
-	_filename="$(basename "$_download_url")" && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	unzip "${_filename}" -d /usr/local/bin/ && \
-	type -p dprint && \
-	rm -rf "./${_filename}"
-
-RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
-	--mount=type=cache,target=/var/lib/apt,sharing=locked \
-	\
-	echo "**** Install Lefthook ****" && \
-	set -euxo pipefail && \
-	_download_url="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
-	https://api.github.com/repos/evilmartians/lefthook/releases/tags/${LEFTHOOK_VERSION} | \
-	jq -r '.assets[] | select(.name | endswith("_amd64.deb")) | .browser_download_url')" && \
-	_filename="$(basename "$_download_url")" && \
-	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
-	ls -lah && \
-	apt-get -y install "./${_filename}" && \
-	\
-	lefthook version --full && \
-	rm -rf "./${_filename}"
+	shellcheck
 
 # User level settings
 USER ${USER_NAME}
-RUN echo "**** add Lefthook bash-completion ****" && \
+RUN echo "**** Install mise ****" && \
 	set -euxo pipefail && \
-	lefthook completion bash > /home/${USER_NAME}/.local/share/bash-completion/completions/lefthook
+	curl https://mise.jdx.dev/install.sh | sh && \
+	echo -e '\n# mise\neval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc && \
+	~/.local/bin/mise --version
+
+COPY --chown=${USER_NAME}:${USER_NAME} mise.toml /tmp/mise.toml
+RUN echo "**** Install tools via mise ****" && \
+	set -euxo pipefail && \
+	cd /tmp && \
+	~/.local/bin/mise install -y && \
+	rm /tmp/mise.toml
 
 # Ref: https://docs.anthropic.com/en/docs/claude-code/setup#native-binary-installation-beta
 RUN echo "**** Install Claude Code ****" && \

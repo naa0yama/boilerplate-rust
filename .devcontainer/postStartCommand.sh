@@ -37,4 +37,4 @@ else
 	echo "All mounts validated successfully!"
 fi
 
-lefthook install
+chmod +x .githooks/*

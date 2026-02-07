@@ -13,9 +13,8 @@ devcontainer を利用した環境ですべて設定済み
 - ブランチを作成
 - 実装
 - 該当ファイルのみを Git stage に登録
-- `lefthook run pre-commit` でコミットチェックを実施
-  - エラーの場合は修正して再度 Git ステージに追加し `lefthook run pre-commit` を実施
-  - `lefthook` は Git stage されている物を対象にテストを実施します
+- `mise run pre-commit` でコミットチェックを実施
+  - エラーの場合は修正して再度 Git ステージに追加し `mise run pre-commit` を実施
 - ドキュメントを更新
 
 ## 3. コーディング規約
@@ -53,7 +52,7 @@ fn into_vec(self) -> Vec<T>
 impl S {
     // get_は付けない
     pub fn first(&self) -> &First { &self.first }
-    
+
     // mut版
     pub fn first_mut(&mut self) -> &mut First { &mut self.first }
 }
@@ -136,11 +135,11 @@ struct Args {
     /// 必須の引数(短縮形と長形式の両方)
     #[arg(short, long)]
     name: String,
-    
+
     /// オプション引数(デフォルト値設定)
     #[arg(short, long, default_value = "default")]
     option: String,
-    
+
     /// フラグ(存在チェック)
     #[arg(long, short = 'V', help = "Print version")]
     version: bool,
@@ -188,7 +187,7 @@ project-name/
 ├── .devcontainer/                      # 開発環境設定
 ├── .github/                            # GitHub Actions & 設定
 │   ├── actions/
-│   │   ├── act-setup-rust/             # Rust, just のセットアップ
+│   │   ├── act-setup-rust/             # Rust のセットアップ
 │   │   └── create-release/             # Release 作成 action
 │   ├── workflows/                      # CI/CD ワークフロー
 │   │   ├── audit.yaml                  # cargo audit の定期実行
@@ -201,6 +200,10 @@ project-name/
 │   │   └── tagpr.yaml
 │   ├── labeler.yml
 │   └── release.yml
+├── .githooks/                          # Git hooks (mise run 連携)
+│   ├── commit-msg                      # Conventional Commits 検証
+│   ├── pre-commit                      # コミット前チェック
+│   └── pre-push                        # プッシュ前チェック
 ├── .vscode/                            # VS Code設定
 │   ├── launch.json                     # デバッグ設定
 │   └── settings.json                   # ワークスペース設定
@@ -225,8 +228,7 @@ project-name/
 ├── Cargo.toml                          # プロジェクト設定と依存関係
 ├── Dockerfile                          # devcontainer 環境ファイル
 ├── dprint.jsonc                        # フォーマッター設定
-├── justfile                            # ビルドタスク管理
-├── lefthook.yml                        # Git hooks
+├── mise.toml                           # ツール管理 & タスクランナー
 ├── LICENSE                             # ライセンスファイル
 ├── README.md                           # プロジェクト説明
 ├── renovate.json                       # 依存関係自動更新
@@ -264,10 +266,10 @@ mod tests {
     fn test_basic_functionality() {
         // arrange
         let input = prepare_input();
-        
+
         // act
         let result = process(input);
-        
+
         // assert
         assert_eq!(result, expected);
     }
@@ -334,7 +336,7 @@ mod tests {
     fn test_sayhello() {
         // テスト用のtracing初期化
         fmt().with_test_writer().init();
-        
+
         let result = sayhello("Alice".to_string());
         assert_eq!(result, "Hi, Alice");
     }
@@ -343,29 +345,29 @@ mod tests {
 
 ## 6. CI/CD
 
-### 5.1 必須チェック(justfile経由)
+### 5.1 必須チェック(`mise run` 経由)
 
 ```bash
 # フォーマットチェック
-just cargo-fmt           # cargo fmt --check
-just dprint check        # dprint formatting check
+mise run fmt:check       # cargo fmt --check + dprint check
 
 # 静的解析
-just cargo-clippy        # clippy with strict warnings
-just project-rules-check # ast-grep project rules check
+mise run clippy          # clippy (warnings only, TDD向け)
+mise run clippy:strict   # clippy (warnings as errors, CI/pre-commit向け)
+mise run ast-grep        # ast-grep project rules check
 
 # テスト実行
-just cargo-test          # unit & integration tests
+mise run test            # unit & integration tests
 
 # ビルドチェック
-just cargo-build         # debug build
-just cargo-build release # release build
+mise run build           # debug build
+mise run build:release   # release build
 
 # カバレッジ
-just cargo-llvm-cov      # code coverage report
+mise run coverage        # code coverage report
 
 # クロスコンパイル
-just zigbuild-all        # Tier 1 targets
+mise run zigbuild:all    # Tier 1 targets
 ```
 
 ### 5.2 品質基準
@@ -377,28 +379,26 @@ just zigbuild-all        # Tier 1 targets
 ### 5.3 クロスコンパイル対応
 
 ```bash
-# Tier 1 targets(全て対応)
-just zigbuild-all
+# Tier 1 targets（全て対応）
+mise run zigbuild:all
 # - aarch64-apple-darwin    (Apple Silicon macOS)
 # - aarch64-unknown-linux-gnu (ARM64 Linux)
 # - x86_64-pc-windows-gnu   (Windows)
 # - x86_64-unknown-linux-gnu (Intel/AMD Linux)
 
 # 個別ターゲット
-just zigbuild x86_64-pc-windows-gnu
+TARGET=x86_64-pc-windows-gnu mise run zigbuild
 ```
 
-### 5.4 Git フック(lefthook)
+### 5.4 Git フック(`.githooks/` + `mise`)
 
 #### 事前チェック(pre-commit)
 
-lefthookによりコミット時に自動的に品質チェックを実行:
+`.githooks/` と `mise` によりコミット時に自動的に品質チェックを実行:
 
 ```bash
-# lefthook により自動実行される項目
-lefthook run pre-commit
-# または手動で全ファイルをチェック
-lefthook run pre-commit --all-files
+# mise により自動実行される項目
+mise run pre-commit
 ```
 
 - **コミット時**: 上記チェックが失敗すると自動的にコミット拒否
@@ -439,7 +439,7 @@ pub fn function(param: Type) -> Result<ReturnType> {
 
 - プロジェクト概要(CLIツールの目的)
 - Dev Container を使ったセットアップ手順
-- justfile を使ったビルド・テスト方法
+- `mise run` を使ったビルド・テスト方法
 - CLI の使用方法とオプション
 - クロスコンパイル手順
 - VSCode拡張機能一覧
@@ -595,13 +595,13 @@ std = [] # no-std対応の場合
 
 ### 15.1 必須確認項目
 
-- [ ] `lefthook run pre-commit --all-files`実行済み
-- [ ] `cargo clippy`警告なし
-- [ ] `just project-rules-check`エラーなし
+- [ ] `mise run pre-commit` 実行済み
+- [ ] `mise run clippy:strict` 警告なし
+- [ ] `mise run ast-grep` エラーなし
 - [ ] テスト追加・更新
 - [ ] ドキュメント更新
 - [ ] エラーハンドリング適切
-- [ ] `unwrap()`の正当性確認
+- [ ] `unwrap()` の正当性確認
 
 ### 15.2 推奨確認項目
 
@@ -626,6 +626,6 @@ std = [] # no-std対応の場合
   - [cargo-zigbuild](https://github.com/rust-cross/cargo-zigbuild) - クロスコンパイル
 
 - 開発環境・ツール
-  - [just Documentation](https://just.systems/) - タスクランナー
+  - [mise Documentation](https://mise.jdx.dev/) - ツール管理 & タスクランナー
   - [dprint Documentation](https://dprint.dev/) - コードフォーマッター
   - [Dev Containers](https://code.visualstudio.com/docs/devcontainers/containers) - 開発環境
