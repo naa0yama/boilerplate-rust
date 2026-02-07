@@ -40,7 +40,7 @@ Allowed types: feat, update, fix, style, refactor, docs, perf, test, build, ci, 
 
 ## Key Coding Rules
 
-- **Imports**: Only `std` / `crate` / `super` allowed at file top-level. External crates must use full path or function-scoped `use`. No aliases (`as`), no wildcards (`*`).
+- **Imports**: All `use` statements at file top level, grouped: `std` -> external crates -> `crate`/`super`. No wildcards (`*`). Aliases (`as`) permitted for name conflicts and re-exports.
 - **Error handling**: Never use bare `?`. Always add `.context()` or `.with_context()`.
 - **Logging**: Use `tracing` crate, not `println!` / `dbg!`.
 - **Tests**: Arrange / Act / Assert pattern. Unit tests in `#[cfg(test)] mod tests`, integration tests in `tests/`. `#![allow(clippy::unwrap_used)]` is permitted in test code.

@@ -5,10 +5,8 @@ echo "Validating mounted files and directories..."
 
 # List of expected mounted files and directories (optional)
 EXPECTED_MOUNTS=(
-	"$HOME/.claude/"
-	"$HOME/.claude/settings.json"
 	"$HOME/.claude.json"
-	"$HOME/.gitignore_global"
+	"$HOME/.claude/"
 )
 
 validation_failed=false
@@ -16,7 +14,7 @@ validation_failed=false
 # Check each expected mount
 for mount_path in "${EXPECTED_MOUNTS[@]}"; do
 	if [[ ! -e "$mount_path" ]]; then
-		echo "\e[33m\e[0mWARNING: Mount target not found: $mount_path\e[0m"
+		echo -e "\e[33mWARNING: Mount target not found: $mount_path\e[0m"
 		validation_failed=true
 	else
 		echo "✓ Mount validated: $mount_path"
@@ -38,3 +36,5 @@ else
 fi
 
 chmod +x .githooks/*
+mise trust /app/mise.toml
+mise install
