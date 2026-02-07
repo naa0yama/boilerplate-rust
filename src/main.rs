@@ -1,5 +1,11 @@
+//! Brust - Rust ボイラープレートプロジェクト
+
+/// ライブラリモジュール群
 pub mod libs;
 use clap::Parser;
+use tracing_subscriber::{filter::EnvFilter, fmt};
+
+use crate::libs::hello::{GreetingError, sayhello};
 
 #[derive(Parser)]
 #[command(about)]
@@ -24,7 +30,6 @@ const APP_VERSION: &str = concat!(
 );
 
 fn main() {
-    use tracing_subscriber::{filter::EnvFilter, fmt};
     fmt()
         .with_env_filter(
             EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
@@ -46,19 +51,16 @@ fn main() {
 /// * `name` - 挨拶対象の名前
 /// * `gender` - 性別オプション（None, Some("man"), Some("woman"), その他）
 pub fn run(name: &str, gender: Option<&str>) {
-    use crate::libs::hello::{GreetingError, sayhello};
-
     let greeting = match sayhello(name, gender) {
-        Ok(Ok(msg)) => msg,
-        Ok(Err(GreetingError::InvalidGender(invalid_gender))) => {
+        Ok(msg) => msg,
+        Err(GreetingError::InvalidGender(invalid_gender)) => {
             tracing::warn!(
                 "Invalid gender '{}' specified, using default greeting",
                 invalid_gender
             );
             format!("Hi, {name} (invalid gender: {invalid_gender})")
         }
-        Ok(Err(GreetingError::UnknownGender)) | Err(_) => {
-            // Fallback for any unexpected cases
+        Err(GreetingError::UnknownGender) => {
             tracing::error!("Unexpected error in greeting generation, using default");
             format!("Hi, {name}")
         }

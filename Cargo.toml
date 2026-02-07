@@ -57,6 +57,9 @@ cast_precision_loss = "warn" #                   精度損失が起こるキャ�
 # パフォーマンス最適化 - イテレータとコレクション
 needless_collect = "warn" #                      不要な.collect()を検出(中間コレクション生成回避)
 manual_find_map = "warn" #                       .find().map()を.find_map()で最適化提案
+reserve_after_initialization = "warn" #          Vec容量の事前確保を推奨
+manual_filter_map = "warn" #                     手動filter+mapをfilter_mapで最適化提案
+map_flatten = "warn" #                           .map().flatten()を.flat_map()で最適化提案
 unnecessary_to_owned = "warn" #                  不要なto_owned()呼び出しを検出(所有権移動回避)
 single_element_loop = "warn" #                   1要素ループをif文で最適化提案
 
@@ -65,6 +68,7 @@ inefficient_to_string = "warn" #                 非効率なto_string()を検�
 str_to_string = "warn" #                         &str.to_string()を検出(String::from推奨)
 string_to_string = "warn" #                      String.to_string()を検出(clone推奨)
 format_in_format_args = "warn" #                 format!内のformat!を検出(直接引数推奨)
+manual_string_new = "warn" #                     String::new()の代替パターンを検出
 
 # パフォーマンス最適化 - メモリ効率
 box_collection = "warn" #                        Box<Vec<T>>等を検出(直接使用推奨)

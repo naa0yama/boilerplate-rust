@@ -205,21 +205,43 @@ USER ${USER_NAME}
 RUN echo "**** Install mise ****" && \
 	set -euxo pipefail && \
 	curl https://mise.jdx.dev/install.sh | sh && \
-	echo -e '\n# mise\neval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc && \
 	~/.local/bin/mise --version
 
 COPY --chown=${USER_NAME}:${USER_NAME} mise.toml /tmp/mise.toml
 RUN echo "**** Install tools via mise ****" && \
 	set -euxo pipefail && \
 	cd /tmp && \
+	~/.local/bin/mise trust -y /tmp/mise.toml && \
 	~/.local/bin/mise install -y && \
+	~/.local/bin/mise trust -y --untrust /tmp/mise.toml && \
 	rm /tmp/mise.toml
+
+RUN <<EOF
+echo "**** add '~/.bashrc mise and claude code ****"
+set -euxo pipefail
+
+cat <<- '_DOC_' >> ~/.bashrc
+# mise
+eval "$(~/.local/bin/mise activate bash)"
+
+# This requires bash-completion to be installed
+if [ ! -f "${HOME}/.local/share/bash-completion/completions/mise" ]; then
+	~/.local/bin/mise use -g usage
+	mkdir -p "${HOME}/.local/share/bash-completion/completions/"
+	~/.local/bin/mise completion bash --include-bash-completion-lib > "${HOME}/.local/share/bash-completion/completions/mise"
+fi
+
+# Claude Code
+export PATH="$HOME/.local/bin:$PATH"
+alias cc="claude --dangerously-skip-permissions"
+
+_DOC_
+EOF
 
 # Ref: https://docs.anthropic.com/en/docs/claude-code/setup#native-binary-installation-beta
 RUN echo "**** Install Claude Code ****" && \
 	set -euxo pipefail && \
 	curl -fsSL https://claude.ai/install.sh | bash && \
-	echo -e "\n# Claude Code\nexport PATH=\"\$HOME/.local/bin:\$PATH\"\nalias cc=\"claude --dangerously-skip-permissions\"" | tee -a "/home/${USER_NAME}/.bashrc" && \
 	exec ${SHELL} -l && \
 	claude --version && \
 	type cc

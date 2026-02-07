@@ -60,37 +60,39 @@ impl S {
 
 ### 3.2 import/use文のルール
 
+#### use文の配置
+
+すべての `use` 文はファイル先頭にまとめる（Rust コミュニティ標準に準拠）。
+
+```rust
+// ✅ ファイル先頭にグループ化して記述
+// 1. std
+use std::collections::HashMap;
+use std::sync::Arc;
+
+// 2. 外部クレート
+use anyhow::Context;
+use serde::Deserialize;
+
+// 3. crate/super
+use crate::libs::hello::sayhello;
+```
+
 #### 禁止事項
 
 ```rust
-// ❌ ファイル先頭でのuse(標準ライブラリ以外)
-use hoge::Error;  // 禁止
-
-// ❌ エイリアス
-use hoge::A as HogeA;  // 禁止
-
 // ❌ ワイルドカードインポート
-use hoge::prelude::*;  // 禁止(std以外)
-
-// ❌ 型名の上書き
-type Result<T> = Result<T, MyError>;  // 禁止
+use hoge::prelude::*;  // 禁止
 ```
 
-#### 推奨事項
+#### 許可事項
 
 ```rust
-// ✅ フルパスで記述
-let channel = std::sync::mpsc::channel();
+// ✅ エイリアス（名前衝突解消、re-export で使用可）
+use std::fmt::Result as FmtResult;
 
-// ✅ 関数内でのuseは許可
-fn process() {
-    use std::collections::HashMap;
-    let map = HashMap::new();
-}
-
-// ✅ 標準的な型のみ例外
-use std::sync::Arc;
-use std::rc::Rc;
+// ✅ Result 型エイリアス（std::io::Result 等と同じ慣用パターン）
+type Result<T> = std::result::Result<T, MyError>;
 ```
 
 ### 3.3 エラーハンドリング
@@ -98,11 +100,20 @@ use std::rc::Rc;
 #### エラー型の設計
 
 ```rust
-// 推奨: 回復可能/不可能なエラーの分離
-type Result<T> = std::result::Result<
-    std::result::Result<T, CustomError>,
-    anyhow::Error
->;
+// 推奨: thiserror でドメインエラーを定義
+#[derive(Debug, thiserror::Error)]
+pub enum MyError {
+    #[error("invalid input: {0}")]
+    InvalidInput(String),
+    #[error("not found")]
+    NotFound,
+}
+
+// ライブラリ: 具体的なエラー型を返す
+pub fn process(input: &str) -> Result<Output, MyError> { /* ... */ }
+
+// アプリケーション: anyhow で集約
+pub fn run() -> anyhow::Result<()> { /* ... */ }
 ```
 
 #### エラーコンテキストの追加
@@ -461,8 +472,9 @@ pub fn function(param: Type) -> Result<ReturnType> {
 
 ```rust
 // main.rsの最初に
+use tracing_subscriber::{filter::EnvFilter, fmt};
+
 fn main() {
-    use tracing_subscriber::{filter::EnvFilter, fmt};
     fmt()
         .with_env_filter(
             EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),

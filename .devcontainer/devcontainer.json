@@ -20,11 +20,12 @@
 	// Add another local file mount.
 	"mounts": [
 		// Claude Code
-		"type=bind,source=${localEnv:HOME}/.claude,target=/home/cuser/.claude,consistency=cached",
+		"type=bind,source=${localEnv:HOME}/.claude,target=/home/cuser/.claude",
+		"type=bind,source=${localEnv:HOME}/.claude.json,target=/home/cuser/.claude.json",
 		// Git
-		"type=bind,source=${localEnv:HOME}/.gitignore_global,target=/home/cuser/.gitignore_global,consistency=cached",
+		"type=bind,source=${localEnv:HOME}/.gitconfig.d,target=/home/cuser/.gitconfig.d",
 		// GitHub
-		"type=bind,source=${localEnv:HOME}/.config/gh,target=/home/cuser/.config/gh,consistency=cached"
+		"type=bind,source=${localEnv:HOME}/.config/gh,target=/home/cuser/.config/gh"
 	],
 	"customizations": {
 		"vscode": {

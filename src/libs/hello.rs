@@ -18,14 +18,6 @@ impl std::fmt::Display for GreetingError {
 
 impl std::error::Error for GreetingError {}
 
-/// 性別を考慮した挨拶生成の結果型
-///
-/// - `Ok(Ok(T))` - 成功
-/// - `Ok(Err(GreetingError))` - 回復可能なエラー
-/// - `Err(anyhow::Error)` - 回復不可能なエラー
-pub type GreetingResult<T> =
-    std::result::Result<std::result::Result<T, GreetingError>, anyhow::Error>;
-
 /// 性別を考慮した挨拶メッセージを生成
 ///
 /// # Arguments
@@ -33,15 +25,11 @@ pub type GreetingResult<T> =
 /// * `gender` - 性別（None, Some("man"), Some("woman"), その他）
 ///
 /// # Returns
-/// * `Ok(Ok(String))` - 正常な挨拶文字列
-/// * `Ok(Err(GreetingError::UnknownGender))` - 性別未指定（回復可能）
-/// * `Ok(Err(GreetingError::InvalidGender))` - 無効な性別（回復可能）
-/// * `Err(anyhow::Error)` - システムエラー（回復不可能）
+/// * `Ok(String)` - 正常な挨拶文字列
+/// * `Err(GreetingError::InvalidGender)` - 無効な性別（回復可能）
 ///
 /// # Errors
-/// この関数はネストした Result パターンを使用します：
-/// - 外側の `Result` は `anyhow::Error` でシステムレベルのエラー
-/// - 内側の `Result` は `GreetingError` で回復可能なビジネスロジックエラー
+/// 無効な性別が指定された場合に `GreetingError::InvalidGender` を返します。
 ///
 /// # Examples
 /// ```
@@ -49,24 +37,19 @@ pub type GreetingResult<T> =
 ///
 /// // 成功例
 /// let result = sayhello("Alice", Some("woman"));
-/// assert!(matches!(result, Ok(Ok(_))));
+/// assert!(matches!(result, Ok(_)));
 ///
-/// // 回復可能エラー例
-/// let result = sayhello("Bob", None);
-/// assert!(matches!(result, Ok(Err(_))));
+/// // エラー例
+/// let result = sayhello("Bob", Some("invalid"));
+/// assert!(matches!(result, Err(_)));
 /// ```
-pub fn sayhello(name: &str, gender: Option<&str>) -> GreetingResult<String> {
-    use anyhow::Context;
-
-    let result = match gender {
+pub fn sayhello(name: &str, gender: Option<&str>) -> Result<String, GreetingError> {
+    match gender {
         Some("man") => Ok(format!("Hi, Mr. {name}")),
         Some("woman") => Ok(format!("Hi, Ms. {name}")),
         None => Ok(format!("Hi, {name}")),
         Some(invalid) => Err(GreetingError::InvalidGender(String::from(invalid))),
-    };
-
-    Ok::<std::result::Result<String, GreetingError>, anyhow::Error>(result)
-        .context("Failed to generate greeting with gender")
+    }
 }
 
 #[cfg(test)]
@@ -76,8 +59,8 @@ mod tests {
     #[test]
     fn test_sayhello_with_gender_man() {
         let result = sayhello("John", Some("man"));
-        assert!(matches!(result, Ok(Ok(_))));
-        if let Ok(Ok(greeting)) = result {
+        assert!(result.is_ok());
+        if let Ok(greeting) = result {
             assert_eq!(greeting, "Hi, Mr. John");
         }
     }
@@ -85,8 +68,8 @@ mod tests {
     #[test]
     fn test_sayhello_with_gender_woman() {
         let result = sayhello("Alice", Some("woman"));
-        assert!(matches!(result, Ok(Ok(_))));
-        if let Ok(Ok(greeting)) = result {
+        assert!(result.is_ok());
+        if let Ok(greeting) = result {
             assert_eq!(greeting, "Hi, Ms. Alice");
         }
     }
@@ -94,8 +77,8 @@ mod tests {
     #[test]
     fn test_sayhello_with_gender_none() {
         let result = sayhello("Bob", None);
-        assert!(matches!(result, Ok(Ok(_))));
-        if let Ok(Ok(greeting)) = result {
+        assert!(result.is_ok());
+        if let Ok(greeting) = result {
             assert_eq!(greeting, "Hi, Bob");
         }
     }
@@ -103,8 +86,8 @@ mod tests {
     #[test]
     fn test_sayhello_with_gender_invalid() {
         let result = sayhello("Charlie", Some("other"));
-        assert!(matches!(result, Ok(Err(GreetingError::InvalidGender(_)))));
-        if let Ok(Err(GreetingError::InvalidGender(gender))) = result {
+        assert!(matches!(result, Err(GreetingError::InvalidGender(_))));
+        if let Err(GreetingError::InvalidGender(gender)) = result {
             assert_eq!(gender, "other");
         }
     }
@@ -112,8 +95,8 @@ mod tests {
     #[test]
     fn test_sayhello_with_gender_empty_string() {
         let result = sayhello("Dave", Some(""));
-        assert!(matches!(result, Ok(Err(GreetingError::InvalidGender(_)))));
-        if let Ok(Err(GreetingError::InvalidGender(gender))) = result {
+        assert!(matches!(result, Err(GreetingError::InvalidGender(_))));
+        if let Err(GreetingError::InvalidGender(gender)) = result {
             assert_eq!(gender, "");
         }
     }

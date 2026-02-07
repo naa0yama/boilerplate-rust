@@ -1,9 +1,11 @@
 #![allow(clippy::unwrap_used)] // テストコードではunwrapを許可
+#![allow(missing_docs)] // テストコードではdocコメント不要
+
+use assert_cmd::Command;
+use predicates::prelude::predicate;
 
 #[test]
 fn test_cli_with_custom_name() {
-    use assert_cmd::Command;
-    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("--name")
         .arg("Alice")
@@ -14,8 +16,6 @@ fn test_cli_with_custom_name() {
 
 #[test]
 fn test_cli_with_short_flag() {
-    use assert_cmd::Command;
-    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("-n")
         .arg("Bob")
@@ -26,8 +26,6 @@ fn test_cli_with_short_flag() {
 
 #[test]
 fn test_cli_version_flag() {
-    use assert_cmd::Command;
-    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("--version")
         .assert()
@@ -37,8 +35,6 @@ fn test_cli_version_flag() {
 
 #[test]
 fn test_cli_version_short_flag() {
-    use assert_cmd::Command;
-    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("-V")
         .assert()
@@ -48,8 +44,6 @@ fn test_cli_version_short_flag() {
 
 #[test]
 fn test_cli_with_gender_man() {
-    use assert_cmd::Command;
-    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("--name")
         .arg("John")
@@ -62,8 +56,6 @@ fn test_cli_with_gender_man() {
 
 #[test]
 fn test_cli_with_gender_woman() {
-    use assert_cmd::Command;
-    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("--name")
         .arg("Alice")
@@ -76,8 +68,6 @@ fn test_cli_with_gender_woman() {
 
 #[test]
 fn test_cli_with_gender_short_flag() {
-    use assert_cmd::Command;
-    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("-n")
         .arg("Bob")
@@ -90,8 +80,6 @@ fn test_cli_with_gender_short_flag() {
 
 #[test]
 fn test_cli_with_invalid_gender() {
-    use assert_cmd::Command;
-    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("--name")
         .arg("Charlie")
@@ -106,8 +94,6 @@ fn test_cli_with_invalid_gender() {
 
 #[test]
 fn test_cli_without_gender() {
-    use assert_cmd::Command;
-    use predicates::prelude::predicate;
     let mut cmd = Command::cargo_bin("brust").unwrap();
     cmd.arg("--name")
         .arg("Dave")

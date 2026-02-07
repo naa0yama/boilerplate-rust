@@ -3,6 +3,7 @@
 プロジェクトで使用しているast-grepルールの詳細解説です。各ルールについてダメな例、良い例、理由を示します。
 
 > **Note**: 以下のルールは clippy に移行済みのため、ast-grep からは削除されました:
+>
 > - `unsafe-needs-safety-comment` -> `clippy::undocumented_unsafe_blocks`
 > - `no-unwrap-in-production` -> `clippy::unwrap_used` + `.clippy.toml` の `allow-unwrap-in-tests`
 > - `no-println-debug` -> `clippy::print_stdout` + `print_stderr` + `dbg_macro`
@@ -10,177 +11,16 @@
 > - `no-ignored-result` -> rustc `unused_must_use`
 > - `require-pub-doc-comment` -> rustc `missing_docs`
 > - `avoid-nested-matches` -> `clippy::collapsible_match`
-
----
-
-## パフォーマンス最適化
-
-### prefer-vec-with-capacity
-
-**目的**: ループ内 `push` の際は `Vec::with_capacity()` 使用を推奨
-
-#### ダメな例
-
-```rust
-fn process_items(items: &[Item]) -> Vec<ProcessedItem> {
-    let mut result = Vec::new(); // 初期容量0 - 何度も再割り当て発生
-    for item in items {
-        result.push(process_item(item));
-    }
-    result
-}
-```
-
-#### 良い例
-
-```rust
-fn process_items(items: &[Item]) -> Vec<ProcessedItem> {
-    // 事前に容量確保 - 再割り当て回数を削減
-    let mut result = Vec::with_capacity(items.len());
-    for item in items {
-        result.push(process_item(item));
-    }
-    result
-}
-
-// さらに良い例: イテレータ使用
-fn process_items(items: &[Item]) -> Vec<ProcessedItem> {
-    items.iter().map(process_item).collect()
-}
-```
-
-#### 理由
-
-- メモリ再割り当ての回数削減
-- パフォーマンス向上(2-3倍高速化の場合も)
-- メモリフラグメンテーション軽減
-
----
-
-### optimize-string-concat
-
-**目的**: 非効率な文字列結合の最適化
-
-#### ダメな例
-
-```rust
-fn build_message(name: &str, status: &str) -> String {
-    // to_string() + &str は非効率
-    name.to_string() + " is " + status
-}
-
-fn build_long_string(parts: &[&str]) -> String {
-    let mut result = String::new();
-    for part in parts {
-        // ループ内push_str - 容量不足で何度も再割り当て
-        result.push_str(part);
-    }
-    result
-}
-```
-
-#### 良い例
-
-```rust
-fn build_message(name: &str, status: &str) -> String {
-    // format!マクロで効率的
-    format!("{} is {}", name, status)
-}
-
-fn build_long_string(parts: &[&str]) -> String {
-    // 事前容量確保
-    let capacity = parts.iter().map(|s| s.len()).sum();
-    let mut result = String::with_capacity(capacity);
-    for part in parts {
-        result.push_str(part);
-    }
-    result
-}
-```
-
-#### 理由
-
-- 不要なメモリ割り当て削減
-- 文字列操作のパフォーマンス向上
-- メモリ使用量の最適化
-
----
-
-### no-blocking-in-async
-
-**目的**: `async` 関数内での同期 I/O 操作を禁止
-
-#### ダメな例
-
-```rust
-async fn load_config() -> Result<Config, Error> {
-    // async関数内で同期I/O - スレッドブロッキング
-    let content = std::fs::read_to_string("config.toml")?;
-
-    // 同期sleep - 他のタスクもブロック
-    std::thread::sleep(Duration::from_secs(1));
-
-    parse_config(&content)
-}
-```
-
-#### 良い例
-
-```rust
-async fn load_config() -> Result<Config, Error> {
-    // async版I/O - 他のタスクをブロックしない
-    let content = tokio::fs::read_to_string("config.toml").await?;
-
-    // async版sleep
-    tokio::time::sleep(Duration::from_secs(1)).await;
-
-    parse_config(&content)
-}
-```
-
-#### 理由
-
-- 非同期実行環境でのスレッドブロッキング回避
-- 並行性の維持
-- スケーラビリティの確保
-
----
-
-### prefer-iterator-over-loop
-
-**目的**: 単純な `for` 文よりイテレータチェーン推奨
-
-#### ダメな例
-
-```rust
-fn process_numbers(numbers: &[i32]) -> Vec<String> {
-    let mut result = Vec::new();
-    for &num in numbers {
-        if num > 0 {
-            result.push(format!("positive: {}", num));
-        }
-    }
-    result
-}
-```
-
-#### 良い例
-
-```rust
-fn process_numbers(numbers: &[i32]) -> Vec<String> {
-    numbers
-        .iter()
-        .filter(|&&num| num > 0)
-        .map(|&num| format!("positive: {}", num))
-        .collect()
-}
-```
-
-#### 理由
-
-- 関数型プログラミングの利点
-- 意図がより明確
-- チェイン可能で拡張性が高い
+> - `prefer-vec-with-capacity` -> `clippy::reserve_after_initialization`
+> - `optimize-string-concat` -> `clippy::manual_string_new` + 既存の文字列系 lint
+> - `prefer-iterator-over-loop` -> `clippy::manual_filter_map` + `map_flatten` + pedantic グループ
+>
+> 以下のルールは Rust コミュニティ標準に反するため削除されました:
+>
+> - `no-file-level-external-use` - ファイル先頭の外部 `use` は Rust の標準スタイル
+> - `no-type-result-override` - `type Result<T> = ...` は `std::io::Result` 等と同じ慣用パターン
+> - `no-use-alias` - `use X as Y` は名前衝突解消、re-export で正当に使用される
+> - `prefer-nested-result` - ネスト Result は非標準。`thiserror`/`anyhow` が標準的アプローチ
 
 ---
 
@@ -283,6 +123,46 @@ fn load_user_config(user_id: u32) -> Result<Config> {
 - デバッグ時の問題特定が容易
 - エラーログの品質向上
 - 運用時のトラブルシューティング効率化
+
+---
+
+### no-blocking-in-async
+
+**目的**: `async` 関数内での同期 I/O 操作を禁止
+
+#### ダメな例
+
+```rust
+async fn load_config() -> Result<Config, Error> {
+    // async関数内で同期I/O - スレッドブロッキング
+    let content = std::fs::read_to_string("config.toml")?;
+
+    // 同期sleep - 他のタスクもブロック
+    std::thread::sleep(Duration::from_secs(1));
+
+    parse_config(&content)
+}
+```
+
+#### 良い例
+
+```rust
+async fn load_config() -> Result<Config, Error> {
+    // async版I/O - 他のタスクをブロックしない
+    let content = tokio::fs::read_to_string("config.toml").await?;
+
+    // async版sleep
+    tokio::time::sleep(Duration::from_secs(1)).await;
+
+    parse_config(&content)
+}
+```
+
+#### 理由
+
+- 非同期実行環境でのスレッドブロッキング回避
+- 並行性の維持
+- スケーラビリティの確保
 
 ---
 
@@ -391,73 +271,6 @@ impl User {
 
 ---
 
-### no-use-alias
-
-**目的**: use文でのエイリアス禁止
-
-#### ダメな例
-
-```rust
-use std::collections::HashMap as Map; // エイリアス使用
-```
-
-#### 良い例
-
-```rust
-use std::collections::HashMap; // 直接使用
-```
-
----
-
-### no-type-result-override
-
-**目的**: `Result` 型の上書き禁止
-
-#### ダメな例
-
-```rust
-type Result<T> = std::result::Result<T, MyError>; // 標準Result型を隠蔽
-```
-
-#### 良い例
-
-```rust
-type MyResult<T> = std::result::Result<T, MyError>; // 独自の型名使用
-```
-
----
-
-### no-file-level-external-use
-
-**目的**: ファイルトップレベルでの外部 `use` 禁止
-
-#### ダメな例
-
-```rust
-use external_crate::SomeType; // ファイル先頭での外部use
-
-fn main() {
-    let instance = SomeType::new();
-}
-```
-
-#### 良い例
-
-```rust
-fn main() {
-    use external_crate::SomeType; // 関数内でのuse
-    let instance = SomeType::new();
-}
-```
-
----
-
-### prefer-nested-result
-
-**目的**: ネストされた `Result` 型の使用を推奨
-
----
-
 ## ルール無効化
 
 特定の箇所でルールを無効にする場合:
@@ -468,8 +281,8 @@ fn main() {
 let value = some_operation()?;
 
 // 複数ルール無効化
-// ast-grep-ignore: no-hardcoded-credentials, no-file-level-external-use
-use some_crate::SomeType;
+// ast-grep-ignore: no-hardcoded-credentials, no-blocking-in-async
+let config = std::fs::read_to_string("config.toml")?;
 
 // 全ルール無効化
 // ast-grep-ignore
