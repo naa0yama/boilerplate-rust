@@ -1,16 +1,9 @@
 # Boilerplate-Rust
 
-![coverage](docs/coverage.svg)
-![coverage](docs/time.svg)
+![coverage](https://raw.githubusercontent.com/naa0yama/boilerplate-rust/badges/coverage.svg)
+![test execution time](https://raw.githubusercontent.com/naa0yama/boilerplate-rust/badges/time.svg)
 
-Rustプロジェクトのための開発テンプレート
-
-## TODO
-
-- [ ] Rest API の例を追加
-  - [ ] Test も追加
-- [ ] Rust の怪文書を CLAUDE.md に規約としてまとめてレビューに使えるようにする
-- [ ] Release テスト
+Rust プロジェクトのための開発テンプレート
 
 ## 概要
 
@@ -41,71 +34,82 @@ code .
 
 ## 使い方
 
-### ビルド
+すべてのタスクは `mise run <task>` で実行します。
+
+### 基本操作
 
 ```bash
-cargo build
+mise run build            # デバッグビルド
+mise run build:release    # リリースビルド
+mise run test             # テスト実行
+mise run test:watch       # TDD ウォッチモード
+mise run test:doc         # ドキュメントテスト
 ```
 
-### 実行
+### コード品質
 
 ```bash
-cargo run
+mise run fmt              # フォーマット (cargo fmt + dprint)
+mise run fmt:check        # フォーマットチェック
+mise run clippy           # Lint
+mise run clippy:strict    # Lint (warnings をエラー扱い)
+mise run ast-grep         # ast-grep カスタムルールチェック
 ```
 
-### テスト
+### コミット前チェック
 
 ```bash
-cargo test
-```
-
-### リリースビルド
-
-```bash
-cargo build --release
-```
-
-### コードフォーマット
-
-```bash
-dprint fmt
-```
-
-### Git フックの管理（lefthook）
-
-```bash
-# Git フックのインストール
-lefthook install
-
-# Git フックの実行
-lefthook run pre-commit
+mise run pre-commit       # fmt:check + clippy:strict + ast-grep
 ```
 
 ## プロジェクト構造
 
 ```
 .
+├── .cargo/                     # Cargo設定
+│   └── config.toml
 ├── .devcontainer/              # Dev Container設定
 │   ├── devcontainer.json       # Dev Container設定ファイル
-│   └── initializeCommand.sh    # 初期化コマンド
+│   ├── initializeCommand.sh    # 初期化コマンド
+│   └── postStartCommand.sh     # 起動後コマンド
+├── .githooks/                  # Git hooks (mise run 連携)
+│   ├── commit-msg              # Conventional Commits 検証
+│   ├── pre-commit              # コミット前チェック
+│   └── pre-push                # プッシュ前チェック
+├── .github/                    # GitHub Actions & 設定
+│   ├── actions/                # カスタムアクション
+│   ├── workflows/              # CI/CD ワークフロー
+│   ├── labeler.yml
+│   └── release.yml
 ├── .vscode/                    # VS Code設定
 │   ├── launch.json             # デバッグ設定
 │   └── settings.json           # ワークスペース設定
-├── src/
+├── ast-rules/                  # ast-grep プロジェクトルール
+├── docs/                       # ドキュメント
+│   └── project_rules.md        # プロジェクトルール
+├── src/                        # ソースコード
 │   ├── main.rs                 # アプリケーションのエントリーポイント
 │   ├── libs.rs                 # モジュール定義
 │   └── libs/
 │       └── hello.rs            # Helloモジュール
+├── tests/                      # 統合テスト
+│   └── integration_test.rs
 ├── .editorconfig               # エディター設定
 ├── .gitignore                  # Git除外設定
-├── Cargo.toml                  # プロジェクト設定と依存関係
+├── .octocov.yml                # カバレッジレポート設定
+├── .tagpr                      # タグ&リリース設定
+├── build.rs                    # ビルドスクリプト
 ├── Cargo.lock                  # 依存関係のロックファイル
+├── Cargo.toml                  # プロジェクト設定と依存関係
+├── deny.toml                   # cargo-deny 設定
 ├── Dockerfile                  # Dockerイメージ定義
-├── LICENSE                     # ライセンスファイル
-├── README.md                   # このファイル
 ├── dprint.jsonc                # Dprint フォーマッター設定
-├── lefthook.yml                # Git hooks設定
-└── renovate.json               # Renovate自動依存関係更新設定
+├── LICENSE                     # ライセンスファイル
+├── mise.toml                   # ツール管理 & タスクランナー
+├── README.md                   # このファイル
+├── renovate.json               # Renovate自動依存関係更新設定
+├── rust-toolchain.toml         # Rust toolchain バージョン固定
+└── sgconfig.yml                # ast-grep 設定ファイル
 ```
 
 ## VSCode拡張機能
@@ -147,70 +151,3 @@ lefthook run pre-commit
 - [The Rust Programming Language 日本語版](https://doc.rust-jp.rs/book-ja/)
 - [Developing inside a Container](https://code.visualstudio.com/docs/devcontainers/containers)
 - [Cargo Documentation](https://doc.rust-lang.org/cargo/)
-
-## Repository 設定
-
-- SSH/GPG Key をマシンに置かない
-- ロックファイルを使う
-- GitHub ActionsでSHA pinを行う(pinnact と Enforce SHA Pinningの設定)
-- renovate/dependabotはminimumReleaseAge/cooldownでアップデートを1週間遅らせる
-- commit は secretlint を通す
-- GH Actionsは zizmor を通す
-- フィッシング耐性が低いMFAは使わない
-- 生tokenをローカルに置かない
-- [CodeQL](https://docs.github.com/en/code-security/code-scanning/introduction-to-code-scanning/about-code-scanning-with-codeql) の有効化
-- GitHub は 2FA 必須
-- Permissions - 最小権限の原則
-- Renovate/Dependabot - 依存関係の自動更新
-- Secret Scanning - 秘密情報の漏洩防止
-- Branch/Push Protection - 不正な変更防止
-- CODEOWNERS - レビュー必須化
-- Sanitize User Input - 環境変数経由など
-- pull_request_target to pull_request - 権限昇格を防ぐ
-- actionlint - YAML 検証
-- Workflow Run Approval - フォークからの PR 実行承認
-- Environment Protection Rules - デプロイ環境の保護
-- pinact - Action の SHA 固定
-- Commit Signing - なりすまし防止
-- Audit Logs - 監査ログ監視
-- OSSF Scorecards - セキュリティ評価
-- Artifact Attestations - 成果物の証明
-- SLSA: Supply-chain Levels for Software Artifacts
-
-- User
-  - Security / Advanced Security
-    - [secret scanning](https://docs.github.com/en/code-security/secret-scanning/introduction/about-secret-scanning)
-    - パブリックレポジトリー
-    - GitHub Secret Protection が有効になっている GitHub Team 上の Organization 所有リポジトリ
-      - [Push protection](https://docs.github.com/ja/code-security/secret-scanning/working-with-secret-scanning-and-push-protection/push-protection-for-users)
-
-- [ ] General
-  - [ ] Features
-    - [ ] Wikis disable
-    - [ ] Sponsorships disable
-    - [ ] Discussions disable
-    - [ ] Projects disable
-  - [ ] Pull Requests
-    - [ ] Allow merge commits
-      - [ ] Default message
-      - [ ] Pull request title
-      - [ ] Pull request title and description
-    - [ ] Allow squash merging
-      - [ ] Default message
-      - [ ] Pull request title
-      - [ ] Pull request title and commit details
-      - [ ] Pull request title and description
-    - [ ] Allow rebase merging
-    - [ ] Always suggest updating pull request branches Loading
-    - [ ] Allow auto-merge
-    - [ ] Automatically delete head branches Loading
-  - [ ] Issues
-    - [ ] Auto-close issues with merged linked pull requests
-- [ ] Rulesets
-  - [ ] New branch ruleset
-  - [ ] New tag ruleset
-  - [ ] Import a ruleset
-- [ ] Actions General
-  - [ ] Workflow permissions
-    - [ ] Read repository contents and packages permissions
-    - [ ] Allow GitHub Actions to create and approve pull requests

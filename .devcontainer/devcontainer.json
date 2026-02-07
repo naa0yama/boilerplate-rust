@@ -36,7 +36,6 @@
 				"EditorConfig.EditorConfig", // 		EditorConfig for VS Code
 				"ms-azuretools.vscode-containers", // 	Container Tools
 				"ms-vscode.live-server", // 			Live Preview
-				"nefrob.vscode-just-syntax", // 		vscode-just
 				"redhat.vscode-yaml", // 				YAML
 				"rust-lang.rust-analyzer", // 			rust-analyzer
 				"ryanluker.vscode-coverage-gutters", // Coverage Gutters
