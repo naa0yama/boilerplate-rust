@@ -15,7 +15,7 @@ codeToTestRatio:
 coverage:
   acceptable: current >= 40%
   badge:
-    path: docs/coverage.svg
+    path: coverage.svg
   if: true
   paths:
     - target/lcov.info
@@ -25,7 +25,7 @@ diff:
 push:
   if: is_default_branch
   datastores:
-    - github://${GITHUB_REPOSITORY}
+    - github://${GITHUB_REPOSITORY}@badges
   message: "Update coverage badges [skip ci]"
 report:
   if: is_default_branch
@@ -36,5 +36,5 @@ summary:
   hideFooterLink: true
 testExecutionTime:
   badge:
-    path: docs/time.svg
+    path: time.svg
   if: true

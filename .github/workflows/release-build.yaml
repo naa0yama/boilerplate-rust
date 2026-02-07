@@ -54,7 +54,6 @@ jobs:
         id: versions
         run: |
           sccache_version=$(grep -E '^ARG SCCACHE_VERSION=v?[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG SCCACHE_VERSION=(v?[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
-          just_version=$(grep -E '^ARG JUST_VERSION=v?[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG JUST_VERSION=(v?[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           zigbuild_version=$(grep -E '^ARG ZIGBUILD_VERSION=v?[0-9]+\.[0-9]+\.[0-9]+' Dockerfile | sed -E 's/ARG ZIGBUILD_VERSION=(v?[0-9]+\.[0-9]+\.[0-9]+).*/\1/')
           package_name=$(grep -E '^\[package\]' -A 10 Cargo.toml | grep -E '^name = "' | sed -E 's/name = "(.*)"/\1/')
 
@@ -67,7 +66,6 @@ jobs:
 
           {
             echo "sccache=${sccache_version}"
-            echo "just=${just_version}"
             echo "zigbuild=${zigbuild_version}"
             echo "package_name=${package_name}"
             echo "binary_name=${binary_name}"
@@ -76,7 +74,6 @@ jobs:
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
         with:
-          just: ${{ steps.versions.outputs.just }}
           sccache: ${{ steps.versions.outputs.sccache }}
 
       - name: Install cargo-zigbuild

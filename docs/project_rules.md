@@ -219,9 +219,7 @@ project-name/
 │   ├── launch.json                     # デバッグ設定
 │   └── settings.json                   # ワークスペース設定
 ├── docs/                               # ドキュメント
-│   ├── coverage.svg                    # カバレッジバッジ
-│   ├── project_rules.md                # プロジェクトルール
-│   └── time.svg                        # ビルド時間バッジ
+│   └── project_rules.md                # プロジェクトルール
 ├── src/                                # ソースコード
 │   ├── main.rs                         # CLIエントリーポイント
 │   ├── libs.rs                         # ライブラリモジュール定義
