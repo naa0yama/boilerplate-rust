@@ -515,13 +515,14 @@ cargo build --release --features otel
 
 **コンテナ実行時の環境変数:**
 
-| 環境変数 | 必須 | 説明 |
-|---|---|---|
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Yes | OTel Collector エンドポイント (例: `http://localhost:4318`) |
-| `OTEL_SERVICE_NAME` | No | サービス名 (デフォルト: パッケージ名) |
-| `RUST_LOG` | No | ログレベル (デフォルト: `info`) |
+| 環境変数                      | 必須 | 説明                                                        |
+| ----------------------------- | ---- | ----------------------------------------------------------- |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Yes  | OTel Collector エンドポイント (例: `http://localhost:4318`) |
+| `OTEL_SERVICE_NAME`           | No   | サービス名 (デフォルト: パッケージ名)                       |
+| `RUST_LOG`                    | No   | ログレベル (デフォルト: `info`)                             |
 
 **注意:**
+
 - アプリケーションコードの `tracing::info!` 等は変更不要
 - `otel` feature 無効時は OTel 依存が一切含まれず、従来のバイナリと同一
 
