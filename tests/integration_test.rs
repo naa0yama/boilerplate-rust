@@ -1,12 +1,12 @@
 #![allow(clippy::unwrap_used)] // テストコードではunwrapを許可
 #![allow(missing_docs)] // テストコードではdocコメント不要
 
-use assert_cmd::Command;
+use assert_cmd::cargo_bin_cmd;
 use predicates::prelude::predicate;
 
 #[test]
 fn test_cli_with_custom_name() {
-    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")
         .arg("Alice")
         .assert()
@@ -16,7 +16,7 @@ fn test_cli_with_custom_name() {
 
 #[test]
 fn test_cli_with_short_flag() {
-    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("-n")
         .arg("Bob")
         .assert()
@@ -26,7 +26,7 @@ fn test_cli_with_short_flag() {
 
 #[test]
 fn test_cli_version_flag() {
-    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--version")
         .assert()
         .success()
@@ -35,7 +35,7 @@ fn test_cli_version_flag() {
 
 #[test]
 fn test_cli_version_short_flag() {
-    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("-V")
         .assert()
         .success()
@@ -44,7 +44,7 @@ fn test_cli_version_short_flag() {
 
 #[test]
 fn test_cli_with_gender_man() {
-    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")
         .arg("John")
         .arg("--gender")
@@ -56,7 +56,7 @@ fn test_cli_with_gender_man() {
 
 #[test]
 fn test_cli_with_gender_woman() {
-    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")
         .arg("Alice")
         .arg("--gender")
@@ -68,7 +68,7 @@ fn test_cli_with_gender_woman() {
 
 #[test]
 fn test_cli_with_gender_short_flag() {
-    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("-n")
         .arg("Bob")
         .arg("-g")
@@ -80,7 +80,7 @@ fn test_cli_with_gender_short_flag() {
 
 #[test]
 fn test_cli_with_invalid_gender() {
-    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")
         .arg("Charlie")
         .arg("--gender")
@@ -94,7 +94,7 @@ fn test_cli_with_invalid_gender() {
 
 #[test]
 fn test_cli_without_gender() {
-    let mut cmd = Command::cargo_bin("brust").unwrap();
+    let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")
         .arg("Dave")
         .assert()
