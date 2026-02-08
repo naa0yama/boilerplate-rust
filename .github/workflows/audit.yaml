@@ -4,16 +4,7 @@ name: Rust Security audit
 on:
   schedule:
     - cron: "0 0 */3 * *"
-
-  push:
-    paths:
-      - "**/Cargo.toml"
-      - "**/Cargo.lock"
-  pull_request:
-    paths:
-      - "**/Cargo.toml"
-      - "**/Cargo.lock"
-
+  workflow_call: {}
   workflow_dispatch:
 
 permissions: {}
