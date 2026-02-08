@@ -1,6 +1,6 @@
 [tools]
 dprint = "0.50.2"
-actionlint = "1.7.8"
+actionlint = "1.7.10"
 ghalint = "1.5.3"
 zizmor = "1.16.0"
 "cargo:ast-grep" = "0.39.7"
