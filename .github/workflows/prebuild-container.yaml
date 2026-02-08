@@ -1,18 +1,7 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Prebuild DevContainer
 on:
-  push:
-    branches:
-      - main
-    paths:
-      - ".devcontainer/**"
-      - ".github/workflows/prebuild-container.yaml"
-      - "Dockerfile"
-  pull_request:
-    paths:
-      - ".devcontainer/**"
-      - ".github/workflows/prebuild-container.yaml"
-      - "Dockerfile"
+  workflow_call: {}
   workflow_dispatch:
     inputs:
       no_cache:

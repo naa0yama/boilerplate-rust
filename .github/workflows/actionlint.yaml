@@ -1,15 +1,9 @@
 # yaml-language-server: $schema=https://json.schemastore.org/github-workflow.json
 name: Lint GitHub Actions
 on:
-  pull_request:
-    branches: ["main"]
-    paths:
-      - ".github/workflows/**.yml"
-      - ".github/workflows/**.yaml"
-      - "**/action.yml"
-      - "**/action.yaml"
   schedule:
     - cron: "0 0 * * *"
+  workflow_call: {}
   workflow_dispatch:
 
 permissions: {}
