@@ -3,7 +3,13 @@
 /// ライブラリモジュール群
 pub mod libs;
 use clap::Parser;
-use tracing_subscriber::{filter::EnvFilter, fmt};
+use tracing_subscriber::filter::EnvFilter;
+#[cfg(not(feature = "otel"))]
+use tracing_subscriber::fmt;
+#[cfg(feature = "otel")]
+use tracing_subscriber::layer::SubscriberExt;
+#[cfg(feature = "otel")]
+use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::libs::hello::{GreetingError, sayhello};
 
@@ -30,11 +36,49 @@ const APP_VERSION: &str = concat!(
 );
 
 fn main() {
-    fmt()
-        .with_env_filter(
-            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
-        )
-        .init();
+    #[cfg(not(feature = "otel"))]
+    {
+        fmt()
+            .with_env_filter(
+                EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info")),
+            )
+            .init();
+    }
+
+    #[cfg(feature = "otel")]
+    {
+        let env_filter =
+            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
+        let fmt_layer = tracing_subscriber::fmt::layer();
+
+        let otel_layer = std::env::var("OTEL_EXPORTER_OTLP_ENDPOINT")
+            .ok()
+            .and_then(|_| {
+                let exporter = opentelemetry_otlp::SpanExporter::builder()
+                    .with_http()
+                    .build()
+                    .ok()?;
+
+                let tracer_provider = opentelemetry_sdk::trace::SdkTracerProvider::builder()
+                    .with_simple_exporter(exporter)
+                    .build();
+
+                let tracer = opentelemetry::trace::TracerProvider::tracer(
+                    &tracer_provider,
+                    env!("CARGO_PKG_NAME"),
+                );
+                opentelemetry::global::set_tracer_provider(tracer_provider);
+
+                Some(tracing_opentelemetry::layer().with_tracer(tracer))
+            });
+
+        tracing_subscriber::registry()
+            .with(env_filter)
+            .with(fmt_layer)
+            .with(otel_layer)
+            .init();
+    }
+
     let args = Args::parse();
     if args.version {
         tracing::info!("{}", APP_VERSION);
