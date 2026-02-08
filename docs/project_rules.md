@@ -487,6 +487,44 @@ tracing::error!("Error occurred: {}", err);
 tracing::info!("Process completed successfully");
 ```
 
+#### OpenTelemetry 対応（`otel` feature 有効時）
+
+コンテナ環境等で OpenTelemetry (OTLP) によるトレースエクスポートが必要な場合、
+`--features otel` でビルドし、環境変数 `OTEL_EXPORTER_OTLP_ENDPOINT` を設定する。
+
+```rust
+// otel feature 有効時の初期化（main.rs）
+// OTEL_EXPORTER_OTLP_ENDPOINT が設定されていれば OTel レイヤーが追加される
+// 未設定の場合は fmt のみ（従来と同じ動作）
+tracing_subscriber::registry()
+    .with(env_filter)
+    .with(fmt_layer)
+    .with(otel_layer) // Option<Layer>: None なら無視
+    .init();
+```
+
+**ビルド方法:**
+
+```bash
+# ターミナル用（OTel なし）
+cargo build --release
+
+# コンテナ用（OTel 対応）
+cargo build --release --features otel
+```
+
+**コンテナ実行時の環境変数:**
+
+| 環境変数 | 必須 | 説明 |
+|---|---|---|
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Yes | OTel Collector エンドポイント (例: `http://localhost:4318`) |
+| `OTEL_SERVICE_NAME` | No | サービス名 (デフォルト: パッケージ名) |
+| `RUST_LOG` | No | ログレベル (デフォルト: `info`) |
+
+**注意:**
+- アプリケーションコードの `tracing::info!` 等は変更不要
+- `otel` feature 無効時は OTel 依存が一切含まれず、従来のバイナリと同一
+
 ### 9.2 デバッグ手法
 
 - `println!` デバッグは開発時のみ
@@ -601,6 +639,16 @@ std = [] # no-std対応の場合
 # ❌ use-std, with-stdなどは使わない
 ```
 
+#### プロジェクト定義の feature フラグ
+
+```toml
+[features]
+default = []
+otel = [...]  # OpenTelemetry 対応（コンテナ環境向け）
+```
+
+- `otel`: OpenTelemetry トレースエクスポート機能を有効化。コンテナビルド時に `--features otel` で指定
+
 ## 15. コードレビュー基準
 
 ### 15.1 必須確認項目
@@ -634,6 +682,8 @@ std = [] # no-std対応の場合
   - [reqwest Documentation](https://docs.rs/reqwest/) - HTTP クライアント
   - [assert_cmd Documentation](https://docs.rs/assert_cmd/) - CLI テスト
   - [cargo-zigbuild](https://github.com/rust-cross/cargo-zigbuild) - クロスコンパイル
+  - [OpenTelemetry Rust](https://docs.rs/opentelemetry/) - 分散トレーシング
+  - [tracing-opentelemetry](https://docs.rs/tracing-opentelemetry/) - tracing → OTel ブリッジ
 
 - 開発環境・ツール
   - [mise Documentation](https://mise.jdx.dev/) - ツール管理 & タスクランナー
