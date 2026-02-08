@@ -4,7 +4,7 @@
 	"target": "branch",
 	"source_type": "Repository",
 	"source": "naa0yama/boilerplate-rust",
-	"enforcement": "evaluate",
+	"enforcement": "disabled",
 	"conditions": {
 		"ref_name": {
 			"exclude": [],
