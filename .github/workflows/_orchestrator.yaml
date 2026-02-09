@@ -18,9 +18,9 @@ jobs:
       pull-requests: read # Required to list changed files in pull request
     outputs:
       rust: ${{ steps.changes.outputs.rust }}
-      actions: ${{ steps.changes.outputs.actions }}
       audit: ${{ steps.changes.outputs.audit }}
       container: ${{ steps.changes.outputs.container }}
+      docs: ${{ steps.changes.outputs.docs }}
     steps:
       - name: Detect changed paths
         id: changes
@@ -47,10 +47,6 @@ jobs:
                 /^mise\.toml$/,
                 /^rust-toolchain\.toml$/,
               ],
-              actions: [
-                /^\.github\/workflows\/.*\.ya?ml$/,
-                /action\.ya?ml$/,
-              ],
               audit: [
                 /(^|\/)Cargo\.(toml|lock)$/,
               ],
@@ -58,6 +54,15 @@ jobs:
                 /^\.devcontainer\//,
                 /^\.github\/workflows\/prebuild-container\.yaml$/,
                 /^Dockerfile$/,
+              ],
+              docs: [
+                /\.md$/,
+                /\.json[c]?$/,
+                /\.toml$/,
+                /\.ya?ml$/,
+                /^docs\//,
+                /^LICENSE$/,
+                /^\.editorconfig$/,
               ],
             };
 
@@ -78,14 +83,6 @@ jobs:
       actions: read # octocov artifact
       pull-requests: write # octocov comment
 
-  actionlint:
-    needs: detect-changes
-    if: needs.detect-changes.outputs.actions == 'true'
-    uses: ./.github/workflows/actionlint.yaml
-    permissions:
-      contents: read # Required to checkout the repository
-      security-events: write # Required to upload SARIF results
-
   audit:
     needs: detect-changes
     if: needs.detect-changes.outputs.audit == 'true'
@@ -101,34 +98,32 @@ jobs:
       contents: read # Required to checkout the repository
       packages: write # Required to push container images to registry
 
-  codeql:
+  docs-ci:
     needs: detect-changes
-    uses: ./.github/workflows/codeql.yaml
+    if: needs.detect-changes.outputs.docs == 'true'
+    uses: ./.github/workflows/docs-ci.yaml
     permissions:
-      contents: read # Required to checkout the repository for CodeQL analysis
-      security-events: write # Required to upload CodeQL analysis results
+      contents: read # Required to checkout the repository
 
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [rust-ci, actionlint, audit, container, codeql]
+    needs: [rust-ci, audit, container, docs-ci]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
       - name: Check CI results
         env:
           RUST_CI_RESULT: ${{ needs.rust-ci.result }}
-          ACTIONLINT_RESULT: ${{ needs.actionlint.result }}
           AUDIT_RESULT: ${{ needs.audit.result }}
           CONTAINER_RESULT: ${{ needs.container.result }}
-          CODEQL_RESULT: ${{ needs.codeql.result }}
+          DOCS_CI_RESULT: ${{ needs.docs-ci.result }}
         run: |
           results=(
             "$RUST_CI_RESULT"
-            "$ACTIONLINT_RESULT"
             "$AUDIT_RESULT"
             "$CONTAINER_RESULT"
-            "$CODEQL_RESULT"
+            "$DOCS_CI_RESULT"
           )
           for result in "${results[@]}"; do
             if [[ "$result" != "success" && "$result" != "skipped" ]]; then
