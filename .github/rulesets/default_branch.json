@@ -38,6 +38,10 @@
 					{
 						"context": "CI Gate",
 						"integration_id": 15368
+					},
+					{
+						"context": "summary",
+						"integration_id": 15368
 					}
 				]
 			}
