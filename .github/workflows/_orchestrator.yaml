@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
-      pull-requests: read
+      pull-requests: read # Required to list changed files in pull request
     outputs:
       rust: ${{ steps.changes.outputs.rust }}
       actions: ${{ steps.changes.outputs.actions }}
@@ -77,15 +77,14 @@ jobs:
       contents: write # octocov badge push
       actions: read # octocov artifact
       pull-requests: write # octocov comment
-    secrets: inherit
 
   actionlint:
     needs: detect-changes
     if: needs.detect-changes.outputs.actions == 'true'
     uses: ./.github/workflows/actionlint.yaml
     permissions:
-      contents: read
-      security-events: write
+      contents: read # Required to checkout the repository
+      security-events: write # Required to upload SARIF results
 
   audit:
     needs: detect-changes
@@ -99,14 +98,21 @@ jobs:
     if: needs.detect-changes.outputs.container == 'true'
     uses: ./.github/workflows/prebuild-container.yaml
     permissions:
-      contents: read
-      packages: write
-    secrets: inherit
+      contents: read # Required to checkout the repository
+      packages: write # Required to push container images to registry
+
+  codeql:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.rust == 'true'
+    uses: ./.github/workflows/codeql.yaml
+    permissions:
+      contents: read # Required to checkout the repository for CodeQL analysis
+      security-events: write # Required to upload CodeQL analysis results
 
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [rust-ci, actionlint, audit, container]
+    needs: [rust-ci, actionlint, audit, container, codeql]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -116,12 +122,14 @@ jobs:
           ACTIONLINT_RESULT: ${{ needs.actionlint.result }}
           AUDIT_RESULT: ${{ needs.audit.result }}
           CONTAINER_RESULT: ${{ needs.container.result }}
+          CODEQL_RESULT: ${{ needs.codeql.result }}
         run: |
           results=(
             "$RUST_CI_RESULT"
             "$ACTIONLINT_RESULT"
             "$AUDIT_RESULT"
             "$CONTAINER_RESULT"
+            "$CODEQL_RESULT"
           )
           for result in "${results[@]}"; do
             if [[ "$result" != "success" && "$result" != "skipped" ]]; then
