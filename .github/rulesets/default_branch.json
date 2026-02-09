@@ -1,10 +1,10 @@
 {
-	"id": 12574914,
+	"id": 12597235,
 	"name": "main",
 	"target": "branch",
 	"source_type": "Repository",
 	"source": "naa0yama/boilerplate-rust",
-	"enforcement": "disabled",
+	"enforcement": "active",
 	"conditions": {
 		"ref_name": {
 			"exclude": [],
@@ -22,7 +22,7 @@
 				"required_reviewers": [],
 				"require_code_owner_review": false,
 				"require_last_push_approval": false,
-				"require_review_thread_resolution": true,
+				"required_review_thread_resolution": false,
 				"allowed_merge_methods": [
 					"squash",
 					"rebase"
@@ -36,7 +36,7 @@
 				"do_not_enforce_on_create": true,
 				"required_status_checks": [
 					{
-						"context": "CI / CI Gate",
+						"context": "CI Gate",
 						"integration_id": 15368
 					}
 				]
@@ -60,8 +60,8 @@
 				"code_scanning_tools": [
 					{
 						"tool": "CodeQL",
-						"alerts_threshold": "errors_and_warnings",
-						"security_alerts_threshold": "medium_or_higher"
+						"security_alerts_threshold": "medium_or_higher",
+						"alerts_threshold": "errors_and_warnings"
 					}
 				]
 			}
