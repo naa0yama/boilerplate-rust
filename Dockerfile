@@ -130,14 +130,14 @@ RUN echo "**** Rust tool cargo-zigbuild ****" && \
 	set -euxo pipefail && \
 	_release_data="$(curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' \
 	https://api.github.com/repos/rust-cross/cargo-zigbuild/releases/tags/${ZIGBUILD_VERSION})" && \
-	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | startswith("cargo-zigbuild-v") and endswith("x86_64-unknown-linux-musl.tar.gz"))')" && \
+	_asset="$(echo "$_release_data" | jq -r '.assets[] | select(.name | endswith("x86_64-unknown-linux-musl.tar.xz"))')" && \
 	_download_url="$(echo "$_asset" | jq -r '.browser_download_url')" && \
 	_digest="$(echo "$_asset" | jq -r '.digest')" && \
 	_sha256="${_digest#sha256:}" && \
 	_filename="$(basename "$_download_url")" && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
 	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
-	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
+	tar -xvf "./${_filename}" --strip-components 1 -C /usr/local/bin/ && \
 	type -p cargo-zigbuild && \
 	rm -rf "./${_filename}"
 
