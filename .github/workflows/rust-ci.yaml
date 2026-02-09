@@ -65,7 +65,17 @@ jobs:
           sccache: ${{ steps.versions.outputs.sccache }}
           sccache_disable_annotations: true
 
+      - name: Cache mise tools
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.local/share/mise
+          key: mise-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.toml') }}
+          restore-keys: |
+            mise-v1-${{ runner.os }}-${{ runner.arch }}-
+
       - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
+        with:
+          cache: false
 
       - name: Check formatting
         run: |
@@ -97,7 +107,17 @@ jobs:
           sccache: ${{ needs.fmt.outputs.sccache }}
           sccache_disable_annotations: true
 
+      - name: Cache mise tools
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.local/share/mise
+          key: mise-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.toml') }}
+          restore-keys: |
+            mise-v1-${{ runner.os }}-${{ runner.arch }}-
+
       - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
+        with:
+          cache: false
 
       - name: Check compilation
         run: |
@@ -125,7 +145,17 @@ jobs:
         with:
           sccache: ${{ needs.fmt.outputs.sccache }}
 
+      - name: Cache mise tools
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.local/share/mise
+          key: mise-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.toml') }}
+          restore-keys: |
+            mise-v1-${{ runner.os }}-${{ runner.arch }}-
+
       - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
+        with:
+          cache: false
 
       - name: Generate coverage report
         run: |
@@ -156,7 +186,17 @@ jobs:
         with:
           sccache: ${{ needs.fmt.outputs.sccache }}
 
+      - name: Cache mise tools
+        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        with:
+          path: ~/.local/share/mise
+          key: mise-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.toml') }}
+          restore-keys: |
+            mise-v1-${{ runner.os }}-${{ runner.arch }}-
+
       - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
+        with:
+          cache: false
 
       - name: Build release binary
         run: |
