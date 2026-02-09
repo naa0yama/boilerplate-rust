@@ -27,7 +27,7 @@ jobs:
       sccache: ${{ steps.versions.outputs.sccache }}
 
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
@@ -66,14 +66,14 @@ jobs:
           sccache_disable_annotations: true
 
       - name: Cache mise tools
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ~/.local/share/mise
           key: mise-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.toml') }}
           restore-keys: |
             mise-v1-${{ runner.os }}-${{ runner.arch }}-
 
-      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
+      - uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3
         with:
           cache: false
 
@@ -96,7 +96,7 @@ jobs:
       contents: read # Required to checkout the repository
 
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -108,14 +108,14 @@ jobs:
           sccache_disable_annotations: true
 
       - name: Cache mise tools
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ~/.local/share/mise
           key: mise-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.toml') }}
           restore-keys: |
             mise-v1-${{ runner.os }}-${{ runner.arch }}-
 
-      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
+      - uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3
         with:
           cache: false
 
@@ -135,7 +135,7 @@ jobs:
       pull-requests: write #  For octocov to comment on pull requests
 
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -146,14 +146,14 @@ jobs:
           sccache: ${{ needs.fmt.outputs.sccache }}
 
       - name: Cache mise tools
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ~/.local/share/mise
           key: mise-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.toml') }}
           restore-keys: |
             mise-v1-${{ runner.os }}-${{ runner.arch }}-
 
-      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
+      - uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3
         with:
           cache: false
 
@@ -176,7 +176,7 @@ jobs:
       contents: read # Required to checkout the repository
 
     steps:
-      - uses: actions/checkout@93cb6efe18208431cddfb8368fd83d5badbf9bfd # v5.0.1
+      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           fetch-depth: 0
           persist-credentials: false
@@ -187,14 +187,14 @@ jobs:
           sccache: ${{ needs.fmt.outputs.sccache }}
 
       - name: Cache mise tools
-        uses: actions/cache@0057852bfaa89a56745cba8c7296529d2fc39830 # v4.3.0
+        uses: actions/cache@cdf6c1fa76f9f475f3d7449005a359c84ca0f306 # v5.0.3
         with:
           path: ~/.local/share/mise
           key: mise-v1-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('mise.toml') }}
           restore-keys: |
             mise-v1-${{ runner.os }}-${{ runner.arch }}-
 
-      - uses: jdx/mise-action@c37c93293d6b742fc901e1406b8f764f6fb19dac # v2
+      - uses: jdx/mise-action@6d1e696aa24c1aa1bcc1adea0212707c71ab78a8 # v3
         with:
           cache: false
 
@@ -204,7 +204,7 @@ jobs:
           mise run build:release
 
       - name: Upload binary artifacts
-        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        uses: actions/upload-artifact@b7c566a772e6b6bfb58ed0dc250532a479d7789f # v6.0.0
         with:
           name: binary-${{ needs.fmt.outputs.binary_name }}
           path: target/release/${{ needs.fmt.outputs.binary_name }}
