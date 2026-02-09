@@ -16,8 +16,8 @@ jobs:
   analyze:
     name: analyze
     permissions:
-      contents: read
-      security-events: write
+      contents: read # Required to checkout the repository for CodeQL analysis
+      security-events: write # Required to upload CodeQL analysis results
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:

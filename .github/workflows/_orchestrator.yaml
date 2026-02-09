@@ -108,8 +108,8 @@ jobs:
     if: needs.detect-changes.outputs.rust == 'true'
     uses: ./.github/workflows/codeql.yaml
     permissions:
-      contents: read
-      security-events: write
+      contents: read # Required to checkout the repository for CodeQL analysis
+      security-events: write # Required to upload CodeQL analysis results
 
   ci-gate:
     name: CI Gate
