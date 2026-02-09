@@ -21,7 +21,7 @@ ARG SCCACHE_VERSION=v0.13.0
 ## renovate: datasource=github-releases packageName=ziglang/zig versioning=semver automerge=true
 ARG ZIG_VERSION=0.15.1
 ## renovate: datasource=github-releases packageName=rust-cross/cargo-zigbuild versioning=semver automerge=true
-ARG ZIGBUILD_VERSION=v0.21.5
+ARG ZIGBUILD_VERSION=v0.21.6
 
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
