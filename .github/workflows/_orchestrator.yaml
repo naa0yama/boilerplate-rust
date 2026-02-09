@@ -91,7 +91,7 @@ jobs:
     if: needs.detect-changes.outputs.audit == 'true'
     uses: ./.github/workflows/audit.yaml
     permissions:
-      contents: read
+      contents: read # Required to checkout the repository for dependency audit
 
   container:
     needs: detect-changes
