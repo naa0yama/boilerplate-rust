@@ -1,0 +1,119 @@
+# Changelog
+
+## [v0.1.0](https://github.com/naa0yama/boilerplate-rust/commits/v0.1.0) - 2026-02-09
+### Documentation 🗒️
+- chore: fmt by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/25
+### Dependency Updates 👒
+- chore: Configure Renovate by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/1
+- chore(deps): update dependency dprint/dprint to v0.50.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/9
+- chore(deps): update dependency evilmartians/lefthook to v1.12.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/3
+- chore(deps): update dependency rui314/mold to v2.40.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/5
+- chore(deps): update dependency cargo-bins/cargo-binstall to v1.14.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/8
+- chore(deps): update dependency taiki-e/cargo-llvm-cov to v0.6.18 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/6
+- chore(deps): update dependency mozilla/sccache to v0.10.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/7
+- chore(deps): update dependency cargo-bins/cargo-binstall to v1.15.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/12
+- chore(deps): update dependency cargo-bins/cargo-binstall to v1.15.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/13
+- chore(deps): update all action update (major) by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/15
+- chore(deps): update dependency rust-cross/cargo-zigbuild to v0.20.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/16
+- chore(deps): pin rust crate assert_cmd to =2.0.17 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/18
+- chore(deps): update dependency ziglang/zig to v0.14.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/17
+- chore(deps): update dependency casey/just to v1.42.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/19
+- chore(deps): update dependency ziglang/zig to v0.15.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/20
+- chore(deps): update actions/download-artifact action to v5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/21
+- chore(deps): pin dependencies by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/23
+- chore(deps): update dependency evilmartians/lefthook to v1.12.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/26
+- chore(deps): update dependency taiki-e/cargo-llvm-cov to v0.6.19 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/27
+- chore(deps): update dependency evilmartians/lefthook to v1.13.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/29
+- chore(deps): update dependency ast-grep/ast-grep to v0.39.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/28
+- chore(deps): pin dependencies by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/31
+- chore(deps): update actions-rust-lang/setup-rust-toolchain digest to 2fcdc49 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/33
+- chore(deps): update taiki-e/install-action digest to e5f8d33 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/34
+- chore(deps): update taiki-e/install-action digest to 2fdc5fd by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/35
+- chore(deps): update taiki-e/install-action digest to 8ea3248 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/36
+- chore(deps): update taiki-e/install-action digest to 0aa4f22 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/37
+- chore(deps): update taiki-e/install-action digest to 056c0cf by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/38
+- chore(deps): update taiki-e/install-action digest to f7958e8 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/39
+- chore(deps): update dependency dprint/dprint to v0.50.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/41
+- chore(deps): update taiki-e/install-action digest to 0e09747 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/40
+- chore(deps): update taiki-e/install-action digest to d6912b4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/42
+- chore(deps): update taiki-e/install-action digest to cd39cb0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/43
+- chore(deps): update taiki-e/install-action digest to 5597bc2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/44
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/45
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/46
+- chore(deps): update dependency evilmartians/lefthook to v1.13.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/47
+- chore(deps): update taiki-e/install-action digest to 8c60043 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/48
+- chore(deps): update taiki-e/install-action digest to ea0eda6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/50
+- chore(deps): update taiki-e/install-action digest to 71d339e by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/51
+- chore(deps): update taiki-e/install-action digest to 00a367b by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/52
+- chore(deps): update taiki-e/install-action digest to efd8b64 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/53
+- chore(deps): update taiki-e/install-action digest to 5ab3094 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/54
+- chore(deps): update dependency evilmartians/lefthook to v1.13.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/56
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/55
+- chore(deps): update taiki-e/install-action digest to 3216b69 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/58
+- chore(deps): update dependency evilmartians/lefthook to v1.13.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/57
+- chore(deps): update taiki-e/install-action digest to 7fe7b8c by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/59
+- chore(deps): update taiki-e/install-action digest to bf2f998 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/60
+- chore(config): migrate renovate config by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/32
+- chore(deps): pin dependencies by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/30
+- chore(deps): update actions/labeler action to v6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/24
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/61
+- chore(deps): update dependency dprint/dprint to v0.50.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/62
+- chore(deps): update taiki-e/install-action action to v2.62.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/64
+- chore(deps): update dependency zizmorcore/zizmor to v1.14.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/63
+- chore(deps): update dependency casey/just to v1.43.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/65
+- chore(deps): update taiki-e/install-action action to v2.62.11 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/66
+- chore(deps): update taiki-e/install-action action to v2.62.12 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/67
+- chore(deps): update dependency zizmorcore/zizmor to v1.14.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/70
+- chore(deps): update dependency evilmartians/lefthook to v1.13.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/68
+- chore(deps): update dependency taiki-e/cargo-llvm-cov to v0.6.20 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/73
+- chore(deps): update dependency evilmartians/lefthook to v1.13.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/71
+- chore(deps): update dependency ast-grep/ast-grep to v0.39.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/74
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/69
+- chore(deps): update taiki-e/install-action action to v2.62.21 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/75
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/76
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/77
+- chore(deps): update taiki-e/install-action action to v2.62.24 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/79
+- chore(deps): update taiki-e/install-action action to v2.62.25 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/80
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/81
+- chore(deps): update dependency taiki-e/cargo-llvm-cov to v0.6.21 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/82
+- chore(deps): update dependency mozilla/sccache to v0.11.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/83
+- chore(deps): update dependency rhysd/actionlint to v1.7.8 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/84
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/85
+- chore(deps): update taiki-e/install-action action to v2.62.29 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/87
+- chore(deps): update taiki-e/install-action action to v2.62.30 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/88
+- chore(deps): update taiki-e/install-action action to v2.62.31 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/89
+- chore(deps): update dependency zizmorcore/zizmor to v1.15.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/86
+- chore(deps): update github/codeql-action action to v4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/78
+- chore(deps): update dependency regexident/cargo-modules to v0.25.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/90
+- chore(deps): update taiki-e/install-action action to v2.62.32 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/91
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/92
+- chore(deps): update taiki-e/install-action action to v2.62.34 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/94
+- chore(deps): update dependency mozilla/sccache to v0.12.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/95
+- chore(deps): update taiki-e/install-action action to v2.62.35 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/96
+- chore(deps): update taiki-e/install-action action to v2.62.36 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/97
+- chore(deps): update dependency zizmorcore/zizmor to v1.16.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/98
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/99
+- chore(deps): update taiki-e/install-action action to v2.62.38 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/101
+- chore(deps): update dependency ast-grep/ast-grep to v0.39.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/102
+- chore(deps): update taiki-e/install-action action to v2.62.40 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/103
+- chore(deps): pin jdx/mise-action action to c37c932 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/105
+- chore(deps): update dependency actionlint to v1.7.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/106
+- chore(deps): update dependency mozilla/sccache to v0.13.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/111
+- chore(deps): update dependency dprint to v0.51.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/110
+- chore(deps): update dependency cargo:cargo-llvm-cov to 0.8.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/109
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/107
+- chore(deps): update all dev-dependencies update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/104
+- chore(deps): update dependency rust-cross/cargo-zigbuild to v0.21.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/112
+- fix(deps): update rust crate reqwest to v0.13.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/113
+- chore(deps): update dependency cargo:ast-grep to 0.40.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/108
+- chore(deps): update zizmorcore/zizmor-action action to v0.5.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/115
+- chore(deps): update all action update (major) by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/100
+- chore(deps): update rust docker tag to v1.92.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/49
+- chore(deps): update docker/dockerfile:1 docker digest to b6afd42 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/72
+- chore(deps): update dependency rust-cross/cargo-zigbuild to v0.21.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/118
+- chore(deps): update github/codeql-action action to v4.32.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/120
+### Other Changes
+- feat: add CodeQL by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/116
+- chore: fix workflow by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/117
+- fix: workflow split codeql / actionlint by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/119
+- fix: tagpr add CHENGLOG.md by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/121
