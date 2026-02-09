@@ -137,7 +137,7 @@ RUN echo "**** Rust tool cargo-zigbuild ****" && \
 	_filename="$(basename "$_download_url")" && \
 	curl ${CURL_OPTS} -H 'User-Agent: builder/1.0' -o "./${_filename}" "${_download_url}" && \
 	echo "${_sha256}  ${_filename}" | sha256sum -c - && \
-	tar -xvf "./${_filename}" -C /usr/local/bin/ && \
+	tar -xvf "./${_filename}" --strip-components 1 -C /usr/local/bin/ && \
 	type -p cargo-zigbuild && \
 	rm -rf "./${_filename}"
 
