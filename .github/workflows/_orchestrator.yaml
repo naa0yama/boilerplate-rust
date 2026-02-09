@@ -103,7 +103,6 @@ jobs:
 
   codeql:
     needs: detect-changes
-    if: needs.detect-changes.outputs.rust == 'true'
     uses: ./.github/workflows/codeql.yaml
     permissions:
       contents: read # Required to checkout the repository for CodeQL analysis
