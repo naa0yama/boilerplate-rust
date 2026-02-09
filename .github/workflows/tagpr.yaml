@@ -9,7 +9,7 @@ permissions: {}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: false
+  cancel-in-progress: false # zizmor: ignore[concurrency-limits] tag creation must not be cancelled mid-flight
 
 jobs:
   tagpr:
