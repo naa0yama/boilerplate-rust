@@ -103,10 +103,18 @@ jobs:
       packages: write
     secrets: inherit
 
+  codeql:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.rust == 'true'
+    uses: ./.github/workflows/codeql.yaml
+    permissions:
+      contents: read
+      security-events: write
+
   ci-gate:
     name: CI Gate
     if: always()
-    needs: [rust-ci, actionlint, audit, container]
+    needs: [rust-ci, actionlint, audit, container, codeql]
     runs-on: ubuntu-latest
     timeout-minutes: 5
     steps:
@@ -116,12 +124,14 @@ jobs:
           ACTIONLINT_RESULT: ${{ needs.actionlint.result }}
           AUDIT_RESULT: ${{ needs.audit.result }}
           CONTAINER_RESULT: ${{ needs.container.result }}
+          CODEQL_RESULT: ${{ needs.codeql.result }}
         run: |
           results=(
             "$RUST_CI_RESULT"
             "$ACTIONLINT_RESULT"
             "$AUDIT_RESULT"
             "$CONTAINER_RESULT"
+            "$CODEQL_RESULT"
           )
           for result in "${results[@]}"; do
             if [[ "$result" != "success" && "$result" != "skipped" ]]; then
