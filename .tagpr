@@ -51,4 +51,5 @@
 	vPrefix = true
 	versionFile = "Cargo.toml"
 	changelog = true
-	command = "cargo check --release"
+	command = "cargo check --release && dprint fmt CHANGELOG.md"
+	template = ".github/tagpr-template.md"
