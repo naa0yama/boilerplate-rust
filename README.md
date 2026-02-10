@@ -78,6 +78,7 @@ mise run pre-commit       # fmt:check + clippy:strict + ast-grep
 │   └── pre-push                # プッシュ前チェック
 ├── .github/                    # GitHub Actions & 設定
 │   ├── actions/                # カスタムアクション
+│   ├── rulesets/               # Protection rulesets
 │   ├── workflows/              # CI/CD ワークフロー
 │   ├── labeler.yml
 │   └── release.yml
