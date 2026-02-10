@@ -1,3 +1,5 @@
+Release for {{.NextVersion}}
+
 {{.Changelog}}
 
 > [!TIP]
