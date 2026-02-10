@@ -1,4 +1,4 @@
-{{.Body}}
+{{.Changelog}}
 
 > [!TIP]
 > この Pull Request は `GITHUB_TOKEN` で作成されているため、CI が自動で起動しません。
