@@ -51,5 +51,4 @@
 	vPrefix = true
 	versionFile = "Cargo.toml"
 	changelog = true
-	command = "dprint fmt CHANGELOG.md"
 	template = ".github/tagpr-template.md"
