@@ -1,10 +1,14 @@
 # Changelog
 
 ## [v0.1.0](https://github.com/naa0yama/boilerplate-rust/commits/v0.1.0) - 2026-02-14
+
 ### Documentation 🗒️
+
 - chore: fmt by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/25
 - chore: Update README.md by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/122
+
 ### Dependency Updates 👒
+
 - chore: Configure Renovate by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/1
 - chore(deps): update dependency dprint/dprint to v0.50.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/9
 - chore(deps): update dependency evilmartians/lefthook to v1.12.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/3
@@ -120,7 +124,9 @@
 - chore(deps): update taiki-e/install-action action to v2.67.23 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/133
 - chore(deps): update taiki-e/install-action action to v2.67.24 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/134
 - chore(deps): update taiki-e/install-action action to v2.67.25 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/135
+
 ### Other Changes
+
 - feat: add CodeQL by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/116
 - chore: fix workflow by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/117
 - fix: workflow split codeql / actionlint by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/119
