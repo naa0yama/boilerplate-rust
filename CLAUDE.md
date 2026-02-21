@@ -22,6 +22,7 @@ All tasks use `mise run <task>`:
 | Pre-commit (required) | `mise run pre-commit`         |
 | Coverage              | `mise run coverage`           |
 | Deny (licenses/deps)  | `mise run deny`               |
+| Miri (UB detection)   | `mise run miri`               |
 | Build (OTel)          | `cargo build --features otel` |
 
 ## Commit Convention
