@@ -5,6 +5,7 @@ use assert_cmd::cargo_bin_cmd;
 use predicates::prelude::predicate;
 
 #[test]
+#[cfg_attr(miri, ignore)]
 fn test_cli_with_custom_name() {
     let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")
@@ -15,6 +16,7 @@ fn test_cli_with_custom_name() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore)]
 fn test_cli_with_short_flag() {
     let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("-n")
@@ -25,6 +27,7 @@ fn test_cli_with_short_flag() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore)]
 fn test_cli_version_flag() {
     let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--version")
@@ -34,6 +37,7 @@ fn test_cli_version_flag() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore)]
 fn test_cli_version_short_flag() {
     let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("-V")
@@ -43,6 +47,7 @@ fn test_cli_version_short_flag() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore)]
 fn test_cli_with_gender_man() {
     let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")
@@ -55,6 +60,7 @@ fn test_cli_with_gender_man() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore)]
 fn test_cli_with_gender_woman() {
     let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")
@@ -67,6 +73,7 @@ fn test_cli_with_gender_woman() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore)]
 fn test_cli_with_gender_short_flag() {
     let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("-n")
@@ -79,6 +86,7 @@ fn test_cli_with_gender_short_flag() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore)]
 fn test_cli_with_invalid_gender() {
     let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")
@@ -93,6 +101,7 @@ fn test_cli_with_invalid_gender() {
 }
 
 #[test]
+#[cfg_attr(miri, ignore)]
 fn test_cli_without_gender() {
     let mut cmd = cargo_bin_cmd!("brust");
     cmd.arg("--name")

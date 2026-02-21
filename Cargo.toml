@@ -81,7 +81,7 @@ single_element_loop = "warn" #                   1要素ループをif文で最�
 # パフォーマンス最適化 - 文字列処理
 inefficient_to_string = "warn" #                 非効率なto_string()を検出(直接変換推奨)
 str_to_string = "warn" #                         &str.to_string()を検出(String::from推奨)
-string_to_string = "warn" #                      String.to_string()を検出(clone推奨)
+# string_to_string is removed; covered by implicit_clone
 format_in_format_args = "warn" #                 format!内のformat!を検出(直接引数推奨)
 manual_string_new = "warn" #                     String::new()の代替パターンを検出
 
