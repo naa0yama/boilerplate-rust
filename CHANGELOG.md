@@ -1,12 +1,16 @@
 # Changelog
 
 ## [v0.1.0](https://github.com/naa0yama/boilerplate-rust/commits/v0.1.0) - 2026-02-21
+
 ### Documentation 🗒️
+
 - chore: fmt by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/25
 - chore: Update README.md by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/122
 - update: .claude/skills by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/136
 - Dev/feat claude skills deps by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/139
+
 ### Dependency Updates 👒
+
 - chore: Configure Renovate by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/1
 - chore(deps): update dependency dprint/dprint to v0.50.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/9
 - chore(deps): update dependency evilmartians/lefthook to v1.12.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/3
@@ -138,7 +142,9 @@
 - chore(deps): update songmu/tagpr action to v1.16.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/156
 - chore(deps): update dependency actionlint to v1.7.11 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/155
 - chore(deps): update songmu/tagpr action to v1.17.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/157
+
 ### Other Changes
+
 - feat: add CodeQL by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/116
 - chore: fix workflow by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/117
 - fix: workflow split codeql / actionlint by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/119
