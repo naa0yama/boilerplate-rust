@@ -4,7 +4,7 @@ version = "0.1.0"
 categories = ["command-line-utilities"]
 edition = "2024"
 keywords = ["cli", "tool"]
-license = "AGPL3.0"
+license = "AGPL-3.0-only"
 repository = "https://github.com/naa0yama/boilerplate-rust"
 description = "A CLI tool built following project rules standards"
 
@@ -14,6 +14,20 @@ opt-level = 1 #		開発時のコンパイル速度向上
 [profile.release]
 strip = "symbols"
 debug = 1 #			リリースビルドでもスタックトレース可能に
+lto = "thin"
+opt-level = "z"
+codegen-units = 1
+panic = "abort"
+
+[package.metadata.binstall]
+pkg-url = "{ repo }/releases/download/v{ version }/{ name }-v{ version }-{ target }.tar.gz"
+bin-dir = "{ bin }{ binary-ext }"
+pkg-fmt = "tgz"
+disabled-strategies = ["quick-install"]
+
+[package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
+pkg-url = "{ repo }/releases/download/v{ version }/{ name }-v{ version }-{ target }.zip"
+pkg-fmt = "zip"
 
 [features]
 default = []
