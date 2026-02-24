@@ -7,15 +7,15 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Debug executable 'app'",
+			"name": "Debug executable 'brust'",
 			"cargo": {
 				"args": [
 					"build",
-					"--bin=app",
-					"--package=app"
+					"--bin=brust",
+					"--package=brust"
 				],
 				"filter": {
-					"name": "app",
+					"name": "brust",
 					"kind": "bin"
 				}
 			},
@@ -25,16 +25,16 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			"name": "Debug unit tests in executable 'app'",
+			"name": "Debug unit tests in executable 'brust'",
 			"cargo": {
 				"args": [
 					"test",
 					"--no-run",
-					"--bin=app",
-					"--package=app"
+					"--bin=brust",
+					"--package=brust"
 				],
 				"filter": {
-					"name": "app",
+					"name": "brust",
 					"kind": "bin"
 				}
 			},
