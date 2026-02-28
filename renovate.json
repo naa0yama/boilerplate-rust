@@ -2,5 +2,16 @@
 	"$schema": "https://docs.renovatebot.com/renovate-schema.json",
 	"extends": [
 		"local>naa0yama/renovate-config"
+	],
+	"customManagers": [
+		{
+			"customType": "regex",
+			"fileMatch": [
+				"^\\.github/workflows/.+\\.ya?ml$"
+			],
+			"matchStrings": [
+				"# renovate: datasource=(?<datasource>.*?) depName=(?<depName>.*?)(?:\\s+registryUrl=(?<registryUrl>.*?))?\\n\\s+\\w+:\\s*\"?(?<currentValue>[\\d.]+)\"?"
+			]
+		}
 	]
 }
