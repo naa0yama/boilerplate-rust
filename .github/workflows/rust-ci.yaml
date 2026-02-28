@@ -125,7 +125,7 @@ jobs:
       - name: Check compilation
         env:
           TARGET: ${{ matrix.target }}
-        run: cargo zigbuild check --target "${TARGET}"
+        run: cargo-zigbuild check --target "${TARGET}"
 
   test:
     name: test
