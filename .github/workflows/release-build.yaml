@@ -36,7 +36,7 @@ jobs:
       artifacts: ${{ steps.collect-artifacts.outputs.artifacts }}
     env:
       # renovate: datasource=forgejo-tags depName=ziglang/zig registryUrl=https://codeberg.org
-      ZIG_VERSION: "0.14.0"
+      ZIG_VERSION: "0.15.2"
     strategy:
       fail-fast: false
       matrix:
@@ -81,8 +81,8 @@ jobs:
         env:
           TARGET: ${{ matrix.target }}
         run: |
-          curl -sSfL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" | tar -xJ
-          echo "${PWD}/zig-linux-x86_64-${ZIG_VERSION}" >> "${GITHUB_PATH}"
+          curl -sSfL "https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz" | tar -xJ
+          echo "${PWD}/zig-x86_64-linux-${ZIG_VERSION}" >> "${GITHUB_PATH}"
 
           # Create wrapper script so sccache can handle zig as a C compiler
           printf '#!/bin/sh\nexec zig cc -target x86_64-windows-gnu "$@"\n' | sudo tee /usr/local/bin/zig-cc-x86_64-windows-gnu > /dev/null
