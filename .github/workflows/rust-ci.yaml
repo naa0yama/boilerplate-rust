@@ -87,6 +87,9 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
+    env:
+      # renovate: datasource=forgejo-tags depName=ziglang/zig registryUrl=https://codeberg.org
+      ZIG_VERSION: "0.14.0"
     strategy:
       fail-fast: false
       matrix:
@@ -98,22 +101,20 @@ jobs:
         with:
           persist-credentials: false
 
-      - name: Install cross-compilation toolchain
+      - name: Install zig
+        run: |
+          curl -sSfL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" | tar -xJ
+          echo "${PWD}/zig-linux-x86_64-${ZIG_VERSION}" >> "${GITHUB_PATH}"
+
+      - name: Install cargo-zigbuild
+        uses: taiki-e/install-action@735e5933943122c5ac182670a935f54a949265c1 # v2.68.6
+        with:
+          tool: cargo-zigbuild
+
+      - name: Add cross-compilation target
         env:
           TARGET: ${{ matrix.target }}
-        run: |
-          case "${TARGET}" in
-            x86_64-pc-windows-gnu)
-              sudo apt-get update -qq
-              sudo apt-get install -yqq gcc-mingw-w64-x86-64
-              ;;
-            aarch64-apple-darwin)
-              ZIG_VERSION="0.14.0"
-              curl -sSfL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" | tar -xJ
-              echo "${PWD}/zig-linux-x86_64-${ZIG_VERSION}" >> "${GITHUB_PATH}"
-              ;;
-          esac
-          rustup target add "${TARGET}"
+        run: rustup target add "${TARGET}"
 
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
@@ -124,9 +125,7 @@ jobs:
       - name: Check compilation
         env:
           TARGET: ${{ matrix.target }}
-          CC_aarch64_apple_darwin: zig cc -target aarch64-macos
-          AR_aarch64_apple_darwin: zig ar
-        run: cargo check --target "${TARGET}"
+        run: cargo zigbuild check --target "${TARGET}"
 
   test:
     name: test
