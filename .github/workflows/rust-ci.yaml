@@ -107,7 +107,7 @@ jobs:
           echo "${PWD}/zig-linux-x86_64-${ZIG_VERSION}" >> "${GITHUB_PATH}"
 
       - name: Install cargo-zigbuild
-        uses: taiki-e/install-action@735e5933943122c5ac182670a935f54a949265c1 # v2.68.6
+        uses: taiki-e/install-action@470679bc3a1580072dac4e67535d1aa3a3dcdf51 # v2.68.6
         with:
           tool: cargo-zigbuild
 
