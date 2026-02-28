@@ -92,7 +92,7 @@ jobs:
       matrix:
         target:
           - x86_64-pc-windows-gnu
-          - aarch64-unknown-linux-gnu
+          - aarch64-apple-darwin
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
@@ -102,10 +102,16 @@ jobs:
         env:
           TARGET: ${{ matrix.target }}
         run: |
-          sudo apt-get update -qq
           case "${TARGET}" in
-            x86_64-pc-windows-gnu)    sudo apt-get install -yqq gcc-mingw-w64-x86-64 ;;
-            aarch64-unknown-linux-gnu) sudo apt-get install -yqq gcc-aarch64-linux-gnu ;;
+            x86_64-pc-windows-gnu)
+              sudo apt-get update -qq
+              sudo apt-get install -yqq gcc-mingw-w64-x86-64
+              ;;
+            aarch64-apple-darwin)
+              ZIG_VERSION="0.14.0"
+              curl -sSfL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" | tar -xJ
+              echo "${PWD}/zig-linux-x86_64-${ZIG_VERSION}" >> "${GITHUB_PATH}"
+              ;;
           esac
           rustup target add "${TARGET}"
 
@@ -118,6 +124,8 @@ jobs:
       - name: Check compilation
         env:
           TARGET: ${{ matrix.target }}
+          CC_aarch64_apple_darwin: zig cc -target aarch64-macos
+          AR_aarch64_apple_darwin: zig ar
         run: cargo check --target "${TARGET}"
 
   test:
