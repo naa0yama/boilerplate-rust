@@ -1,12 +1,16 @@
 # Changelog
 
 ## [v0.1.0](https://github.com/naa0yama/boilerplate-rust/commits/v0.1.0) - 2026-02-28
+
 ### Documentation 🗒️
+
 - chore: fmt by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/25
 - chore: Update README.md by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/122
 - update: .claude/skills by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/136
 - Dev/feat claude skills deps by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/139
+
 ### Dependency Updates 👒
+
 - chore: Configure Renovate by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/1
 - chore(deps): update dependency dprint/dprint to v0.50.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/9
 - chore(deps): update dependency evilmartians/lefthook to v1.12.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/3
@@ -155,7 +159,9 @@
 - chore(deps): update dependency ziglang/zig to v0.15.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/176
 - chore(deps): update actions/attest-build-provenance action to v3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/162
 - chore(deps): update rust docker tag to v1.93.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/140
+
 ### Other Changes
+
 - feat: add CodeQL by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/116
 - chore: fix workflow by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/117
 - fix: workflow split codeql / actionlint by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/119
