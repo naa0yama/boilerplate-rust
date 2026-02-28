@@ -103,8 +103,8 @@ jobs:
 
       - name: Install zig
         run: |
-          curl -sSfL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" | tar -xJ
-          echo "${PWD}/zig-linux-x86_64-${ZIG_VERSION}" >> "${GITHUB_PATH}"
+          curl -sSfL "https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz" | tar -xJ
+          echo "${PWD}/zig-x86_64-linux-${ZIG_VERSION}" >> "${GITHUB_PATH}"
 
       - name: Install cargo-zigbuild
         uses: taiki-e/install-action@470679bc3a1580072dac4e67535d1aa3a3dcdf51 # v2.68.6
