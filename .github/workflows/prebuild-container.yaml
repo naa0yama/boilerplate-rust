@@ -54,6 +54,5 @@ jobs:
         with:
           imageName: ghcr.io/${{ steps.repo_name.outputs.lowercase }}/devcontainer
           cacheFrom: ghcr.io/${{ steps.repo_name.outputs.lowercase }}/devcontainer
-          cacheTo: ghcr.io/${{ steps.repo_name.outputs.lowercase }}/devcontainer
           refFilterForPush: refs/heads/main
           noCache: ${{ github.event.inputs.no_cache == 'true' }}
