@@ -174,8 +174,11 @@ RUN echo "**** Install mise ****" && \
 	~/.local/bin/mise --version
 
 COPY --chown=${USER_NAME}:${USER_NAME} mise.toml /tmp/mise.toml
-RUN echo "**** Install tools via mise ****" && \
+RUN --mount=type=secret,id=MISE_GITHUB_TOKEN,mode=0444 \
+	\
+	echo "**** Install tools via mise ****" && \
 	set -euxo pipefail && \
+	{ set +x; if [ -f /run/secrets/MISE_GITHUB_TOKEN ] && [ -s /run/secrets/MISE_GITHUB_TOKEN ]; then export MISE_GITHUB_TOKEN=$(cat /run/secrets/MISE_GITHUB_TOKEN); echo "MISE_GITHUB_TOKEN loaded from secret"; fi; set -x; } && \
 	cd /tmp && \
 	~/.local/bin/mise trust -y /tmp/mise.toml && \
 	~/.local/bin/mise install -y && \

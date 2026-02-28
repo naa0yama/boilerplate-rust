@@ -9,7 +9,11 @@
 			"TZ": "${localEnv:TZ:Asia/Tokyo}",
 			"USER_GID": "1100",
 			"USER_UID": "1100"
-		}
+		},
+		"options": [
+			"--secret",
+			"id=MISE_GITHUB_TOKEN,src=/tmp/.devcontainer-github-token"
+		]
 	},
 	"initializeCommand": "./.devcontainer/initializeCommand.sh",
 	"postStartCommand": "./.devcontainer/postStartCommand.sh",
@@ -27,7 +31,9 @@
 		// Git
 		"type=bind,source=${localEnv:HOME}/.gitconfig.d,target=/home/cuser/.gitconfig.d",
 		// GitHub
-		"type=bind,source=${localEnv:HOME}/.config/gh,target=/home/cuser/.config/gh"
+		"type=bind,source=${localEnv:HOME}/.config/gh,target=/home/cuser/.config/gh",
+		// Mise tools cache (persists across container rebuilds, project-isolated)
+		"type=volume,source=${localWorkspaceFolderBasename}-mise-cache,target=/home/cuser/.local/share/mise"
 	],
 	"customizations": {
 		"vscode": {
