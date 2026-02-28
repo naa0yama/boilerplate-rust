@@ -89,7 +89,7 @@ jobs:
       contents: read
     env:
       # renovate: datasource=forgejo-tags depName=ziglang/zig registryUrl=https://codeberg.org
-      ZIG_VERSION: "0.14.0"
+      ZIG_VERSION: "0.15.2"
     strategy:
       fail-fast: false
       matrix:
