@@ -34,6 +34,9 @@ jobs:
       attestations: write # Required for build provenance attestation
     outputs:
       artifacts: ${{ steps.collect-artifacts.outputs.artifacts }}
+    env:
+      # renovate: datasource=forgejo-tags depName=ziglang/zig registryUrl=https://codeberg.org
+      ZIG_VERSION: "0.14.0"
     strategy:
       fail-fast: false
       matrix:
@@ -44,8 +47,9 @@ jobs:
             os: ubuntu-24.04-arm
           - target: aarch64-apple-darwin
             os: macos-latest
-          - target: x86_64-pc-windows-msvc
-            os: windows-latest
+          - target: x86_64-pc-windows-gnu
+            os: ubuntu-latest
+            cross: true
 
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -71,6 +75,26 @@ jobs:
             echo "package_name=${package_name}"
             echo "binary_name=${binary_name}"
           } >> "$GITHUB_OUTPUT"
+
+      - name: Install cross-compilation toolchain
+        if: matrix.cross
+        env:
+          TARGET: ${{ matrix.target }}
+        run: |
+          curl -sSfL "https://ziglang.org/download/${ZIG_VERSION}/zig-linux-x86_64-${ZIG_VERSION}.tar.xz" | tar -xJ
+          echo "${PWD}/zig-linux-x86_64-${ZIG_VERSION}" >> "${GITHUB_PATH}"
+
+          # Create wrapper script so sccache can handle zig as a C compiler
+          printf '#!/bin/sh\nexec zig cc -target x86_64-windows-gnu "$@"\n' | sudo tee /usr/local/bin/zig-cc-x86_64-windows-gnu > /dev/null
+          sudo chmod +x /usr/local/bin/zig-cc-x86_64-windows-gnu
+
+          rustup target add "${TARGET}"
+
+          {
+            echo "CC_x86_64_pc_windows_gnu=zig-cc-x86_64-windows-gnu"
+            echo "AR_x86_64_pc_windows_gnu=zig ar"
+            echo "CARGO_TARGET_X86_64_PC_WINDOWS_GNU_LINKER=zig-cc-x86_64-windows-gnu"
+          } >> "${GITHUB_ENV}"
 
       - name: Rust setup
         uses: ./.github/actions/act-setup-rust
