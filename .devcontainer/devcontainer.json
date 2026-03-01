@@ -53,7 +53,7 @@
 				"xyz.local-history" // 					Local History
 			],
 			"settings": {
-				"window.title": "brust${separator}${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}${appName}",
+				"window.title": "${localWorkspaceFolderBasename}${separator}${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}${appName}",
 				"dprint.path": "/home/cuser/.local/share/mise/shims/dprint"
 			}
 		}

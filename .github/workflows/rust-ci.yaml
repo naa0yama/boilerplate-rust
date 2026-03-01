@@ -87,31 +87,28 @@ jobs:
     timeout-minutes: 15
     permissions:
       contents: read
-    env:
-      # renovate: datasource=forgejo-tags depName=ziglang/zig registryUrl=https://codeberg.org
-      ZIG_VERSION: "0.15.2"
     strategy:
       fail-fast: false
       matrix:
-        target:
-          - x86_64-pc-windows-gnu
-          - aarch64-unknown-linux-gnu
+        include:
+          - target: x86_64-pc-windows-gnu
+            cross-pkgs: gcc-mingw-w64-x86-64
+          - target: aarch64-unknown-linux-gnu
+            cross-pkgs: gcc-aarch64-linux-gnu libc6-dev-arm64-cross
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
-      - name: Install zig
+      - name: Install cross-compilation toolchain
+        env:
+          CROSS_PKGS: ${{ matrix.cross-pkgs }}
         run: |
-          curl -sSfL "https://ziglang.org/download/${ZIG_VERSION}/zig-x86_64-linux-${ZIG_VERSION}.tar.xz" | tar -xJ
-          echo "${PWD}/zig-x86_64-linux-${ZIG_VERSION}" >> "${GITHUB_PATH}"
+          sudo apt-get update -qq
+          # shellcheck disable=SC2086
+          sudo apt-get install -y --no-install-recommends ${CROSS_PKGS}
 
-      - name: Install cargo-zigbuild
-        uses: taiki-e/install-action@470679bc3a1580072dac4e67535d1aa3a3dcdf51 # v2.68.6
-        with:
-          tool: cargo-zigbuild
-
-      - name: Add cross-compilation target
+      - name: Add target
         env:
           TARGET: ${{ matrix.target }}
         run: rustup target add "${TARGET}"
@@ -122,10 +119,10 @@ jobs:
           sccache: ${{ needs.fmt.outputs.sccache }}
           sccache_disable_annotations: true
 
-      - name: Check compilation
+      - name: Check compilation for ${{ matrix.target }}
         env:
           TARGET: ${{ matrix.target }}
-        run: cargo-zigbuild check --target "${TARGET}"
+        run: cargo check --target "${TARGET}"
 
   test:
     name: test
