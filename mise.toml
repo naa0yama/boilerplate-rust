@@ -103,7 +103,7 @@ run = "cargo +nightly miri test"
 
 [tasks.pre-commit]
 description = "Pre-commit checks (fast)"
-depends = ["fmt:check", "clippy:strict", "ast-grep"]
+depends = ["fmt:check", "clippy:strict", "ast-grep", "lint:gh"]
 
 [tasks.pre-push]
 description = "Pre-push checks (comprehensive)"
