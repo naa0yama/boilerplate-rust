@@ -387,15 +387,26 @@ mise run zigbuild:all    # Tier 1 targets
 
 ### 6.3 Miri 互換性
 
-ネットワーク I/O (TCP ソケット等) を使うテストには `#[cfg_attr(miri, ignore)]` を付与する。
-Miri はソケット FFI をサポートしないため、`wiremock::MockServer` 等を使用するテストは
-Miri 実行時にスキップする必要がある。
+以下のテストには `#[cfg_attr(miri, ignore)]` を付与する:
+
+1. **ネットワーク I/O**: `wiremock::MockServer` 等のソケット FFI を使用するテスト。
+   Miri はソケット FFI をサポートしない。
+2. **TLS 初期化**: `reqwest::Client::builder().build()` を呼び出すテスト。
+   TLS スタック(rustls)の暗号初期化が Miri 上で極端に遅くなり(1 回あたり約 10 分)、
+   CI タイムアウトの原因となる。
 
 ```rust
 #[cfg_attr(miri, ignore)]
 #[tokio::test]
 async fn test_something_via_http() {
     let mock_server = wiremock::MockServer::start().await;
+    // ...
+}
+
+#[cfg_attr(miri, ignore)]
+#[test]
+fn test_builder_succeeds() {
+    let client = MyClient::builder().build().unwrap();
     // ...
 }
 ```
