@@ -105,7 +105,7 @@ jobs:
           CROSS_PKGS: ${{ matrix.cross-pkgs }}
         run: |
           sudo apt-get update -qq
-          sudo apt-get install -y --no-install-recommends ${CROSS_PKGS}
+          sudo apt-get install -y --no-install-recommends "${CROSS_PKGS}"
 
       - name: Add target
         env:
