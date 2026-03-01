@@ -400,7 +400,7 @@ async fn test_something_via_http() {
 }
 ```
 
-### 6.3 クロスコンパイル対応
+### 6.4 クロスコンパイル対応
 
 ```bash
 # Tier 1 targets（全て対応）
@@ -414,7 +414,7 @@ mise run zigbuild:all
 TARGET=x86_64-pc-windows-gnu mise run zigbuild
 ```
 
-### 6.4 Git フック(`.githooks/` + `mise`)
+### 6.5 Git フック(`.githooks/` + `mise`)
 
 #### 事前チェック(pre-commit)
 
