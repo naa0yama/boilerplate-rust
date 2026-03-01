@@ -90,13 +90,22 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        target:
-          - x86_64-pc-windows-gnu
-          - aarch64-apple-darwin
+        include:
+          - target: x86_64-pc-windows-gnu
+            cross-pkgs: gcc-mingw-w64-x86-64
+          - target: aarch64-unknown-linux-gnu
+            cross-pkgs: gcc-aarch64-linux-gnu
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
+
+      - name: Install cross-compilation toolchain
+        env:
+          CROSS_PKGS: ${{ matrix.cross-pkgs }}
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends ${CROSS_PKGS}
 
       - name: Add target
         env:
