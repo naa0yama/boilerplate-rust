@@ -1,7 +1,7 @@
 ---
 name: project-conventions
 description: >-
-  Project-specific conventions for the dtvmgr Rust CLI. Enforces mandatory
+  Project-specific conventions for the boilerplate-rust Rust CLI. Enforces mandatory
   error context on all ? operators, tracing-only logging, strict import
   grouping, mise-based tooling, and 6 custom ast-grep rules. Use when
   writing, reviewing, or modifying .rs files, running builds/tests, or
@@ -9,7 +9,7 @@ description: >-
 license: AGPL-3.0
 ---
 
-# Project Conventions — dtvmgr
+# Project Conventions — boilerplate-rust
 
 ## 1. Mandatory Error Context
 
