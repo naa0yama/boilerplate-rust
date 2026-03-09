@@ -2,7 +2,7 @@
 RUSTC_WRAPPER = "sccache"
 
 [tools]
-dprint = "0.51.1"
+dprint = "0.52.0"
 actionlint = "1.7.11"
 ghalint = "1.5.3"
 zizmor = "1.16.0"
