@@ -1,3 +1,6 @@
+[env]
+RUSTC_WRAPPER = "sccache"
+
 [tools]
 dprint = "0.51.1"
 actionlint = "1.7.11"
