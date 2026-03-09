@@ -374,9 +374,6 @@ mise run build:release   # release build
 
 # カバレッジ
 mise run coverage        # code coverage report
-
-# クロスコンパイル
-mise run zigbuild:all    # Tier 1 targets
 ```
 
 ### 6.2 品質基準
@@ -411,21 +408,7 @@ fn test_builder_succeeds() {
 }
 ```
 
-### 6.4 クロスコンパイル対応
-
-```bash
-# Tier 1 targets（全て対応）
-mise run zigbuild:all
-# - aarch64-apple-darwin    (Apple Silicon macOS)
-# - aarch64-unknown-linux-gnu (ARM64 Linux)
-# - x86_64-pc-windows-gnu   (Windows)
-# - x86_64-unknown-linux-gnu (Intel/AMD Linux)
-
-# 個別ターゲット
-TARGET=x86_64-pc-windows-gnu mise run zigbuild
-```
-
-### 6.5 Git フック(`.githooks/` + `mise`)
+### 6.4 Git フック(`.githooks/` + `mise`)
 
 #### 事前チェック(pre-commit)
 
@@ -708,7 +691,6 @@ otel = [...]  # OpenTelemetry 対応（コンテナ環境向け）
   - [tracing Documentation](https://docs.rs/tracing/) - 構造化ログ
   - [reqwest Documentation](https://docs.rs/reqwest/) - HTTP クライアント
   - [assert_cmd Documentation](https://docs.rs/assert_cmd/) - CLI テスト
-  - [cargo-zigbuild](https://github.com/rust-cross/cargo-zigbuild) - クロスコンパイル
   - [OpenTelemetry Rust](https://docs.rs/opentelemetry/) - 分散トレーシング
   - [tracing-opentelemetry](https://docs.rs/tracing-opentelemetry/) - tracing → OTel ブリッジ
 
