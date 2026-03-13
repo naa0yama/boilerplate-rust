@@ -18,8 +18,8 @@ ARG CACHE_VERSION=0.8.3
 ARG MODULES_VERSION=v0.25.0
 ## renovate: datasource=github-releases packageName=mozilla/sccache versioning=semver automerge=true
 ARG SCCACHE_VERSION=v0.14.0
-## renovate: datasource=github-tags packageName=holmgr/cargo-sweep versioning=semver automerge=true
-ARG SWEEP_VERSION=0.8.0
+## renovate: datasource=github-releases packageName=holmgr/cargo-sweep versioning=semver automerge=true
+ARG SWEEP_VERSION=v0.8.0
 
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
