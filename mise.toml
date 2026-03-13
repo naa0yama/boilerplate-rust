@@ -1,5 +1,6 @@
 [env]
 RUSTC_WRAPPER = "sccache"
+OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:4318"
 
 [tools]
 dprint = "0.52.0"
@@ -12,6 +13,7 @@ zizmor = "1.16.0"
 "aqua:EmbarkStudios/cargo-deny" = "0.19.0"
 "aqua:watchexec/cargo-watch" = "8.5.3"
 usage = "2.18.2"
+"github:jaegertracing/jaeger" = "2.16.0"
 
 [tasks.setup]
 description = "Initial project setup"
@@ -126,3 +128,17 @@ run = """
 cargo cache
 cargo cache --autoclean
 """
+
+[tasks.jaeger]
+description = "Start Jaeger all-in-one (OTLP HTTP :4318, UI :16686)"
+run = """
+if pgrep -x jaeger > /dev/null 2>&1; then
+  echo 'Jaeger is already running'
+  exit 0
+fi
+jaeger --query.http.tls.enabled=false
+"""
+
+[tasks."jaeger:stop"]
+description = "Stop Jaeger"
+run = "pkill -x jaeger || true"
