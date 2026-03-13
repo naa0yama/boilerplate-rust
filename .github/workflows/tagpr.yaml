@@ -21,6 +21,7 @@ jobs:
     name: tagpr
     if: >-
       github.event_name == 'push' ||
+      github.event_name == 'workflow_dispatch' ||
       startsWith(github.event.pull_request.head.ref, 'tagpr-from-')
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -44,7 +45,7 @@ jobs:
           restore-keys: |
             dprint-v1-${{ runner.os }}-${{ runner.arch }}-
 
-      - uses: jdx/mise-action@5228313ee0372e111a38da051671ca30fc5a96db # v3
+      - uses: jdx/mise-action@5228313ee0372e111a38da051671ca30fc5a96db # v3.6.3
         with:
           install_args: dprint
         env:
