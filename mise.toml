@@ -136,7 +136,7 @@ if pgrep -x jaeger > /dev/null 2>&1; then
   echo 'Jaeger is already running'
   exit 0
 fi
-jaeger --query.http.tls.enabled=false
+jaeger
 """
 
 [tasks."jaeger:stop"]
