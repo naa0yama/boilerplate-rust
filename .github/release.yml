@@ -12,7 +12,16 @@ changelog:
       labels: ["bug"]
     - title: Documentation 🗒️
       labels: ["documentation"]
-    - title: Dependency Updates 👒
-      labels: ["renovate"]
+    - title: Dependency Updates 📦
+      labels:
+        - "manager:cargo"
+    - title: Development Environment 🔧
+      labels:
+        - "manager:mise"
+        - "manager:github-actions"
+        - "manager:dockerfile"
+        - "manager:regex"
+        - "depType:action"
+        - "renovate"
     - title: Other Changes
       labels: ["*"]
