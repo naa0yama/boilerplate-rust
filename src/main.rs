@@ -46,7 +46,7 @@ fn main() {
     }
 
     #[cfg(feature = "otel")]
-    let _tracer_provider = {
+    let tracer_provider = {
         let env_filter =
             EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
         let fmt_layer = tracing_subscriber::fmt::layer();
@@ -74,7 +74,10 @@ fn main() {
                     env!("CARGO_PKG_NAME"),
                 );
 
-                Some((tracing_opentelemetry::layer().with_tracer(tracer), tracer_provider))
+                Some((
+                    tracing_opentelemetry::layer().with_tracer(tracer),
+                    tracer_provider,
+                ))
             })
             .unzip();
 
@@ -97,7 +100,7 @@ fn main() {
     run(&args.name, args.gender.as_deref());
 
     #[cfg(feature = "otel")]
-    if let Some(provider) = _tracer_provider {
+    if let Some(provider) = tracer_provider {
         let _ = provider.shutdown();
     }
 }
