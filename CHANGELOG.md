@@ -1,7 +1,9 @@
 # Changelog
 
 ## [v0.1.0](https://github.com/naa0yama/boilerplate-rust/commits/v0.1.0) - 2026-03-14
+
 ### Documentation 🗒️
+
 - chore: fmt by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/25
 - chore: Update README.md by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/122
 - update: .claude/skills by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/136
@@ -9,7 +11,9 @@
 - Renumber sections in project_rules.md by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/181
 - Update Miri compatibility section in project rules by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/182
 - remove: delete zigbuild references from docs by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/206
+
 ### Dependency Updates 📦
+
 - chore(deps): pin rust crate assert_cmd to =2.0.17 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/18
 - chore(deps): pin dependencies by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/23
 - chore(deps): update all dev-dependencies update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/104
@@ -20,7 +24,9 @@
 - chore(deps): update rust crate clap to v4.5.60 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/204
 - chore(deps): pin rust crate tempfile to v3.25.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/219
 - chore(deps): update rust crate tempfile to v3.26.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/222
+
 ### Development Environment 🔧
+
 - chore: Configure Renovate by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/1
 - chore(deps): update dependency dprint/dprint to v0.50.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/9
 - chore(deps): update dependency evilmartians/lefthook to v1.12.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/3
@@ -192,7 +198,9 @@
 - chore(deps): update taiki-e/install-action action to v2.68.21 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/223
 - chore(deps): update dependency aqua:caddyserver/caddy to v2.11.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/224
 - chore(deps): update docker/login-action action to v4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/211
+
 ### Other Changes
+
 - feat: add CodeQL by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/116
 - chore: fix workflow by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/117
 - fix: workflow split codeql / actionlint by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/119
