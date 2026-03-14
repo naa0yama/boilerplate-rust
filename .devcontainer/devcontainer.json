@@ -21,8 +21,6 @@
 	"features": {
 		"ghcr.io/devcontainers/features/github-cli:1": {}
 	},
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
 	// Add another local file mount.
 	"mounts": [
 		// Claude Code
@@ -54,7 +52,9 @@
 			],
 			"settings": {
 				"window.title": "${localWorkspaceFolderBasename}${separator}${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}${appName}",
-				"dprint.path": "/home/cuser/.local/share/mise/shims/dprint"
+				"dprint.path": "/home/cuser/.local/share/mise/shims/dprint",
+				"remote.autoForwardPorts": true,
+				"remote.autoForwardPortsList": [16686]
 			}
 		}
 	},

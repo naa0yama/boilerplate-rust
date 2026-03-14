@@ -46,20 +46,26 @@ fn main() {
     }
 
     #[cfg(feature = "otel")]
-    {
+    let tracer_provider = {
         let env_filter =
             EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
         let fmt_layer = tracing_subscriber::fmt::layer();
 
-        let otel_layer = std::env::var("OTEL_EXPORTER_OTLP_ENDPOINT")
+        let (otel_layer, provider) = std::env::var("OTEL_EXPORTER_OTLP_ENDPOINT")
             .ok()
+            .filter(|ep| !ep.is_empty())
             .and_then(|_| {
                 let exporter = opentelemetry_otlp::SpanExporter::builder()
                     .with_http()
                     .build()
                     .ok()?;
 
+                let resource = opentelemetry_sdk::Resource::builder()
+                    .with_service_name(env!("CARGO_PKG_NAME"))
+                    .build();
+
                 let tracer_provider = opentelemetry_sdk::trace::SdkTracerProvider::builder()
+                    .with_resource(resource)
                     .with_simple_exporter(exporter)
                     .build();
 
@@ -67,17 +73,22 @@ fn main() {
                     &tracer_provider,
                     env!("CARGO_PKG_NAME"),
                 );
-                opentelemetry::global::set_tracer_provider(tracer_provider);
 
-                Some(tracing_opentelemetry::layer().with_tracer(tracer))
-            });
+                Some((
+                    tracing_opentelemetry::layer().with_tracer(tracer),
+                    tracer_provider,
+                ))
+            })
+            .unzip();
 
         tracing_subscriber::registry()
             .with(env_filter)
             .with(fmt_layer)
             .with(otel_layer)
             .init();
-    }
+
+        provider
+    };
 
     let args = Args::parse();
     if args.version {
@@ -87,6 +98,11 @@ fn main() {
     }
 
     run(&args.name, args.gender.as_deref());
+
+    #[cfg(feature = "otel")]
+    if let Some(provider) = tracer_provider {
+        let _ = provider.shutdown();
+    }
 }
 
 /// アプリケーションのメイン処理を実行
@@ -94,6 +110,7 @@ fn main() {
 /// # Arguments
 /// * `name` - 挨拶対象の名前
 /// * `gender` - 性別オプション（None, Some("man"), Some("woman"), その他）
+#[cfg_attr(feature = "otel", tracing::instrument)]
 pub fn run(name: &str, gender: Option<&str>) {
     let greeting = match sayhello(name, gender) {
         Ok(msg) => msg,

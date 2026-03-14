@@ -27,6 +27,8 @@ All tasks use `mise run <task>`:
 | Clean (full)          | `mise run clean`              |
 | Clean (sweep)         | `mise run clean:sweep`        |
 | Clean (cache)         | `mise run clean:cache`        |
+| Jaeger (start)        | `mise run jaeger`             |
+| Jaeger (stop)         | `mise run jaeger:stop`        |
 
 ## Commit Convention
 
@@ -51,7 +53,7 @@ Allowed types: feat, update, fix, style, refactor, docs, perf, test, build, ci, 
 
 - **Imports**: All `use` statements at file top level, grouped: `std` -> external crates -> `crate`/`super`. No wildcards (`*`). Aliases (`as`) permitted for name conflicts and re-exports.
 - **Error handling**: Never use bare `?`. Always add `.context()` or `.with_context()`.
-- **Logging**: Use `tracing` crate, not `println!` / `dbg!`. For container/OTel support, build with `--features otel` and set `OTEL_EXPORTER_OTLP_ENDPOINT` env var.
+- **Logging**: Use `tracing` crate, not `println!` / `dbg!`. For container/OTel support, build with `--features otel` (`OTEL_EXPORTER_OTLP_ENDPOINT` is pre-configured in `mise.toml`).
 - **Tests**: Arrange / Act / Assert pattern. Unit tests in `#[cfg(test)] mod tests`, integration tests in `tests/`. `#![allow(clippy::unwrap_used)]` is permitted in test code.
 - See [docs/project_rules.md](./docs/project_rules.md) for full details.
 
