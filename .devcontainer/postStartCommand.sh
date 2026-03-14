@@ -36,5 +36,6 @@ else
 fi
 
 chmod +x .githooks/*
-mise trust /app/mise.toml
+git config core.hooksPath .githooks
+mise settings add trusted_config_paths /app
 mise install
