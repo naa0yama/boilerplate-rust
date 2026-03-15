@@ -40,6 +40,7 @@
 				"Anthropic.claude-code", // 			Claude Code for VSCode
 				"dprint.dprint", // 					Dprint Code Formatter
 				"EditorConfig.EditorConfig", // 		EditorConfig for VS Code
+				"MermaidChart.vscode-mermaid-chart", // Mermaid
 				"ms-azuretools.vscode-containers", // 	Container Tools
 				"ms-vscode.live-server", // 			Live Preview
 				"redhat.vscode-yaml", // 				YAML
@@ -52,11 +53,11 @@
 			"settings": {
 				"window.title": "${localWorkspaceFolderBasename}${separator}${dirty}${activeEditorShort}${separator}${rootName}${separator}${profileName}${separator}${appName}",
 				"dprint.path": "/home/cuser/.local/share/mise/shims/dprint",
-				"remote.autoForwardPorts": false,
-				"remote.autoForwardPortsList": [16686]
+				"remote.autoForwardPorts": false
 			}
 		}
 	},
+	"forwardPorts": [16686],
 	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
 	"remoteUser": "cuser",
 	"workspaceMount": "source=${localWorkspaceFolder},target=/app,type=bind,consistency=delegated",

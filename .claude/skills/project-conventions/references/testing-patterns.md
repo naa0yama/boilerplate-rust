@@ -108,4 +108,22 @@ For universal Miri rules and decision flowchart, see
 
 ## Coverage
 
-Target: 80%+ line coverage. Run: `mise run coverage`
+### Project Coverage
+
+- CI threshold (octocov): `current >= 40%`
+- Aspiration: 80%+ line coverage
+- Run: `mise run coverage`
+
+### Unit Test Branch Coverage
+
+- Target: **100% branch coverage** for unit tests
+- Every `if`, `match` arm, `?` error path, `Option::None`, `Result::Err` must be tested
+- Untested branches require `// NOTEST(category): why — what`
+- See `~/.claude/skills/rust-implementation/references/testing.md` → "Branch Coverage"
+
+### Per-Function Checklist
+
+- [ ] All `match` arms tested
+- [ ] All `if`/`else` branches tested
+- [ ] All `?` error paths tested (or NOTEST annotated)
+- [ ] All `Option::None` / `Result::Err` paths tested

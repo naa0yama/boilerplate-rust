@@ -100,8 +100,10 @@ fn main() {
     run(&args.name, args.gender.as_deref());
 
     #[cfg(feature = "otel")]
-    if let Some(provider) = tracer_provider {
-        let _ = provider.shutdown();
+    if let Some(provider) = tracer_provider
+        && let Err(e) = provider.shutdown()
+    {
+        tracing::warn!("failed to shutdown OTel tracer provider: {e}");
     }
 }
 
@@ -136,12 +138,23 @@ mod tests {
     use tracing::subscriber::with_default;
     use tracing_mock::{expect, subscriber};
 
+    /// Build a mock subscriber that expects the `run` instrumentation span
+    /// wrapping a single event with the given message.
+    fn mock_run_single_event(msg: &str) -> (impl tracing::Subscriber, subscriber::MockHandle) {
+        let run_span = expect::span().named("run");
+        subscriber::mock()
+            .new_span(run_span.clone())
+            .enter(run_span.clone())
+            .event(expect::event().with_fields(expect::msg(msg)))
+            .exit(run_span.clone())
+            .drop_span(run_span)
+            .only()
+            .run_with_handle()
+    }
+
     #[test]
     fn test_run_with_default_name() {
-        let (subscriber, handle) = subscriber::mock()
-            .event(expect::event().with_fields(expect::msg("Hi, Youre, new world!!")))
-            .only()
-            .run_with_handle();
+        let (subscriber, handle) = mock_run_single_event("Hi, Youre, new world!!");
 
         with_default(subscriber, || {
             run("Youre", None);
@@ -152,10 +165,7 @@ mod tests {
 
     #[test]
     fn test_run_with_custom_name() {
-        let (subscriber, handle) = subscriber::mock()
-            .event(expect::event().with_fields(expect::msg("Hi, Alice, new world!!")))
-            .only()
-            .run_with_handle();
+        let (subscriber, handle) = mock_run_single_event("Hi, Alice, new world!!");
 
         with_default(subscriber, || {
             run("Alice", None);
@@ -166,10 +176,7 @@ mod tests {
 
     #[test]
     fn test_run_with_empty_name() {
-        let (subscriber, handle) = subscriber::mock()
-            .event(expect::event().with_fields(expect::msg("Hi, , new world!!")))
-            .only()
-            .run_with_handle();
+        let (subscriber, handle) = mock_run_single_event("Hi, , new world!!");
 
         with_default(subscriber, || {
             run("", None);
@@ -180,10 +187,7 @@ mod tests {
 
     #[test]
     fn test_run_with_japanese_name() {
-        let (subscriber, handle) = subscriber::mock()
-            .event(expect::event().with_fields(expect::msg("Hi, 世界, new world!!")))
-            .only()
-            .run_with_handle();
+        let (subscriber, handle) = mock_run_single_event("Hi, 世界, new world!!");
 
         with_default(subscriber, || {
             run("世界", None);
@@ -194,10 +198,7 @@ mod tests {
 
     #[test]
     fn test_run_with_gender_man() {
-        let (subscriber, handle) = subscriber::mock()
-            .event(expect::event().with_fields(expect::msg("Hi, Mr. John, new world!!")))
-            .only()
-            .run_with_handle();
+        let (subscriber, handle) = mock_run_single_event("Hi, Mr. John, new world!!");
 
         with_default(subscriber, || {
             run("John", Some("man"));
@@ -208,10 +209,7 @@ mod tests {
 
     #[test]
     fn test_run_with_gender_woman() {
-        let (subscriber, handle) = subscriber::mock()
-            .event(expect::event().with_fields(expect::msg("Hi, Ms. Alice, new world!!")))
-            .only()
-            .run_with_handle();
+        let (subscriber, handle) = mock_run_single_event("Hi, Ms. Alice, new world!!");
 
         with_default(subscriber, || {
             run("Alice", Some("woman"));
@@ -222,9 +220,10 @@ mod tests {
 
     #[test]
     fn test_run_with_invalid_gender() {
-        use tracing_mock::expect;
-
+        let run_span = expect::span().named("run");
         let (subscriber, handle) = subscriber::mock()
+            .new_span(run_span.clone())
+            .enter(run_span.clone())
             .event(
                 expect::event()
                     .with_target(env!("CARGO_PKG_NAME"))
@@ -234,6 +233,9 @@ mod tests {
                 expect::event()
                     .with_fields(expect::msg("Hi, Bob (invalid gender: other), new world!!")),
             )
+            .exit(run_span.clone())
+            .drop_span(run_span)
+            .only()
             .run_with_handle();
 
         with_default(subscriber, || {

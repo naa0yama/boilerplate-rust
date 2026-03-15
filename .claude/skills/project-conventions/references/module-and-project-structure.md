@@ -78,12 +78,15 @@ struct Cli {
 
 ## OTel / Tracing Setup
 
-- Default build: `tracing-subscriber` with `fmt` layer only.
-- OTel build: `cargo build --features otel` (via `mise run build -- --features otel`).
-- Set `OTEL_EXPORTER_OTLP_ENDPOINT` env var to enable OTLP export.
+- OTel is enabled by default (`default = ["otel"]`).
+- Set `OTEL_EXPORTER_OTLP_ENDPOINT` env var to activate OTLP export.
+- Without the env var (or empty), only the `fmt` layer is active.
+- Build without OTel: `cargo build --no-default-features`.
+- Test tasks automatically set `OTEL_EXPORTER_OTLP_ENDPOINT=""` to prevent OTel panics.
 - Feature flag in `Cargo.toml`:
   ```toml
   [features]
+  default = ["otel"]
   otel = [
   	"dep:opentelemetry",
   	"dep:opentelemetry_sdk",

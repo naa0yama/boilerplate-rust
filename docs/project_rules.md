@@ -352,6 +352,38 @@ mod tests {
 }
 ```
 
+### 5.3 ブランチカバレッジ
+
+ユニットテストは **100% ブランチカバレッジ** を目標とする。TDD の RED フェーズで以下の手順を行う:
+
+1. 実装対象の関数/モジュールの分岐構造を列挙する(`if`, `match`, `?`, `Option`, `Result`)
+2. 各分岐に対するテストケースを設計する
+3. テスト不可能な分岐には `NOTEST` コメントを実装コード側に追加する
+
+#### `NOTEST` コメントフォーマット
+
+```rust
+// NOTEST(category): <why> — <what the branch does>
+```
+
+| category      | 用途                                                |
+| ------------- | --------------------------------------------------- |
+| `unreachable` | 型/ロジック上到達不可能だがコンパイラが検出できない |
+| `io`          | ファイルシステム・ネットワーク等の外部 I/O 依存     |
+| `ffi`         | FFI/C バインディング経由でテスト環境では実行不可    |
+| `env`         | 環境変数やランタイム環境に依存                      |
+| `infra`       | テストインフラの制約(mock 困難、外部サービス依存等) |
+
+#### コード例
+
+```rust
+match result {
+    Ok(v) => v,
+    // NOTEST(unreachable): validated upstream — error on XML parse failure
+    Err(_) => return Err(MyError::ParseFailed),
+}
+```
+
 ## 6. CI/CD
 
 ### 6.1 必須チェック(`mise run` 経由)
@@ -380,7 +412,8 @@ mise run coverage        # code coverage report
 
 - **Warning一切禁止**
 - **フォーマット違反禁止**
-- **カバレッジ目標**: 80%以上
+- **プロジェクト全体カバレッジ目標**: 80%以上(CI 閾値: 40%)
+- **ユニットテストカバレッジ目標**: 100%(ブランチカバレッジ)
 
 ### 6.3 Miri 互換性
 
@@ -496,13 +529,14 @@ tracing::error!("Error occurred: {}", err);
 tracing::info!("Process completed successfully");
 ```
 
-#### OpenTelemetry 対応（`otel` feature 有効時）
+#### OpenTelemetry 対応（デフォルト有効）
 
-コンテナ環境等で OpenTelemetry (OTLP) によるトレースエクスポートが必要な場合、
-`--features otel` でビルドし、環境変数 `OTEL_EXPORTER_OTLP_ENDPOINT` を設定する。
+OTel support is enabled by default (`default = ["otel"]`).
+`OTEL_EXPORTER_OTLP_ENDPOINT` が設定されていれば OTLP エクスポートが有効になる。
+未設定(または空文字)の場合は `fmt` レイヤーのみ(従来と同じ動作)。
 
 ```rust
-// otel feature 有効時の初期化（main.rs）
+// main.rs の初期化（otel feature 有効時）
 // OTEL_EXPORTER_OTLP_ENDPOINT が設定されていれば OTel レイヤーが追加される
 // 未設定の場合は fmt のみ（従来と同じ動作）
 tracing_subscriber::registry()
@@ -515,14 +549,14 @@ tracing_subscriber::registry()
 **ビルド方法:**
 
 ```bash
-# ターミナル用（OTel なし）
+# 通常ビルド（OTel 対応、デフォルト）
 cargo build --release
 
-# コンテナ用（OTel 対応）
-cargo build --release --features otel
+# OTel なしビルド
+cargo build --release --no-default-features
 ```
 
-**コンテナ実行時の環境変数:**
+**実行時の環境変数:**
 
 | 環境変数                      | 必須 | 説明                                                        |
 | ----------------------------- | ---- | ----------------------------------------------------------- |
@@ -533,7 +567,8 @@ cargo build --release --features otel
 **注意:**
 
 - アプリケーションコードの `tracing::info!` 等は変更不要
-- `otel` feature 無効時は OTel 依存が一切含まれず、従来のバイナリと同一
+- `--no-default-features` でビルドすると OTel 依存が一切含まれない
+- テストタスクでは `OTEL_EXPORTER_OTLP_ENDPOINT=""` が自動設定される(OTel パニック防止)
 
 ### 9.2 デバッグ手法
 
@@ -653,11 +688,11 @@ std = [] # no-std対応の場合
 
 ```toml
 [features]
-default = []
-otel = [...]  # OpenTelemetry 対応（コンテナ環境向け）
+default = ["otel"]
+otel = [...]  # OpenTelemetry 対応（デフォルト有効）
 ```
 
-- `otel`: OpenTelemetry トレースエクスポート機能を有効化。コンテナビルド時に `--features otel` で指定
+- `otel`: OpenTelemetry トレースエクスポート機能。デフォルト有効。`--no-default-features` で無効化可能
 
 ## 15. コードレビュー基準
 
