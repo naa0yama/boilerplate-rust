@@ -14,6 +14,7 @@ All tasks use `mise run <task>`:
 | Test                  | `mise run test`          |
 | TDD watch             | `mise run test:watch`    |
 | Doc tests             | `mise run test:doc`      |
+| Trace test            | `mise run test:trace`    |
 | Format                | `mise run fmt`           |
 | Format check          | `mise run fmt:check`     |
 | Lint (clippy)         | `mise run clippy`        |
