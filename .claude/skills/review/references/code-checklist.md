@@ -36,7 +36,9 @@ Tests must follow Arrange / Act / Assert and cover edge cases.
 - [ ] Mocks implement traits (see `MockSyoboiApi` pattern in `src/libs/syoboi/util.rs`)
 - [ ] Fixtures loaded with `include_str!` from `fixtures/` directory
 - [ ] Integration tests use `assert_cmd` + `predicates`
-- [ ] Target: 80%+ line coverage (`mise run coverage`)
+- [ ] Unit tests: 100% branch coverage (aspiration)
+- [ ] Untested branches annotated with `// NOTEST(category): why — what`
+- [ ] Project overall: 80%+ line coverage (`mise run coverage`)
 
 ## Phase 4: API Design
 

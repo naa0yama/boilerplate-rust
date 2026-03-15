@@ -34,8 +34,11 @@ Generate test code following these rules:
 7. For HTTP mocking, use `wiremock::MockServer`.
 8. Load fixtures with `include_str!`.
 9. Use `assert_cmd` + `predicates` for CLI integration tests.
+10. **Enumerate all branches** (`if`, `match`, `?`, `Option::None`, `Result::Err`) in the target code and write a test for each. For branches that cannot be tested, add a `// NOTEST(category): why — what` comment to the implementation code.
+11. **Unit tests target 100% branch coverage.**
 
 ## Output
 
 Return only the test code to insert, with clear comments indicating where it goes.
 Do NOT modify the implementation — only write tests.
+If any branches cannot be tested, include the `NOTEST` comments that should be added to the implementation code, clearly marked as implementation-side additions.
