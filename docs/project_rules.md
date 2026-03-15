@@ -496,13 +496,14 @@ tracing::error!("Error occurred: {}", err);
 tracing::info!("Process completed successfully");
 ```
 
-#### OpenTelemetry 対応（`otel` feature 有効時）
+#### OpenTelemetry 対応（デフォルト有効）
 
-コンテナ環境等で OpenTelemetry (OTLP) によるトレースエクスポートが必要な場合、
-`--features otel` でビルドし、環境変数 `OTEL_EXPORTER_OTLP_ENDPOINT` を設定する。
+OTel support is enabled by default (`default = ["otel"]`).
+`OTEL_EXPORTER_OTLP_ENDPOINT` が設定されていれば OTLP エクスポートが有効になる。
+未設定(または空文字)の場合は `fmt` レイヤーのみ(従来と同じ動作)。
 
 ```rust
-// otel feature 有効時の初期化（main.rs）
+// main.rs の初期化（otel feature 有効時）
 // OTEL_EXPORTER_OTLP_ENDPOINT が設定されていれば OTel レイヤーが追加される
 // 未設定の場合は fmt のみ（従来と同じ動作）
 tracing_subscriber::registry()
@@ -515,14 +516,14 @@ tracing_subscriber::registry()
 **ビルド方法:**
 
 ```bash
-# ターミナル用（OTel なし）
+# 通常ビルド（OTel 対応、デフォルト）
 cargo build --release
 
-# コンテナ用（OTel 対応）
-cargo build --release --features otel
+# OTel なしビルド
+cargo build --release --no-default-features
 ```
 
-**コンテナ実行時の環境変数:**
+**実行時の環境変数:**
 
 | 環境変数                      | 必須 | 説明                                                        |
 | ----------------------------- | ---- | ----------------------------------------------------------- |
@@ -533,7 +534,8 @@ cargo build --release --features otel
 **注意:**
 
 - アプリケーションコードの `tracing::info!` 等は変更不要
-- `otel` feature 無効時は OTel 依存が一切含まれず、従来のバイナリと同一
+- `--no-default-features` でビルドすると OTel 依存が一切含まれない
+- テストタスクでは `OTEL_EXPORTER_OTLP_ENDPOINT=""` が自動設定される(OTel パニック防止)
 
 ### 9.2 デバッグ手法
 
@@ -653,11 +655,11 @@ std = [] # no-std対応の場合
 
 ```toml
 [features]
-default = []
-otel = [...]  # OpenTelemetry 対応（コンテナ環境向け）
+default = ["otel"]
+otel = [...]  # OpenTelemetry 対応（デフォルト有効）
 ```
 
-- `otel`: OpenTelemetry トレースエクスポート機能を有効化。コンテナビルド時に `--features otel` で指定
+- `otel`: OpenTelemetry トレースエクスポート機能。デフォルト有効。`--no-default-features` で無効化可能
 
 ## 15. コードレビュー基準
 
