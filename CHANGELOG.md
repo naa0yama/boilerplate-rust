@@ -1,7 +1,9 @@
 # Changelog
 
 ## [v0.1.0](https://github.com/naa0yama/boilerplate-rust/commits/v0.1.0) - 2026-03-16
+
 ### Documentation 🗒️
+
 - chore: fmt by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/25
 - chore: Update README.md by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/122
 - update: .claude/skills by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/136
@@ -10,7 +12,9 @@
 - Update Miri compatibility section in project rules by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/182
 - remove: delete zigbuild references from docs by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/206
 - feat: enable OTel by default with runtime activation by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/227
+
 ### Dependency Updates 📦
+
 - chore: Configure Renovate by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/1
 - chore(deps): pin rust crate assert_cmd to =2.0.17 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/18
 - chore(deps): pin dependencies by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/23
@@ -25,7 +29,9 @@
 - chore(deps): pin rust crate tempfile to v3.25.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/219
 - chore(deps): update rust crate tempfile to v3.26.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/222
 - chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/232
+
 ### Development Environment 🔧
+
 - chore(deps): update dependency dprint/dprint to v0.50.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/9
 - chore(deps): update dependency evilmartians/lefthook to v1.12.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/3
 - chore(deps): update dependency rui314/mold to v2.40.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/5
@@ -205,7 +211,9 @@
 - chore(deps): update taiki-e/install-action action to v2.68.25 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/234
 - chore(deps): update zizmorcore/zizmor-action action to v0.5.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/235
 - fix: sync label and release changes from chezmage PRs by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/238
+
 ### Other Changes
+
 - feat: add CodeQL by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/116
 - chore: fix workflow by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/117
 - fix: workflow split codeql / actionlint by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/119
