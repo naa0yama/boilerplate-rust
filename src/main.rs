@@ -11,10 +11,11 @@ use tracing_subscriber::layer::SubscriberExt;
 #[cfg(feature = "otel")]
 use tracing_subscriber::util::SubscriberInitExt;
 
+use crate::libs::count;
 use crate::libs::hello::{GreetingError, sayhello};
 
 #[derive(Parser)]
-#[command(about)]
+#[command(about, version = APP_VERSION)]
 struct Args {
     /// Name of the person to greet
     #[arg(short, long, default_value = "Youre")]
@@ -22,18 +23,12 @@ struct Args {
     /// Gender for greeting (man, woman)
     #[arg(short, long)]
     gender: Option<String>,
-    #[arg(long, short = 'V', help = "Print version")]
-    version: bool,
+    /// Number of iterations to run with random delays (metrics demo)
+    #[arg(short = 'c', long = "count")]
+    count: Option<u32>,
 }
 
-const APP_VERSION: &str = concat!(
-    env!("CARGO_PKG_NAME"),
-    " version ",
-    env!("CARGO_PKG_VERSION"),
-    " (rev:",
-    env!("GIT_HASH"),
-    ")\n",
-);
+const APP_VERSION: &str = concat!(env!("CARGO_PKG_VERSION"), " (rev:", env!("GIT_HASH"), ")",);
 
 fn main() {
     #[cfg(not(feature = "otel"))]
@@ -46,64 +41,128 @@ fn main() {
     }
 
     #[cfg(feature = "otel")]
-    let tracer_provider = {
-        let env_filter =
-            EnvFilter::try_from_default_env().unwrap_or_else(|_| EnvFilter::new("info"));
-        let fmt_layer = tracing_subscriber::fmt::layer();
+    let otel_providers = init_otel();
 
-        let (otel_layer, provider) = std::env::var("OTEL_EXPORTER_OTLP_ENDPOINT")
+    let args = Args::parse();
+
+    run(&args.name, args.gender.as_deref());
+
+    if let Some(count) = args.count {
+        run_count(count);
+    }
+
+    #[cfg(feature = "otel")]
+    shutdown_otel(otel_providers);
+}
+
+/// Providers returned by `OTel` initialization for shutdown.
+#[cfg(feature = "otel")]
+type OtelProviders = (
+    Option<opentelemetry_sdk::trace::SdkTracerProvider>,
+    Option<opentelemetry_sdk::metrics::SdkMeterProvider>,
+    Option<opentelemetry_sdk::logs::SdkLoggerProvider>,
+);
+
+/// Initialize `OTel` tracing, logging, and metrics providers.
+#[cfg(feature = "otel")]
+fn init_otel() -> OtelProviders {
+    let env_filter = EnvFilter::try_from_default_env()
+        .unwrap_or_else(|_| EnvFilter::new("info,opentelemetry=off"));
+    let fmt_layer = tracing_subscriber::fmt::layer();
+
+    let (otel_trace_layer, tp, mp, lp, otel_log_layer) =
+        std::env::var("OTEL_EXPORTER_OTLP_ENDPOINT")
             .ok()
             .filter(|ep| !ep.is_empty())
             .and_then(|_| {
-                let exporter = opentelemetry_otlp::SpanExporter::builder()
-                    .with_http()
-                    .build()
-                    .ok()?;
-
                 let resource = opentelemetry_sdk::Resource::builder()
                     .with_service_name(env!("CARGO_PKG_NAME"))
                     .build();
 
+                // --- Traces ---
+                let span_exporter = opentelemetry_otlp::SpanExporter::builder()
+                    .with_http()
+                    .build()
+                    .ok()?;
                 let tracer_provider = opentelemetry_sdk::trace::SdkTracerProvider::builder()
-                    .with_resource(resource)
-                    .with_simple_exporter(exporter)
+                    .with_resource(resource.clone())
+                    .with_simple_exporter(span_exporter)
                     .build();
-
                 let tracer = opentelemetry::trace::TracerProvider::tracer(
                     &tracer_provider,
                     env!("CARGO_PKG_NAME"),
                 );
+                let trace_layer = tracing_opentelemetry::layer().with_tracer(tracer);
+
+                // --- Logs ---
+                let log_exporter = opentelemetry_otlp::LogExporter::builder()
+                    .with_http()
+                    .build()
+                    .ok()?;
+                let logger_provider = opentelemetry_sdk::logs::SdkLoggerProvider::builder()
+                    .with_resource(resource.clone())
+                    .with_simple_exporter(log_exporter)
+                    .build();
+                let log_layer =
+                    opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge::new(
+                        &logger_provider,
+                    );
+
+                // --- Metrics (last: consumes resource without clone) ---
+                let metric_exporter = opentelemetry_otlp::MetricExporter::builder()
+                    .with_http()
+                    .build()
+                    .ok()?;
+                let metric_reader =
+                    opentelemetry_sdk::metrics::PeriodicReader::builder(metric_exporter)
+                        .with_interval(std::time::Duration::from_secs(5))
+                        .build();
+                let meter_provider = opentelemetry_sdk::metrics::SdkMeterProvider::builder()
+                    .with_resource(resource)
+                    .with_reader(metric_reader)
+                    .build();
+                opentelemetry::global::set_meter_provider(meter_provider.clone());
 
                 Some((
-                    tracing_opentelemetry::layer().with_tracer(tracer),
-                    tracer_provider,
+                    Some(trace_layer),
+                    Some(tracer_provider),
+                    Some(meter_provider),
+                    Some(logger_provider),
+                    Some(log_layer),
                 ))
             })
-            .unzip();
+            .unwrap_or((None, None, None, None, None));
 
-        tracing_subscriber::registry()
-            .with(env_filter)
-            .with(fmt_layer)
-            .with(otel_layer)
-            .init();
+    tracing_subscriber::registry()
+        .with(env_filter)
+        .with(fmt_layer)
+        .with(otel_trace_layer)
+        .with(otel_log_layer)
+        .init();
 
-        provider
-    };
+    (tp, mp, lp)
+}
 
-    let args = Args::parse();
-    if args.version {
-        tracing::info!("{}", APP_VERSION);
-        #[allow(clippy::exit)] // CLIアプリケーションでの正当な使用
-        std::process::exit(0);
-    }
-
-    run(&args.name, args.gender.as_deref());
-
-    #[cfg(feature = "otel")]
+/// Shut down `OTel` providers in reverse initialization order.
+#[cfg(feature = "otel")]
+fn shutdown_otel((tracer_provider, meter_provider, logger_provider): OtelProviders) {
     if let Some(provider) = tracer_provider
         && let Err(e) = provider.shutdown()
     {
         tracing::warn!("failed to shutdown OTel tracer provider: {e}");
+    }
+    if let Some(provider) = meter_provider {
+        if let Err(e) = provider.force_flush() {
+            tracing::warn!("failed to flush OTel meter provider: {e}");
+        }
+        if let Err(e) = provider.shutdown() {
+            tracing::warn!("failed to shutdown OTel meter provider: {e}");
+        }
+    }
+    if let Some(provider) = logger_provider
+        && let Err(e) = provider.shutdown()
+    {
+        tracing::warn!("failed to shutdown OTel logger provider: {e}");
     }
 }
 
@@ -130,6 +189,32 @@ pub fn run(name: &str, gender: Option<&str>) {
     };
 
     tracing::info!("{}, new world!!", greeting);
+}
+
+/// Run iteration count demo and record `OTel` metrics.
+#[cfg_attr(feature = "otel", tracing::instrument)]
+fn run_count(count: u32) {
+    let results = count::run_iterations(count);
+
+    #[cfg(feature = "otel")]
+    {
+        let meter = opentelemetry::global::meter(env!("CARGO_PKG_NAME"));
+        let counter = meter.u64_counter("iteration.count").build();
+        let histogram = meter
+            .f64_histogram("iteration.duration")
+            .with_unit("s")
+            .build();
+
+        for result in &results {
+            counter.add(1, &[]);
+            #[allow(clippy::cast_precision_loss, clippy::as_conversions)]
+            // u64 seconds (1..=5) fits f64 losslessly
+            histogram.record(result.duration_secs as f64, &[]);
+        }
+    }
+
+    #[cfg(not(feature = "otel"))]
+    drop(results);
 }
 
 #[cfg(test)]
