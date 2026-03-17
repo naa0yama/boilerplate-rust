@@ -13,6 +13,14 @@ service:
       receivers: [otlp]
       processors: [batch]
       exporters: [jaeger_storage_exporter]
+    logs:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
+    metrics:
+      receivers: [otlp]
+      processors: [batch]
+      exporters: [debug]
   telemetry:
     logs:
       level: warn
@@ -48,3 +56,5 @@ processors:
 exporters:
   jaeger_storage_exporter:
     trace_storage: mem_store
+  debug:
+    verbosity: basic
