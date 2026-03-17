@@ -59,7 +59,7 @@ tracing-opentelemetry = { version = "0.32", default-features = false, optional =
 
 # Dev dependencies
 [dev-dependencies]
-assert_cmd = "=2.1.2"
+assert_cmd = "=2.2.0"
 predicates = "=3.1.4"
 tempfile = "=3.26.0"
 tracing-mock = "=0.1.0-beta.3"
