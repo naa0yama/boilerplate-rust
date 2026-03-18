@@ -1,6 +1,8 @@
 [env]
 RUSTC_WRAPPER = "sccache"
 OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:5080/api/default"
+## renovate: datasource=github-releases packageName=openobserve/openobserve versioning=semver automerge=true
+OPENOBSERVE_VERSION = "v0.70.0"
 _.source = [".devcontainer/o2-env.sh"]
 
 [tools]
@@ -143,11 +145,74 @@ cargo cache
 cargo cache --autoclean
 """
 
+[tasks."claudecode:install"]
+description = "Install Claude Code to ~/.local/bin via official installer"
+run = """
+set -euo pipefail
+if command -v claude > /dev/null 2>&1; then
+  echo "Claude Code already installed: $(claude --version)"
+  exit 0
+fi
+case "$(uname -s)" in
+	Linux|Darwin) ;;
+	*) echo "Unsupported OS: $(uname -s)" >&2; exit 1 ;;
+esac
+curl -fsSL https://claude.ai/install.sh | bash
+"""
+
+[tasks."o2:install"]
+description = "Install OpenObserve Enterprise to ~/.local/bin"
+run = """
+set -euo pipefail
+
+install_dir="${HOME}/.local/bin"
+target="${install_dir}/openobserve"
+version="${OPENOBSERVE_VERSION}"
+
+# Idempotent: skip if same version already installed
+if [ -x "${target}" ]; then
+  installed="$("${target}" --version 2>/dev/null | grep -oP '\\d+\\.\\d+\\.\\d+' || true)"
+  expected="${version#v}"
+  if [ "${installed}" = "${expected}" ]; then
+    echo "OpenObserve ${version} already installed at ${target}"
+    exit 0
+  fi
+fi
+
+# Architecture detection
+case "$(uname -m)" in
+  x86_64)  arch="amd64" ;;
+  aarch64) arch="arm64" ;;
+  *)
+    echo "Error: unsupported architecture $(uname -m)" >&2
+    exit 1
+    ;;
+esac
+
+filename="openobserve-ee-${version}-linux-${arch}-musl.tar.gz"
+url="https://downloads.openobserve.ai/releases/o2-enterprise/${version}/${filename}"
+tmpfile="$(mktemp)"
+trap 'rm -f "${tmpfile}"' EXIT
+
+echo "Downloading OpenObserve ${version} (${arch})..."
+curl -fSL --retry 3 --retry-delay 2 --retry-connrefused -o "${tmpfile}" "${url}"
+
+mkdir -p "${install_dir}"
+tar -xzf "${tmpfile}" -C "${install_dir}"
+chmod +x "${target}"
+
+echo "OpenObserve ${version} installed to ${target}"
+"${target}" --version
+"""
+
 [tasks.o2]
 description = "Start OpenObserve (OTLP HTTP via :5080, UI :5080)"
 env = { OTEL_EXPORTER_OTLP_ENDPOINT = "" }
 run = """
-set -eux
+if ! command -v openobserve > /dev/null 2>&1; then
+  echo 'Error: openobserve not found. Run "mise run o2:install" first.' >&2
+  exit 1
+fi
 if pgrep -x openobserve > /dev/null 2>&1; then
   echo 'OpenObserve is already running.'
   exit 0

@@ -8,27 +8,29 @@
 
 All tasks use `mise run <task>`:
 
-| Task                  | Command                  |
-| --------------------- | ------------------------ |
-| Build                 | `mise run build`         |
-| Test                  | `mise run test`          |
-| TDD watch             | `mise run test:watch`    |
-| Doc tests             | `mise run test:doc`      |
-| Trace test            | `mise run test:trace`    |
-| Format                | `mise run fmt`           |
-| Format check          | `mise run fmt:check`     |
-| Lint (clippy)         | `mise run clippy`        |
-| Lint strict           | `mise run clippy:strict` |
-| AST rules             | `mise run ast-grep`      |
-| Pre-commit (required) | `mise run pre-commit`    |
-| Coverage              | `mise run coverage`      |
-| Deny (licenses/deps)  | `mise run deny`          |
-| Miri (UB detection)   | `mise run miri`          |
-| Clean (full)          | `mise run clean`         |
-| Clean (sweep)         | `mise run clean:sweep`   |
-| Clean (cache)         | `mise run clean:cache`   |
-| O2 (start)            | `mise run o2`            |
-| O2 (stop)             | `mise run o2:stop`       |
+| Task                  | Command                       |
+| --------------------- | ----------------------------- |
+| Build                 | `mise run build`              |
+| Test                  | `mise run test`               |
+| TDD watch             | `mise run test:watch`         |
+| Doc tests             | `mise run test:doc`           |
+| Trace test            | `mise run test:trace`         |
+| Format                | `mise run fmt`                |
+| Format check          | `mise run fmt:check`          |
+| Lint (clippy)         | `mise run clippy`             |
+| Lint strict           | `mise run clippy:strict`      |
+| AST rules             | `mise run ast-grep`           |
+| Pre-commit (required) | `mise run pre-commit`         |
+| Coverage              | `mise run coverage`           |
+| Deny (licenses/deps)  | `mise run deny`               |
+| Miri (UB detection)   | `mise run miri`               |
+| Clean (full)          | `mise run clean`              |
+| Clean (sweep)         | `mise run clean:sweep`        |
+| Clean (cache)         | `mise run clean:cache`        |
+| Claude Code (install) | `mise run claudecode:install` |
+| O2 (install)          | `mise run o2:install`         |
+| O2 (start)            | `mise run o2`                 |
+| O2 (stop)             | `mise run o2:stop`            |
 
 ## Commit Convention
 
