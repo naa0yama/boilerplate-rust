@@ -21,6 +21,9 @@ ARG SCCACHE_VERSION=v0.14.0
 ## renovate: datasource=github-releases packageName=holmgr/cargo-sweep versioning=semver automerge=true
 ARG SWEEP_VERSION=v0.8.0
 
+## renovate: datasource=github-releases packageName=openobserve/openobserve versioning=semver automerge=true
+ARG OPENOBSERVE_VERSION=v0.70.0
+
 # retry dns and some http codes that might be transient errors
 ARG CURL_OPTS="-sfSL --retry 3 --retry-delay 2 --retry-connrefused"
 
@@ -165,6 +168,7 @@ USER root
 FROM builder-base AS development
 ARG CURL_OPTS \
 	DEBIAN_FRONTEND \
+	OPENOBSERVE_VERSION \
 	USER_NAME
 
 RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
@@ -174,6 +178,16 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	set -euxo pipefail && \
 	apt-get -y install --no-install-recommends \
 	shellcheck
+
+RUN echo "**** Install OpenObserve ****" && \
+	set -euxo pipefail && \
+	_filename="openobserve-ee-${OPENOBSERVE_VERSION}-linux-amd64-musl.tar.gz" && \
+	_url="https://downloads.openobserve.ai/releases/o2-enterprise/${OPENOBSERVE_VERSION}/${_filename}" && \
+	curl ${CURL_OPTS} -o "/tmp/${_filename}" "${_url}" && \
+	tar -xvf "/tmp/${_filename}" -C /usr/local/bin/ && \
+	chmod +x /usr/local/bin/openobserve && \
+	openobserve --version && \
+	rm -f "/tmp/${_filename}"
 
 # User level settings
 USER ${USER_NAME}
