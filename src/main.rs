@@ -63,6 +63,7 @@ type OtelProviders = (
     Option<opentelemetry_sdk::logs::SdkLoggerProvider>,
 );
 
+// NOTEST(cfg): OTel init requires OTLP endpoint — covered by integration trace tests
 /// Initialize `OTel` tracing, logging, and metrics providers.
 #[cfg(feature = "otel")]
 fn init_otel() -> OtelProviders {
@@ -143,6 +144,7 @@ fn init_otel() -> OtelProviders {
     (tp, mp, lp)
 }
 
+// NOTEST(cfg): OTel shutdown requires live providers — covered by integration trace tests
 /// Shut down `OTel` providers in reverse initialization order.
 #[cfg(feature = "otel")]
 fn shutdown_otel((tracer_provider, meter_provider, logger_provider): OtelProviders) {
@@ -173,7 +175,14 @@ fn shutdown_otel((tracer_provider, meter_provider, logger_provider): OtelProvide
 /// * `gender` - 性別オプション（None, Some("man"), Some("woman"), その他）
 #[cfg_attr(feature = "otel", tracing::instrument)]
 pub fn run(name: &str, gender: Option<&str>) {
-    let greeting = match sayhello(name, gender) {
+    let result = sayhello(name, gender);
+    let greeting = format_greeting(name, result);
+    tracing::info!("{}, new world!!", greeting);
+}
+
+/// Format a greeting from a `sayhello` result, handling errors gracefully.
+fn format_greeting(name: &str, result: Result<String, GreetingError>) -> String {
+    match result {
         Ok(msg) => msg,
         Err(GreetingError::InvalidGender(invalid_gender)) => {
             tracing::warn!(
@@ -186,9 +195,7 @@ pub fn run(name: &str, gender: Option<&str>) {
             tracing::error!("Unexpected error in greeting generation, using default");
             format!("Hi, {name}")
         }
-    };
-
-    tracing::info!("{}, new world!!", greeting);
+    }
 }
 
 /// Run iteration count demo and record `OTel` metrics.
@@ -219,7 +226,8 @@ fn run_count(count: u32) {
 
 #[cfg(test)]
 mod tests {
-    use super::run;
+    use super::{format_greeting, run};
+    use crate::libs::hello::GreetingError;
     use tracing::subscriber::with_default;
     use tracing_mock::{expect, subscriber};
 
@@ -301,6 +309,53 @@ mod tests {
         });
 
         handle.assert_finished();
+    }
+
+    #[test]
+    fn test_format_greeting_unknown_gender() {
+        let (subscriber, handle) = subscriber::mock()
+            .event(
+                expect::event()
+                    .with_target(env!("CARGO_PKG_NAME"))
+                    .at_level(tracing::Level::ERROR),
+            )
+            .only()
+            .run_with_handle();
+
+        with_default(subscriber, || {
+            let result = format_greeting("Unknown", Err(GreetingError::UnknownGender));
+            assert_eq!(result, "Hi, Unknown");
+        });
+
+        handle.assert_finished();
+    }
+
+    #[test]
+    fn test_format_greeting_invalid_gender() {
+        let (subscriber, handle) = subscriber::mock()
+            .event(
+                expect::event()
+                    .with_target(env!("CARGO_PKG_NAME"))
+                    .at_level(tracing::Level::WARN),
+            )
+            .only()
+            .run_with_handle();
+
+        with_default(subscriber, || {
+            let result = format_greeting(
+                "Bob",
+                Err(GreetingError::InvalidGender(String::from("other"))),
+            );
+            assert_eq!(result, "Hi, Bob (invalid gender: other)");
+        });
+
+        handle.assert_finished();
+    }
+
+    #[test]
+    fn test_format_greeting_ok() {
+        let result = format_greeting("Alice", Ok(String::from("Hi, Alice")));
+        assert_eq!(result, "Hi, Alice");
     }
 
     #[test]

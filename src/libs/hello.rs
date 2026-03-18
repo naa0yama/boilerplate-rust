@@ -58,47 +58,32 @@ mod tests {
 
     #[test]
     fn test_sayhello_with_gender_man() {
-        let result = sayhello("John", Some("man"));
-        assert!(result.is_ok());
-        if let Ok(greeting) = result {
-            assert_eq!(greeting, "Hi, Mr. John");
-        }
+        let result = sayhello("John", Some("man")).unwrap();
+        assert_eq!(result, "Hi, Mr. John");
     }
 
     #[test]
     fn test_sayhello_with_gender_woman() {
-        let result = sayhello("Alice", Some("woman"));
-        assert!(result.is_ok());
-        if let Ok(greeting) = result {
-            assert_eq!(greeting, "Hi, Ms. Alice");
-        }
+        let result = sayhello("Alice", Some("woman")).unwrap();
+        assert_eq!(result, "Hi, Ms. Alice");
     }
 
     #[test]
     fn test_sayhello_with_gender_none() {
-        let result = sayhello("Bob", None);
-        assert!(result.is_ok());
-        if let Ok(greeting) = result {
-            assert_eq!(greeting, "Hi, Bob");
-        }
+        let result = sayhello("Bob", None).unwrap();
+        assert_eq!(result, "Hi, Bob");
     }
 
     #[test]
     fn test_sayhello_with_gender_invalid() {
-        let result = sayhello("Charlie", Some("other"));
-        assert!(matches!(result, Err(GreetingError::InvalidGender(_))));
-        if let Err(GreetingError::InvalidGender(gender)) = result {
-            assert_eq!(gender, "other");
-        }
+        let result = sayhello("Charlie", Some("other")).unwrap_err();
+        assert_eq!(result, GreetingError::InvalidGender(String::from("other")));
     }
 
     #[test]
     fn test_sayhello_with_gender_empty_string() {
-        let result = sayhello("Dave", Some(""));
-        assert!(matches!(result, Err(GreetingError::InvalidGender(_))));
-        if let Err(GreetingError::InvalidGender(gender)) = result {
-            assert_eq!(gender, "");
-        }
+        let result = sayhello("Dave", Some("")).unwrap_err();
+        assert_eq!(result, GreetingError::InvalidGender(String::new()));
     }
 
     #[test]
