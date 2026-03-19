@@ -31,6 +31,7 @@ otel = [
 	"dep:opentelemetry_sdk",
 	"dep:opentelemetry-otlp",
 	"dep:tracing-opentelemetry",
+	"dep:opentelemetry-appender-tracing",
 ]
 
 # - -------------------------------------------------------------------------------------------------
@@ -47,14 +48,18 @@ rustls = { version = "0.23", default-features = false, features = ["ring", "logg
 serde = { version = "1.0.219", features = ["derive"] }
 serde_json = "1.0.137"
 
+# Random
+rand = "0.9"
+
 # Logging
 tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 
 # OpenTelemetry (optional, behind `otel` feature)
 opentelemetry = { version = "0.31", optional = true }
-opentelemetry-otlp = { version = "0.31", default-features = false, features = ["trace", "http-proto", "reqwest-blocking-client"], optional = true }
-opentelemetry_sdk = { version = "0.31", default-features = false, features = ["trace"], optional = true }
+opentelemetry-appender-tracing = { version = "0.31", optional = true }
+opentelemetry-otlp = { version = "0.31", default-features = false, features = ["trace", "logs", "metrics", "http-proto", "reqwest-blocking-client"], optional = true }
+opentelemetry_sdk = { version = "0.31", default-features = false, features = ["trace", "logs", "metrics"], optional = true }
 tracing-opentelemetry = { version = "0.32", default-features = false, optional = true }
 
 # Dev dependencies

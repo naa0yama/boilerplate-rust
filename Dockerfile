@@ -209,7 +209,7 @@ if [ ! -f "${HOME}/.local/share/bash-completion/completions/mise" ]; then
 	~/.local/bin/mise completion bash --include-bash-completion-lib > "${HOME}/.local/share/bash-completion/completions/mise"
 fi
 
-# Claude Code
+# ~/.local/bin (Claude Code, OpenObserve, etc.)
 case ":$PATH:" in
 	*:"$HOME/.local/bin":*) ;;
 	*) export PATH="$HOME/.local/bin:$PATH" ;;
@@ -219,10 +219,3 @@ alias cc="claude --dangerously-skip-permissions"
 _DOC_
 EOF
 
-# Ref: https://docs.anthropic.com/en/docs/claude-code/setup#native-binary-installation-beta
-RUN echo "**** Install Claude Code ****" && \
-	set -euxo pipefail && \
-	curl -fsSL https://claude.ai/install.sh | bash && \
-	exec ${SHELL} -l && \
-	claude --version && \
-	type cc
