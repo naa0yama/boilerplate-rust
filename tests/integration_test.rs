@@ -1,8 +1,10 @@
 #![allow(clippy::unwrap_used)] // テストコードではunwrapを許可
 #![allow(missing_docs)] // テストコードではdocコメント不要
 
+use std::time::Duration;
+
 use assert_cmd::cargo_bin_cmd;
-use predicates::prelude::predicate;
+use predicates::prelude::{PredicateBooleanExt, predicate};
 
 #[test]
 #[cfg_attr(miri, ignore)]
@@ -33,7 +35,8 @@ fn test_cli_version_flag() {
     cmd.arg("--version")
         .assert()
         .success()
-        .stdout(predicate::str::contains("brust version"));
+        .stdout(predicate::str::contains("brust"))
+        .stdout(predicate::str::contains("(rev:"));
 }
 
 #[test]
@@ -43,7 +46,8 @@ fn test_cli_version_short_flag() {
     cmd.arg("-V")
         .assert()
         .success()
-        .stdout(predicate::str::contains("brust version"));
+        .stdout(predicate::str::contains("brust"))
+        .stdout(predicate::str::contains("(rev:"));
 }
 
 #[test]
@@ -109,4 +113,43 @@ fn test_cli_without_gender() {
         .assert()
         .success()
         .stdout(predicate::str::contains("Hi, Dave, new world!!"));
+}
+
+#[test]
+#[cfg_attr(miri, ignore)]
+fn test_cli_count_basic() {
+    let mut cmd = cargo_bin_cmd!("brust");
+    cmd.arg("-c")
+        .arg("1")
+        .timeout(Duration::from_secs(10))
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("starting iteration"))
+        .stdout(predicate::str::contains("finished iteration"));
+}
+
+#[test]
+#[cfg_attr(miri, ignore)]
+fn test_cli_count_zero() {
+    let mut cmd = cargo_bin_cmd!("brust");
+    cmd.arg("--count")
+        .arg("0")
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("starting iteration").not());
+}
+
+#[test]
+#[cfg_attr(miri, ignore)]
+fn test_cli_count_with_name() {
+    let mut cmd = cargo_bin_cmd!("brust");
+    cmd.arg("-n")
+        .arg("Alice")
+        .arg("-c")
+        .arg("1")
+        .timeout(Duration::from_secs(10))
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Hi, Alice, new world!!"))
+        .stdout(predicate::str::contains("finished iteration"));
 }

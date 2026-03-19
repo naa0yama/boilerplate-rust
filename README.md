@@ -147,6 +147,12 @@ mise run pre-commit       # fmt:check + clippy:strict + ast-grep
 
 このプロジェクトは [LICENSE](./LICENSE) ファイルに記載されているライセンスの下で公開されています。
 
+### サードパーティライセンスについて
+
+Dev Container の起動時に [OpenObserve Enterprise Edition](https://openobserve.ai/) が自動的にダウンロード・インストールされます。Enterprise 版は MCP (Model Context Protocol) サーバー機能など OSS 版にはない付加機能を備えているため採用しています。Enterprise 版は 200GB/Day のインジェストクォータ内であれば無料で利用できます。
+
+OpenObserve Enterprise Edition は [EULA (End User License Agreement)](https://openobserve.ai/enterprise-license/) の下で提供されており、OSS 版 (AGPL-3.0) とはライセンスが異なります。Enterprise 版の機能一覧は [OpenObserve Enterprise](https://openobserve.ai/docs/features/enterprise/) を参照してください。
+
 ## 参考資料
 
 - [The Rust Programming Language 日本語版](https://doc.rust-jp.rs/book-ja/)

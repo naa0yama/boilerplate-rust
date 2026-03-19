@@ -558,11 +558,12 @@ cargo build --release --no-default-features
 
 **実行時の環境変数:**
 
-| 環境変数                      | 必須 | 説明                                                        |
-| ----------------------------- | ---- | ----------------------------------------------------------- |
-| `OTEL_EXPORTER_OTLP_ENDPOINT` | Yes  | OTel Collector エンドポイント (例: `http://localhost:4318`) |
-| `OTEL_SERVICE_NAME`           | No   | サービス名 (デフォルト: パッケージ名)                       |
-| `RUST_LOG`                    | No   | ログレベル (デフォルト: `info`)                             |
+| 環境変数                      | 必須 | 説明                                                                    |
+| ----------------------------- | ---- | ----------------------------------------------------------------------- |
+| `OTEL_EXPORTER_OTLP_ENDPOINT` | Yes  | OTel Collector エンドポイント (例: `http://localhost:5080/api/default`) |
+| `OTEL_EXPORTER_OTLP_HEADERS`  | No   | OTLP エクスポータに付加する HTTP ヘッダ (例: `Authorization=Basic ...`) |
+| `OTEL_SERVICE_NAME`           | No   | サービス名 (デフォルト: パッケージ名)                                   |
+| `RUST_LOG`                    | No   | ログレベル (デフォルト: `info`)                                         |
 
 **注意:**
 
