@@ -1,6 +1,6 @@
 # Testing Patterns — Project-Specific
 
-> **Shared templates**: See `~/.claude/skills/coding/references/testing-templates.md`
+> **Shared templates**: See `~/.claude/skills/rust-coding/references/testing-templates.md`
 > for unit test, async test, integration test templates, fixtures, coverage rules,
 > and ETXTBSY workaround.
 
