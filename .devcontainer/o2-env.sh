@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
-# Ref: https://openobserve.ai/docs/environment-variables
 # OpenObserve configuration for local development (ephemeral, no persistence)
+# Ref: https://openobserve.ai/docs/environment-variables
+
 export ZO_ROOT_USER_EMAIL="dev@o2.test"
 export ZO_ROOT_USER_PASSWORD="dev"
 export ZO_LOCAL_MODE=true

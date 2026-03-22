@@ -87,7 +87,6 @@ mise run pre-commit       # fmt:check + clippy:strict + ast-grep
 │   └── settings.json           # ワークスペース設定
 ├── ast-rules/                  # ast-grep プロジェクトルール
 ├── docs/                       # ドキュメント
-│   └── project_rules.md        # プロジェクトルール
 ├── src/                        # ソースコード
 │   ├── main.rs                 # アプリケーションのエントリーポイント
 │   ├── libs.rs                 # モジュール定義
