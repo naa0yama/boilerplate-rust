@@ -89,7 +89,6 @@ jobs:
         if: steps.tagpr.outputs.tag == ''
         env:
           GH_TOKEN: ${{ github.token }}
-          RUSTC_WRAPPER: ""
         run: |
           PR_BRANCH=$(gh pr list --state open --json headRefName \
             --jq '[.[] | select(.headRefName | startswith("tagpr-from-"))][0].headRefName // empty')
@@ -99,7 +98,7 @@ jobs:
           fi
           git fetch origin "${PR_BRANCH}"
           git checkout -f "${PR_BRANCH}"
-          cargo generate-lockfile
+          "$(rustup which cargo)" generate-lockfile
           if ! git diff --quiet Cargo.lock; then
             FILE_SHA=$(gh api "repos/${GITHUB_REPOSITORY}/contents/Cargo.lock?ref=${PR_BRANCH}" --jq '.sha')
             gh api "repos/${GITHUB_REPOSITORY}/contents/Cargo.lock" \
