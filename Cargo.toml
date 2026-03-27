@@ -1,43 +1,22 @@
 # - -------------------------------------------------------------------------------------------------
-# - Package
+# - Workspace
 # -
-[package]
-name = "brust"
+[workspace]
+resolver = "3"
+members = [
+	"crates/brust-cli",
+]
+
+[workspace.package]
 version = "0.1.0"
-categories = ["command-line-utilities"]
 edition = "2024"
-keywords = ["cli", "tool"]
 license = "AGPL-3.0-only"
 repository = "https://github.com/naa0yama/boilerplate-rust"
-description = "A CLI tool built following project rules standards"
-
-[package.metadata.binstall]
-pkg-url = "{ repo }/releases/download/v{ version }/{ name }-v{ version }-{ target }.tar.gz"
-bin-dir = "{ bin }{ binary-ext }"
-pkg-fmt = "tgz"
-disabled-strategies = ["quick-install"]
-
-[package.metadata.binstall.overrides.x86_64-pc-windows-msvc]
-pkg-url = "{ repo }/releases/download/v{ version }/{ name }-v{ version }-{ target }.zip"
-pkg-fmt = "zip"
-
-# - -------------------------------------------------------------------------------------------------
-# - Features
-# -
-[features]
-default = ["otel"]
-otel = [
-	"dep:opentelemetry",
-	"dep:opentelemetry_sdk",
-	"dep:opentelemetry-otlp",
-	"dep:tracing-opentelemetry",
-	"dep:opentelemetry-appender-tracing",
-]
 
 # - -------------------------------------------------------------------------------------------------
 # - Dependencies
 # -
-[dependencies]
+[workspace.dependencies]
 # Core
 anyhow = "1.0"
 clap = { version = "4.5.45", features = ["derive"] }
@@ -56,14 +35,13 @@ tracing = "0.1.41"
 tracing-subscriber = { version = "0.3.20", features = ["env-filter"] }
 
 # OpenTelemetry (optional, behind `otel` feature)
-opentelemetry = { version = "0.31", optional = true }
-opentelemetry-appender-tracing = { version = "0.31", optional = true }
-opentelemetry-otlp = { version = "0.31", default-features = false, features = ["trace", "logs", "metrics", "http-proto", "reqwest-blocking-client"], optional = true }
-opentelemetry_sdk = { version = "0.31", default-features = false, features = ["trace", "logs", "metrics"], optional = true }
-tracing-opentelemetry = { version = "0.32", default-features = false, optional = true }
+opentelemetry = { version = "0.31" }
+opentelemetry-appender-tracing = { version = "0.31" }
+opentelemetry-otlp = { version = "0.31", default-features = false, features = ["trace", "logs", "metrics", "http-proto", "reqwest-blocking-client"] }
+opentelemetry_sdk = { version = "0.31", default-features = false, features = ["trace", "logs", "metrics"] }
+tracing-opentelemetry = { version = "0.32", default-features = false }
 
 # Dev dependencies
-[dev-dependencies]
 assert_cmd = "=2.2.0"
 predicates = "=3.1.4"
 tempfile = "=3.27.0"
@@ -72,8 +50,7 @@ tracing-mock = "=0.1.0-beta.3"
 # - -------------------------------------------------------------------------------------------------
 # - Lints
 # -
-[lints.clippy]
-# lint設定（priority=-1で個別設定を優先）
+[workspace.lints.clippy]
 all = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
 nursery = { level = "warn", priority = -1 }
@@ -166,7 +143,7 @@ print_stderr = "warn" #								eprintln!/eprint!の使用を警告(tracing推奨
 multiple-crate-versions = "allow"
 cargo-common-metadata = "allow"
 
-[lints.rust]
+[workspace.lints.rust]
 warnings = "warn"
 missing_debug_implementations = "warn" #			Debugトレイト未実装を警告
 missing_docs = "warn" #								pub項目のドキュメント不足を警告
