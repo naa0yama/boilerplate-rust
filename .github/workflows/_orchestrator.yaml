@@ -94,6 +94,7 @@ jobs:
     uses: ./.github/workflows/miri.yaml
     permissions:
       contents: read # Required to checkout the repository for Miri analysis
+      pull-requests: read # Required to list changed files for per-crate detection
 
   audit:
     needs: detect-changes
