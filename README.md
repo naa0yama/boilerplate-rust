@@ -87,7 +87,7 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 │   └── settings.json           # ワークスペース設定
 ├── ast-rules/                  # ast-grep プロジェクトルール
 ├── crates/                     # ワークスペースクレート
-│   └── brust-cli/              # CLI バイナリクレート
+│   └── brust/                  # CLI バイナリクレート
 │       ├── src/
 │       │   ├── main.rs         # アプリケーションのエントリーポイント
 │       │   ├── libs.rs         # モジュール定義
