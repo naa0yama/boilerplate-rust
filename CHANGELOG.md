@@ -1,5 +1,49 @@
 # Changelog
 
+## [v0.1.1](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.0...v0.1.1) - 2026-03-27
+### Documentation 🗒️
+- feat(otel): add OTel Logs and Metrics support by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/241
+- feat(o2): add dashboard auto-import on O2 startup by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/253
+- chore: migrate coding rules to skill system by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/258
+- Chore/reduce renovate noise by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/263
+- ci: backport infrastructure improvements from dtvmgr by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/276
+### Dependency Updates 📦
+- chore(deps): update rust crate assert_cmd to v2.2.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/245
+- chore(deps): update rust crate tempfile to v3.27.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/246
+- fix(deps): update rust crate rand to 0.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/248
+- chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/270
+### Development Environment 🔧
+- chore(deps): update dependency aqua:ast-grep/ast-grep to v0.41.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/243
+- chore(deps): update taiki-e/install-action action to v2.68.26 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/244
+- chore(deps): update actions/download-artifact action to v8.0.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/247
+- chore(deps): update taiki-e/install-action action to v2.68.27 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/250
+- chore(deps): update taiki-e/install-action action to v2.68.28 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/255
+- chore(deps): update taiki-e/install-action action to v2.68.29 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/256
+- chore(deps): update actions-rust-lang/setup-rust-toolchain action to v1.15.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/257
+- chore(deps): update dependency usage to v3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/254
+- chore(deps): update all action update to v4 (major) by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/252
+- chore(deps): update taiki-e/install-action action to v2.68.30 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/260
+- chore: pin dockerfile syntax to semver and clean up octocov config by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/259
+- chore(deps): update taiki-e/install-action action to v2.68.31 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/262
+- fix: add Cargo.lock staging and clear RUSTC_WRAPPER in tagpr by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/265
+- fix(ci): move RUSTC_WRAPPER override into postVersionCommand by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/266
+- ci(tagpr): move Cargo.lock and CHANGELOG updates to postVersionCommand by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/267
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/269
+- chore(deps): update taiki-e/install-action action to v2.68.33 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/272
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/274
+- chore(deps): update taiki-e/install-action action to v2.68.35 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/275
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/277
+- chore(deps): update taiki-e/install-action action to v2.69.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/278
+- chore(deps): update taiki-e/install-action action to v2.69.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/279
+- chore(deps): update taiki-e/install-action action to v2.69.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/280
+- chore(deps): update taiki-e/install-action action to v2.69.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/281
+- chore(deps): update dependency aqua:taiki-e/cargo-llvm-cov to v0.8.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/282
+### Other Changes
+- Update .tagpr by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/239
+- feat: add coverage threshold verification and badges branch init task by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/249
+- chore: add worktree include config for Claude skill files by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/251
+- chore: raise octocov coverage threshold to 90% by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/264
+
 ## [v0.1.0](https://github.com/naa0yama/boilerplate-rust/commits/v0.1.0) - 2026-03-16
 
 ### Documentation 🗒️
