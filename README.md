@@ -86,21 +86,24 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 │   ├── launch.json             # デバッグ設定
 │   └── settings.json           # ワークスペース設定
 ├── ast-rules/                  # ast-grep プロジェクトルール
+├── crates/                     # ワークスペースクレート
+│   └── brust/                  # CLI バイナリクレート
+│       ├── src/
+│       │   ├── main.rs         # アプリケーションのエントリーポイント
+│       │   ├── libs.rs         # モジュール定義
+│       │   └── libs/
+│       │       └── hello.rs    # Helloモジュール
+│       ├── tests/
+│       │   └── integration_test.rs  # 統合テスト
+│       ├── build.rs            # ビルドスクリプト
+│       └── Cargo.toml          # クレート設定
 ├── docs/                       # ドキュメント
-├── src/                        # ソースコード
-│   ├── main.rs                 # アプリケーションのエントリーポイント
-│   ├── libs.rs                 # モジュール定義
-│   └── libs/
-│       └── hello.rs            # Helloモジュール
-├── tests/                      # 統合テスト
-│   └── integration_test.rs
 ├── .editorconfig               # エディター設定
 ├── .gitignore                  # Git除外設定
 ├── .octocov.yml                # カバレッジレポート設定
 ├── .tagpr                      # タグ&リリース設定
-├── build.rs                    # ビルドスクリプト
 ├── Cargo.lock                  # 依存関係のロックファイル
-├── Cargo.toml                  # プロジェクト設定と依存関係
+├── Cargo.toml                  # ワークスペース設定と共有依存関係
 ├── deny.toml                   # cargo-deny 設定
 ├── Dockerfile                  # Dockerイメージ定義
 ├── dprint.jsonc                # Dprint フォーマッター設定
