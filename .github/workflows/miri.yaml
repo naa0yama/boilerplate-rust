@@ -63,7 +63,7 @@ jobs:
 
             const changed = allCrates.filter(crate => {
               const prefix = `crates/${crate}/`;
-              return filenames.some(f => f.startsWith(prefix) && (f.endsWith('.rs') || f.endsWith('/Cargo.toml')));
+              return filenames.some(f => f.startsWith(prefix) && f.endsWith('.rs'));
             });
 
             // Global triggers → all eligible crates
@@ -86,7 +86,6 @@ jobs:
     timeout-minutes: 60
     permissions:
       contents: read # Required to checkout the repository
-
     strategy:
       fail-fast: false
       matrix: ${{ fromJSON(needs.detect-crates.outputs.matrix) }}
