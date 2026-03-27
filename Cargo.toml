@@ -3,7 +3,7 @@
 # -
 [package]
 name = "brust"
-version = "0.1.0"
+version = "0.1.1"
 categories = ["command-line-utilities"]
 edition = "2024"
 keywords = ["cli", "tool"]
