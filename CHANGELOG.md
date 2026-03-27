@@ -1,19 +1,25 @@
 # Changelog
 
 ## [v0.1.1](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.0...v0.1.1) - 2026-03-27
+
 ### Documentation 🗒️
+
 - feat(otel): add OTel Logs and Metrics support by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/241
 - feat(o2): add dashboard auto-import on O2 startup by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/253
 - chore: migrate coding rules to skill system by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/258
 - Chore/reduce renovate noise by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/263
 - ci: backport infrastructure improvements from dtvmgr by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/276
 - refactor: migrate to Cargo workspace structure by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/283
+
 ### Dependency Updates 📦
+
 - chore(deps): update rust crate assert_cmd to v2.2.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/245
 - chore(deps): update rust crate tempfile to v3.27.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/246
 - fix(deps): update rust crate rand to 0.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/248
 - chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/270
+
 ### Development Environment 🔧
+
 - chore(deps): update dependency aqua:ast-grep/ast-grep to v0.41.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/243
 - chore(deps): update taiki-e/install-action action to v2.68.26 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/244
 - chore(deps): update actions/download-artifact action to v8.0.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/247
@@ -39,7 +45,9 @@
 - chore(deps): update taiki-e/install-action action to v2.69.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/280
 - chore(deps): update taiki-e/install-action action to v2.69.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/281
 - chore(deps): update dependency aqua:taiki-e/cargo-llvm-cov to v0.8.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/282
+
 ### Other Changes
+
 - Update .tagpr by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/239
 - feat: add coverage threshold verification and badges branch init task by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/249
 - chore: add worktree include config for Claude skill files by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/251
