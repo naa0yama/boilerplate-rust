@@ -1,7 +1,9 @@
 # Changelog
 
 ## [v0.1.2](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.1...v0.1.2) - 2026-03-28
+
 ### Development Environment 🔧
+
 - chore(deps): update github/codeql-action action to v4.34.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/285
 - chore(deps): update github/codeql-action action to v4.34.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/287
 - chore(deps): update taiki-e/install-action action to v2.69.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/288
