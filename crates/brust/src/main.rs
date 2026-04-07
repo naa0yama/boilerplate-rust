@@ -2,8 +2,8 @@
 
 /// ライブラリモジュール群
 pub mod libs;
-/// Application metric instruments
-mod metrics;
+/// OpenTelemetry instrumentation (metrics, future: tracing, logs)
+mod telemetry;
 
 use clap::Parser;
 use tracing_subscriber::filter::EnvFilter;
@@ -17,7 +17,7 @@ use tracing_subscriber::util::SubscriberInitExt;
 use crate::libs::count;
 use crate::libs::hello::{GreetingError, sayhello};
 use crate::libs::http;
-use crate::metrics::Meters;
+use crate::telemetry::metrics::Meters;
 
 #[derive(Parser)]
 #[command(about, version = APP_VERSION)]
