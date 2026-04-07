@@ -18,3 +18,4 @@ For universal Miri rules and decision flowchart, see
 5. **TLS / Crypto (reqwest + rustls)** — included in Network I/O count. TLS initialization is extremely slow under Miri (~10 min/call).
 6. **Regex compilation** — included in tests that indirectly trigger `regex::Regex::new()`. DFA construction under interpretation is extremely slow (~2-6 min/test).
 7. **Environment variables** — Tests calling `std::env::set_var` or relying on `HOME`/`current_dir`.
+8. **sysinfo / sysconf (process metrics)** — Tests calling `ProcessMetricHandles::register()` trigger `sysinfo` which calls `sysconf(_SC_CLK_TCK)` internally. Miri does not stub this syscall. Use `#[cfg_attr(miri, ignore)]` on individual tests; guard the struct field and its initialization with `#[cfg(all(feature = "process-metrics", not(miri)))]`.
