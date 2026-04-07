@@ -8,7 +8,7 @@ use std::time::Instant;
 
 use anyhow::Context as _;
 
-use crate::metrics::Meters;
+use crate::telemetry::metrics::Meters;
 
 /// Perform an HTTP GET request to `url` and record `OTel` client metrics.
 ///
@@ -50,7 +50,7 @@ pub fn fetch_url(url: &str, meters: &Meters) -> anyhow::Result<()> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::metrics::Meters;
+    use crate::telemetry::metrics::Meters;
 
     #[test]
     fn fetch_url_rejects_invalid_url() {
