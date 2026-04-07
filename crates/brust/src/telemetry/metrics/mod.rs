@@ -12,6 +12,8 @@
 mod process;
 
 #[cfg(feature = "otel")]
+use crate::telemetry::conventions::{attribute as brust_attr, metric as brust_metric};
+#[cfg(feature = "otel")]
 use opentelemetry::metrics::{Counter, Histogram, UpDownCounter};
 #[cfg(feature = "otel")]
 use opentelemetry_semantic_conventions::{attribute, metric as semconv};
@@ -64,32 +66,32 @@ impl Meters {
 
         Self {
             run_duration: meter
-                .f64_histogram("brust.run.duration")
+                .f64_histogram(brust_metric::RUN_DURATION)
                 .with_unit("s")
                 .with_description("End-to-end command execution latency")
                 .build(),
             greeting_count: meter
-                .u64_counter("brust.greeting.count")
+                .u64_counter(brust_metric::GREETING_COUNT)
                 .with_unit("{call}")
                 .with_description("Total greeting calls attributed by resolved gender")
                 .build(),
             greeting_errors: meter
-                .u64_counter("brust.greeting.errors")
+                .u64_counter(brust_metric::GREETING_ERRORS)
                 .with_unit("{error}")
                 .with_description("Greeting calls that resulted in an error")
                 .build(),
             iteration_count: meter
-                .u64_counter("brust.iteration.count")
+                .u64_counter(brust_metric::ITERATION_COUNT)
                 .with_unit("{iter}")
                 .with_description("Total iterations executed in the count demo")
                 .build(),
             iteration_duration: meter
-                .f64_histogram("brust.iteration.duration")
+                .f64_histogram(brust_metric::ITERATION_DURATION)
                 .with_unit("s")
                 .with_description("Per-iteration sleep delay in the count demo")
                 .build(),
             iteration_in_flight: meter
-                .i64_up_down_counter("brust.iteration.in_flight")
+                .i64_up_down_counter(brust_metric::ITERATION_IN_FLIGHT)
                 .with_unit("{iter}")
                 .with_description("Iterations currently executing (UpDownCounter demo)")
                 .build(),
@@ -113,7 +115,7 @@ impl Meters {
         self.run_duration.record(
             duration_s,
             &[opentelemetry::KeyValue::new(
-                "brust.command",
+                brust_attr::COMMAND,
                 command.to_owned(),
             )],
         );
@@ -126,7 +128,7 @@ impl Meters {
         self.greeting_count.add(
             1,
             &[opentelemetry::KeyValue::new(
-                "brust.gender",
+                brust_attr::GENDER,
                 gender.to_owned(),
             )],
         );
@@ -222,6 +224,7 @@ impl Meters {
 mod tests {
     #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
+    use crate::telemetry::conventions::{attribute as brust_attr, metric as brust_metric};
     use opentelemetry::metrics::MeterProvider as _;
     use opentelemetry_sdk::metrics::{
         InMemoryMetricExporter, SdkMeterProvider,
@@ -255,20 +258,20 @@ mod tests {
         let meter = provider.meter("test");
 
         let greeting_count = meter
-            .u64_counter("brust.greeting.count")
+            .u64_counter(brust_metric::GREETING_COUNT)
             .with_unit("{call}")
             .with_description("Total greeting calls attributed by resolved gender")
             .build();
 
-        greeting_count.add(1, &[KeyValue::new("brust.gender", "man")]);
-        greeting_count.add(1, &[KeyValue::new("brust.gender", "woman")]);
-        greeting_count.add(1, &[KeyValue::new("brust.gender", "man")]);
+        greeting_count.add(1, &[KeyValue::new(brust_attr::GENDER, "man")]);
+        greeting_count.add(1, &[KeyValue::new(brust_attr::GENDER, "woman")]);
+        greeting_count.add(1, &[KeyValue::new(brust_attr::GENDER, "man")]);
 
         provider.force_flush().expect("flush failed");
 
         let metrics = exporter.get_finished_metrics().expect("no data");
-        let metric =
-            find_metric(&metrics, "brust.greeting.count").expect("brust.greeting.count not found");
+        let metric = find_metric(&metrics, brust_metric::GREETING_COUNT)
+            .expect("brust.greeting.count not found");
 
         let total = match metric.data() {
             AggregatedMetrics::U64(MetricData::Sum(sum)) => sum
@@ -288,7 +291,7 @@ mod tests {
         let meter = provider.meter("test");
 
         let histogram = meter
-            .f64_histogram("brust.iteration.duration")
+            .f64_histogram(brust_metric::ITERATION_DURATION)
             .with_unit("s")
             .with_description("Per-iteration sleep delay in the count demo")
             .build();
@@ -300,7 +303,7 @@ mod tests {
         provider.force_flush().expect("flush failed");
 
         let metrics = exporter.get_finished_metrics().expect("no data");
-        let metric = find_metric(&metrics, "brust.iteration.duration")
+        let metric = find_metric(&metrics, brust_metric::ITERATION_DURATION)
             .expect("brust.iteration.duration not found");
 
         let (count, sum) = match metric.data() {
@@ -322,7 +325,7 @@ mod tests {
         let meter = provider.meter("test");
 
         let in_flight = meter
-            .i64_up_down_counter("brust.iteration.in_flight")
+            .i64_up_down_counter(brust_metric::ITERATION_IN_FLIGHT)
             .with_unit("{iter}")
             .with_description("Iterations currently executing (UpDownCounter demo)")
             .build();
@@ -334,7 +337,7 @@ mod tests {
         provider.force_flush().expect("flush failed");
 
         let metrics = exporter.get_finished_metrics().expect("no data");
-        let metric = find_metric(&metrics, "brust.iteration.in_flight")
+        let metric = find_metric(&metrics, brust_metric::ITERATION_IN_FLIGHT)
             .expect("brust.iteration.in_flight not found");
 
         let value = match metric.data() {
