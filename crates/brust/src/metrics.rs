@@ -32,7 +32,8 @@ pub struct Meters {
     iteration_in_flight: UpDownCounter<i64>,
     http_request_duration: Histogram<f64>,
     // --- Observable process metrics (feature = "process-metrics") ---
-    #[cfg(feature = "process-metrics")]
+    // Disabled under Miri: sysinfo calls sysconf(_SC_CLK_TCK) which Miri does not stub.
+    #[cfg(all(feature = "process-metrics", not(miri)))]
     _process: process::ProcessMetricHandles,
 }
 
@@ -100,7 +101,7 @@ impl Meters {
                      (`OTel` HTTP semconv)",
                 )
                 .build(),
-            #[cfg(feature = "process-metrics")]
+            #[cfg(all(feature = "process-metrics", not(miri)))]
             _process: process::ProcessMetricHandles::register(&meter),
         }
     }

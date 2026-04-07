@@ -313,6 +313,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // sysinfo calls sysconf(_SC_CLK_TCK) which Miri does not stub
     fn process_metrics_are_registered_and_flushed() {
         let (provider, exporter) = test_provider();
         let meter = provider.meter("test");
@@ -342,6 +343,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // sysinfo calls sysconf(_SC_CLK_TCK) which Miri does not stub
     fn memory_usage_is_positive() {
         let (provider, exporter) = test_provider();
         let meter = provider.meter("test");
@@ -370,6 +372,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // sysinfo calls sysconf(_SC_CLK_TCK) which Miri does not stub
     fn disk_io_has_read_and_write_data_points() {
         let (provider, exporter) = test_provider();
         let meter = provider.meter("test");
@@ -411,6 +414,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg_attr(miri, ignore)] // sysinfo calls sysconf(_SC_CLK_TCK) which Miri does not stub
     fn uptime_is_positive() {
         let (provider, exporter) = test_provider();
         let meter = provider.meter("test");
