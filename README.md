@@ -91,8 +91,11 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 │       ├── src/
 │       │   ├── main.rs         # アプリケーションのエントリーポイント
 │       │   ├── libs.rs         # モジュール定義
+│       │   ├── metrics.rs      # OTel メトリクス instruments
 │       │   └── libs/
-│       │       └── hello.rs    # Helloモジュール
+│       │       ├── count.rs    # イテレーションカウンターモジュール
+│       │       ├── hello.rs    # Hello モジュール
+│       │       └── http.rs     # HTTP クライアント (OTel メトリクス付き)
 │       ├── tests/
 │       │   └── integration_test.rs  # 統合テスト
 │       ├── build.rs            # ビルドスクリプト

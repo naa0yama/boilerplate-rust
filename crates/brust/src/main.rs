@@ -2,6 +2,9 @@
 
 /// ライブラリモジュール群
 pub mod libs;
+/// Application metric instruments
+mod metrics;
+
 use clap::Parser;
 use tracing_subscriber::filter::EnvFilter;
 #[cfg(not(feature = "otel"))]
@@ -13,6 +16,8 @@ use tracing_subscriber::util::SubscriberInitExt;
 
 use crate::libs::count;
 use crate::libs::hello::{GreetingError, sayhello};
+use crate::libs::http;
+use crate::metrics::Meters;
 
 #[derive(Parser)]
 #[command(about, version = APP_VERSION)]
@@ -26,11 +31,18 @@ struct Args {
     /// Number of iterations to run with random delays (metrics demo)
     #[arg(short = 'c', long = "count")]
     count: Option<u32>,
+    /// URL to fetch via HTTP GET (HTTP client metrics demo)
+    #[arg(short = 'u', long = "url")]
+    url: Option<String>,
 }
 
 const APP_VERSION: &str = concat!(env!("CARGO_PKG_VERSION"), " (rev:", env!("GIT_HASH"), ")",);
 
 fn main() {
+    // Install TLS crypto provider for reqwest (required by rustls-no-provider feature).
+    // Ignored if a provider is already installed (e.g., across tests).
+    let _ = rustls::crypto::ring::default_provider().install_default();
+
     #[cfg(not(feature = "otel"))]
     {
         fmt()
@@ -43,13 +55,31 @@ fn main() {
     #[cfg(feature = "otel")]
     let otel_providers = init_otel();
 
+    // Create metric instruments after the global MeterProvider is set up.
+    let meters = Meters::default();
+
     let args = Args::parse();
 
-    run(&args.name, args.gender.as_deref());
+    {
+        // Root span wraps all command processing so child spans (run, run_count,
+        // HTTP fetch) share a single trace_id and errors are captured in context.
+        let root = tracing::info_span!("main");
+        let _guard = root.enter();
 
-    if let Some(count) = args.count {
-        run_count(count);
-    }
+        run(&args.name, args.gender.as_deref(), &meters);
+
+        if let Some(count) = args.count {
+            run_count(count, &meters);
+        }
+
+        if let Some(ref url) = args.url {
+            let start = std::time::Instant::now();
+            if let Err(e) = http::fetch_url(url, &meters) {
+                tracing::error!("HTTP fetch failed: {e:#}");
+            }
+            meters.record_run_duration(start.elapsed().as_secs_f64(), "http");
+        }
+    } // _guard dropped here: root span exits before OTel shutdown
 
     #[cfg(feature = "otel")]
     shutdown_otel(otel_providers);
@@ -62,6 +92,28 @@ type OtelProviders = (
     Option<opentelemetry_sdk::metrics::SdkMeterProvider>,
     Option<opentelemetry_sdk::logs::SdkLoggerProvider>,
 );
+
+/// Build an `OTel` `Resource` for this process.
+///
+/// `OTEL_SERVICE_NAME` env var overrides the compiled-in package name.
+#[cfg(feature = "otel")]
+fn build_resource() -> opentelemetry_sdk::Resource {
+    let service_name =
+        std::env::var("OTEL_SERVICE_NAME").unwrap_or_else(|_| String::from(env!("CARGO_PKG_NAME")));
+    opentelemetry_sdk::Resource::builder()
+        .with_service_name(service_name)
+        .with_attributes([
+            opentelemetry::KeyValue::new(
+                opentelemetry_semantic_conventions::attribute::SERVICE_VERSION,
+                env!("CARGO_PKG_VERSION"),
+            ),
+            opentelemetry::KeyValue::new(
+                opentelemetry_semantic_conventions::attribute::VCS_REF_HEAD_REVISION,
+                env!("GIT_HASH"),
+            ),
+        ])
+        .build()
+}
 
 // NOTEST(cfg): OTel init requires OTLP endpoint — covered by integration trace tests
 /// Initialize `OTel` tracing, logging, and metrics providers.
@@ -76,18 +128,16 @@ fn init_otel() -> OtelProviders {
             .ok()
             .filter(|ep| !ep.is_empty())
             .and_then(|_| {
-                let resource = opentelemetry_sdk::Resource::builder()
-                    .with_service_name(env!("CARGO_PKG_NAME"))
-                    .build();
+                let resource = build_resource();
 
-                // --- Traces ---
+                // --- Traces (batch: non-blocking, suitable for production) ---
                 let span_exporter = opentelemetry_otlp::SpanExporter::builder()
                     .with_http()
                     .build()
                     .ok()?;
                 let tracer_provider = opentelemetry_sdk::trace::SdkTracerProvider::builder()
                     .with_resource(resource.clone())
-                    .with_simple_exporter(span_exporter)
+                    .with_batch_exporter(span_exporter)
                     .build();
                 let tracer = opentelemetry::trace::TracerProvider::tracer(
                     &tracer_provider,
@@ -95,21 +145,21 @@ fn init_otel() -> OtelProviders {
                 );
                 let trace_layer = tracing_opentelemetry::layer().with_tracer(tracer);
 
-                // --- Logs ---
+                // --- Logs (batch: non-blocking) ---
                 let log_exporter = opentelemetry_otlp::LogExporter::builder()
                     .with_http()
                     .build()
                     .ok()?;
                 let logger_provider = opentelemetry_sdk::logs::SdkLoggerProvider::builder()
                     .with_resource(resource.clone())
-                    .with_simple_exporter(log_exporter)
+                    .with_batch_exporter(log_exporter)
                     .build();
                 let log_layer =
                     opentelemetry_appender_tracing::layer::OpenTelemetryTracingBridge::new(
                         &logger_provider,
                     );
 
-                // --- Metrics (last: consumes resource without clone) ---
+                // --- Metrics (PeriodicReader: exports every 5 s) ---
                 let metric_exporter = opentelemetry_otlp::MetricExporter::builder()
                     .with_http()
                     .build()
@@ -168,16 +218,32 @@ fn shutdown_otel((tracer_provider, meter_provider, logger_provider): OtelProvide
     }
 }
 
-/// アプリケーションのメイン処理を実行
+/// Run the greeting command and record `OTel` metrics.
 ///
 /// # Arguments
 /// * `name` - 挨拶対象の名前
 /// * `gender` - 性別オプション（None, Some("man"), Some("woman"), その他）
-#[cfg_attr(feature = "otel", tracing::instrument)]
-pub fn run(name: &str, gender: Option<&str>) {
+/// * `meters` - Metric instruments; no-op when `otel` feature is disabled
+#[cfg_attr(feature = "otel", tracing::instrument(skip(meters)))]
+pub fn run(name: &str, gender: Option<&str>, meters: &Meters) {
+    let start = std::time::Instant::now();
     let result = sayhello(name, gender);
+
+    match &result {
+        Ok(_) => meters.record_greeting(gender.unwrap_or("none")),
+        Err(GreetingError::InvalidGender(_)) => {
+            meters.record_greeting("invalid");
+            meters.record_greeting_error("invalid_gender");
+        }
+        Err(GreetingError::UnknownGender) => {
+            meters.record_greeting("none");
+            meters.record_greeting_error("unknown");
+        }
+    }
+
     let greeting = format_greeting(name, result);
     tracing::info!("{}, new world!!", greeting);
+    meters.record_run_duration(start.elapsed().as_secs_f64(), "greet");
 }
 
 /// Format a greeting from a `sayhello` result, handling errors gracefully.
@@ -199,34 +265,26 @@ fn format_greeting(name: &str, result: Result<String, GreetingError>) -> String 
 }
 
 /// Run iteration count demo and record `OTel` metrics.
-#[cfg_attr(feature = "otel", tracing::instrument)]
-fn run_count(count: u32) {
+#[cfg_attr(feature = "otel", tracing::instrument(skip(meters)))]
+fn run_count(count: u32, meters: &Meters) {
+    let start = std::time::Instant::now();
+    meters.in_flight_add(1);
+
     let results = count::run_iterations(count);
 
-    #[cfg(feature = "otel")]
-    {
-        let meter = opentelemetry::global::meter(env!("CARGO_PKG_NAME"));
-        let counter = meter.u64_counter("iteration.count").build();
-        let histogram = meter
-            .f64_histogram("iteration.duration")
-            .with_unit("s")
-            .build();
-
-        for result in &results {
-            counter.add(1, &[]);
-            #[allow(clippy::cast_precision_loss, clippy::as_conversions)]
-            // u64 seconds (1..=5) fits f64 losslessly
-            histogram.record(result.duration_secs as f64, &[]);
-        }
+    for result in &results {
+        #[allow(clippy::cast_precision_loss, clippy::as_conversions)]
+        // duration_secs (u64 1..=5) fits f64 losslessly
+        meters.record_iteration(result.duration_secs as f64);
     }
 
-    #[cfg(not(feature = "otel"))]
-    drop(results);
+    meters.in_flight_add(-1);
+    meters.record_run_duration(start.elapsed().as_secs_f64(), "count");
 }
 
 #[cfg(test)]
 mod tests {
-    use super::{format_greeting, run};
+    use super::{Meters, format_greeting, run};
     use crate::libs::hello::GreetingError;
     use tracing::subscriber::with_default;
     use tracing_mock::{expect, subscriber};
@@ -247,10 +305,11 @@ mod tests {
 
     #[test]
     fn test_run_with_default_name() {
+        let meters = Meters::default();
         let (subscriber, handle) = mock_run_single_event("Hi, Youre, new world!!");
 
         with_default(subscriber, || {
-            run("Youre", None);
+            run("Youre", None, &meters);
         });
 
         handle.assert_finished();
@@ -258,10 +317,11 @@ mod tests {
 
     #[test]
     fn test_run_with_custom_name() {
+        let meters = Meters::default();
         let (subscriber, handle) = mock_run_single_event("Hi, Alice, new world!!");
 
         with_default(subscriber, || {
-            run("Alice", None);
+            run("Alice", None, &meters);
         });
 
         handle.assert_finished();
@@ -269,10 +329,11 @@ mod tests {
 
     #[test]
     fn test_run_with_empty_name() {
+        let meters = Meters::default();
         let (subscriber, handle) = mock_run_single_event("Hi, , new world!!");
 
         with_default(subscriber, || {
-            run("", None);
+            run("", None, &meters);
         });
 
         handle.assert_finished();
@@ -280,10 +341,11 @@ mod tests {
 
     #[test]
     fn test_run_with_japanese_name() {
+        let meters = Meters::default();
         let (subscriber, handle) = mock_run_single_event("Hi, 世界, new world!!");
 
         with_default(subscriber, || {
-            run("世界", None);
+            run("世界", None, &meters);
         });
 
         handle.assert_finished();
@@ -291,10 +353,11 @@ mod tests {
 
     #[test]
     fn test_run_with_gender_man() {
+        let meters = Meters::default();
         let (subscriber, handle) = mock_run_single_event("Hi, Mr. John, new world!!");
 
         with_default(subscriber, || {
-            run("John", Some("man"));
+            run("John", Some("man"), &meters);
         });
 
         handle.assert_finished();
@@ -302,10 +365,11 @@ mod tests {
 
     #[test]
     fn test_run_with_gender_woman() {
+        let meters = Meters::default();
         let (subscriber, handle) = mock_run_single_event("Hi, Ms. Alice, new world!!");
 
         with_default(subscriber, || {
-            run("Alice", Some("woman"));
+            run("Alice", Some("woman"), &meters);
         });
 
         handle.assert_finished();
@@ -378,8 +442,9 @@ mod tests {
             .only()
             .run_with_handle();
 
+        let meters = Meters::default();
         with_default(subscriber, || {
-            run("Bob", Some("other"));
+            run("Bob", Some("other"), &meters);
         });
 
         handle.assert_finished();
