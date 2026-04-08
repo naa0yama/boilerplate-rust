@@ -1,12 +1,18 @@
 # Changelog
 
 ## [v0.1.2](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.1...v0.1.2) - 2026-04-08
+
 ### Documentation 🗒️
+
 - feat(metrics): add process-metrics feature with OTel semconv support by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/314
+
 ### Dependency Updates 📦
+
 - chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/293
 - chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/310
+
 ### Development Environment 🔧
+
 - chore(deps): update github/codeql-action action to v4.34.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/285
 - chore(deps): update github/codeql-action action to v4.34.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/287
 - chore(deps): update taiki-e/install-action action to v2.69.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/288
@@ -34,7 +40,9 @@
 - chore(deps): update dependency openobserve/openobserve to v0.70.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/315
 - chore(deps): update taiki-e/install-action action to v2.70.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/318
 - ci(cross-check): replace windows-gnu with native windows-msvc + harden apt cache by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/319
+
 ### Other Changes
+
 - refactor(telemetry): introduce telemetry module with brust.* conventions by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/316
 
 ## [v0.1.1](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.0...v0.1.1) - 2026-03-27
