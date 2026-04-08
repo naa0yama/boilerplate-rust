@@ -1,5 +1,42 @@
 # Changelog
 
+## [v0.1.2](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.1...v0.1.2) - 2026-04-08
+### Documentation 🗒️
+- feat(metrics): add process-metrics feature with OTel semconv support by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/314
+### Dependency Updates 📦
+- chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/293
+- chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/310
+### Development Environment 🔧
+- chore(deps): update github/codeql-action action to v4.34.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/285
+- chore(deps): update github/codeql-action action to v4.34.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/287
+- chore(deps): update taiki-e/install-action action to v2.69.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/288
+- chore(deps): update taiki-e/install-action action to v2.69.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/289
+- chore(deps): update taiki-e/install-action action to v2.69.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/290
+- chore(deps): update jdx/mise-action action to v4.0.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/291
+- chore(deps): update taiki-e/install-action action to v2.69.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/295
+- chore(deps): update taiki-e/install-action action to v2.69.8 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/296
+- chore(deps): update taiki-e/install-action action to v2.69.9 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/297
+- chore(deps): update taiki-e/install-action action to v2.69.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/298
+- chore(deps): update dependency openobserve/openobserve to v0.70.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/299
+- chore(deps): update dependency dprint to v0.53.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/300
+- chore(deps): update taiki-e/install-action action to v2.69.11 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/301
+- chore(deps): update taiki-e/install-action action to v2.69.12 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/302
+- chore(deps): update github/codeql-action action to v4.35.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/303
+- chore(deps): update taiki-e/install-action action to v2.69.13 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/304
+- chore: backport dna-assistant infrastructure improvements by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/305
+- chore(deps): update github/codeql-action action to v4.35.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/306
+- chore(deps): update taiki-e/install-action action to v2.69.14 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/307
+- chore(deps): update taiki-e/install-action action to v2.70.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/308
+- chore(deps): update taiki-e/install-action action to v2.70.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/309
+- chore(deps): update taiki-e/install-action action to v2.70.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/311
+- chore(deps): update dependency actionlint to v1.7.12 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/312
+- chore(deps): update taiki-e/install-action action to v2.70.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/313
+- chore(deps): update dependency openobserve/openobserve to v0.70.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/315
+- chore(deps): update taiki-e/install-action action to v2.70.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/318
+- ci(cross-check): replace windows-gnu with native windows-msvc + harden apt cache by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/319
+### Other Changes
+- refactor(telemetry): introduce telemetry module with brust.* conventions by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/316
+
 ## [v0.1.1](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.0...v0.1.1) - 2026-03-27
 
 ### Documentation 🗒️
