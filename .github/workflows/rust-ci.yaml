@@ -103,23 +103,35 @@ jobs:
 
       - name: Cache cross-compilation packages
         if: matrix.os == 'ubuntu-latest'
+        id: cross-apt-cache
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/cross-apt-cache
-          key: cross-apt-${{ runner.arch }}-${{ matrix.target }}-v1
+          key: cross-apt-v2-${{ runner.os }}-${{ runner.arch }}-${{ matrix.target }}-${{ hashFiles('.github/workflows/rust-ci.yaml') }}
+          restore-keys: |
+            cross-apt-v2-${{ runner.os }}-${{ runner.arch }}-${{ matrix.target }}-
 
-      - name: Install cross-compilation toolchain
-        if: matrix.os == 'ubuntu-latest'
+      - name: Download cross-compilation packages
+        if: matrix.os == 'ubuntu-latest' && steps.cross-apt-cache.outputs.cache-hit != 'true'
+        shell: bash
         env:
           CROSS_PKGS: ${{ matrix.cross-pkgs }}
         run: |
-          mkdir -p ~/cross-apt-cache/partial
+          sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu|g' \
+            /etc/apt/sources.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
+          mkdir -p ~/cross-apt-cache
           sudo apt-get update -qq
           # shellcheck disable=SC2086
-          sudo apt-get install -y --no-install-recommends \
+          sudo apt-get install -y --no-install-recommends --download-only \
             -o Dir::Cache::Archives="${HOME}/cross-apt-cache" \
             ${CROSS_PKGS}
           sudo chown -R "$(id -u):$(id -g)" ~/cross-apt-cache
+          rm -rf ~/cross-apt-cache/partial ~/cross-apt-cache/lock
+
+      - name: Install cross-compilation packages
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: sudo dpkg -i ~/cross-apt-cache/*.deb
 
       - name: Add target
         shell: bash
