@@ -82,7 +82,7 @@ jobs:
 
   cross-check:
     name: cross-check (${{ matrix.target }})
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
     needs: fmt
     timeout-minutes: 15
     permissions:
@@ -91,34 +91,50 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - target: x86_64-pc-windows-gnu
-            cross-pkgs: gcc-mingw-w64-x86-64
-          - target: aarch64-unknown-linux-gnu
+          - os: ubuntu-latest
+            target: aarch64-unknown-linux-gnu
             cross-pkgs: gcc-aarch64-linux-gnu libc6-dev-arm64-cross
+          - os: windows-latest
+            target: x86_64-pc-windows-msvc
     steps:
       - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           persist-credentials: false
 
       - name: Cache cross-compilation packages
+        if: matrix.os == 'ubuntu-latest'
+        id: cross-apt-cache
         uses: actions/cache@668228422ae6a00e4ad889ee87cd7109ec5666a7 # v5.0.4
         with:
           path: ~/cross-apt-cache
-          key: cross-apt-${{ runner.arch }}-${{ matrix.target }}-v1
+          key: cross-apt-v2-${{ runner.os }}-${{ runner.arch }}-${{ matrix.target }}-${{ hashFiles('.github/workflows/rust-ci.yaml') }}
+          restore-keys: |
+            cross-apt-v2-${{ runner.os }}-${{ runner.arch }}-${{ matrix.target }}-
 
-      - name: Install cross-compilation toolchain
+      - name: Download cross-compilation packages
+        if: matrix.os == 'ubuntu-latest' && steps.cross-apt-cache.outputs.cache-hit != 'true'
+        shell: bash
         env:
           CROSS_PKGS: ${{ matrix.cross-pkgs }}
         run: |
-          mkdir -p ~/cross-apt-cache/partial
+          sudo sed -i 's|http://azure.archive.ubuntu.com/ubuntu|http://archive.ubuntu.com/ubuntu|g' \
+            /etc/apt/sources.list /etc/apt/sources.list.d/*.sources 2>/dev/null || true
+          mkdir -p ~/cross-apt-cache
           sudo apt-get update -qq
           # shellcheck disable=SC2086
-          sudo apt-get install -y --no-install-recommends \
+          sudo apt-get install -y --no-install-recommends --download-only \
             -o Dir::Cache::Archives="${HOME}/cross-apt-cache" \
             ${CROSS_PKGS}
           sudo chown -R "$(id -u):$(id -g)" ~/cross-apt-cache
+          rm -rf ~/cross-apt-cache/partial ~/cross-apt-cache/lock
+
+      - name: Install cross-compilation packages
+        if: matrix.os == 'ubuntu-latest'
+        shell: bash
+        run: sudo dpkg -i ~/cross-apt-cache/*.deb
 
       - name: Add target
+        shell: bash
         env:
           TARGET: ${{ matrix.target }}
         run: rustup target add "${TARGET}"
@@ -130,9 +146,10 @@ jobs:
           sccache_disable_annotations: true
 
       - name: Check compilation for ${{ matrix.target }}
+        shell: bash
         env:
           TARGET: ${{ matrix.target }}
-        run: cargo check --target "${TARGET}"
+        run: cargo check --all-targets --target "${TARGET}"
 
   test:
     name: test
