@@ -16,6 +16,8 @@ ghalint = "1.5.3"
 usage = "3.0.0"
 zizmor = "1.16.0"
 codeql = { version = "latest", bin_path = "codeql", platforms = { linux-x64 = { asset_pattern = "codeql-linux64.zip" }, macos-arm64 = { asset_pattern = "codeql-osx64.zip" }, macos-x64 = { asset_pattern = "codeql-osx64.zip" }, windows-x64 = { asset_pattern = "codeql-win64.zip" } } }
+## renovate: datasource=github-releases packageName=holmgr/cargo-sweep versioning=semver automerge=true
+"cargo:cargo-sweep" = "0.8.0"
 
 [tasks.setup]
 description = "Initial project setup"
@@ -142,13 +144,6 @@ run = "cargo clean"
 [tasks."clean:sweep"]
 description = "Remove build artifacts older than 1 day"
 run = "cargo sweep --time 1"
-
-[tasks."clean:cache"]
-description = "Show cargo cache info and clean registry cache"
-run = """
-cargo cache
-cargo cache --autoclean
-"""
 
 [tasks."claudecode:install"]
 description = "Install Claude Code to ~/.local/bin via official installer"
