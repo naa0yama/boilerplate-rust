@@ -1,6 +1,6 @@
 // For format details, see https://aka.ms/devcontainer.json. For config options, see the
 {
-	"name": "Rust(brust)",
+	"name": "Rust(${localWorkspaceFolderBasename})",
 	"build": {
 		"dockerfile": "../Dockerfile",
 		"target": "development",
