@@ -35,14 +35,24 @@ else
 	echo "All mounts validated successfully!"
 fi
 
+# mise bootstrap: install into shared volume if not already present
+export PATH="$HOME/.local/bin:$PATH"
+if ! command -v mise > /dev/null 2>&1; then
+	echo "Installing mise..."
+	curl -fsSL https://mise.jdx.dev/install.sh | sh
+fi
+mise --version
+
 chmod +x .githooks/*
 git config --local --unset core.hookspath || true
+mise trust -y /app
 mise settings add trusted_config_paths /app
 mise install
 
-echo "Installing Claude Code and OpenObserve in parallel..."
+echo "Installing Claude Code and OpenObserve and gh-infra in parallel..."
 mise run claudecode:install &
 mise run o2:install &
+mise run gh-infra:install &
 wait
 
 echo "Starting OpenObserve..."
