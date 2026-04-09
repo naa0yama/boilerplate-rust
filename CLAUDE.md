@@ -37,6 +37,7 @@ All tasks use `mise run <task>`:
 | Clean (sweep)         | `mise run clean:sweep`        |
 | Badges (init)         | `mise run badges:init`        |
 | Claude Code (install) | `mise run claudecode:install` |
+| gh-infra (install)    | `mise run gh-infra:install`   |
 | O2 (install)          | `mise run o2:install`         |
 | O2 (start)            | `mise run o2`                 |
 | O2 (stop)             | `mise run o2:stop`            |

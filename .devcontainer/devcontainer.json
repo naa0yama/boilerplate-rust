@@ -13,9 +13,7 @@
 	"initializeCommand": "./.devcontainer/initializeCommand.sh",
 	"postStartCommand": "./.devcontainer/postStartCommand.sh",
 	// Features to add to the dev container. More info: https://containers.dev/features.
-	"features": {
-		"ghcr.io/devcontainers/features/github-cli:1": {}
-	},
+	"features": {},
 	// Add another local file mount.
 	"mounts": [
 		// Claude Code

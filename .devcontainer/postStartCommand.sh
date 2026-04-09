@@ -49,9 +49,10 @@ mise trust -y /app
 mise settings add trusted_config_paths /app
 mise install
 
-echo "Installing Claude Code and OpenObserve in parallel..."
+echo "Installing Claude Code and OpenObserve and gh-infra in parallel..."
 mise run claudecode:install &
 mise run o2:install &
+mise run gh-infra:install &
 wait
 
 echo "Starting OpenObserve..."
