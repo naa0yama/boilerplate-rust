@@ -8,6 +8,7 @@ repositories:
   - name: chezmage
   - name: dna-assistant
   - name: dtvmgr
+  - name: fterm
 
 defaults:
   spec:
@@ -308,4 +309,4 @@ defaults:
       sha_pinning_required: true
       workflow_permissions: read
       can_approve_pull_requests: false
-      fork_pr_approval: all
+      fork_pr_approval: all_external_contributors
