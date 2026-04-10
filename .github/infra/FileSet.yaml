@@ -1,0 +1,114 @@
+apiVersion: gh-infra/v1
+kind: FileSet
+metadata:
+  owner: naa0yama
+
+spec:
+  repositories:
+    - name: boilerplate-rust
+    - name: chezmage
+    - name: dna-assistant
+    - name: dtvmgr
+
+  files:
+    # .claude
+    - path: .claude/settings.json
+      source: github://naa0yama/boilerplate-rust/.claude/settings.json
+
+    # .devcontainer
+    - path: .devcontainer
+      source: github://naa0yama/boilerplate-rust/.devcontainer/
+      reconcile: mirror # deleted
+
+    # .githooks
+    - path: .githooks
+      source: github://naa0yama/boilerplate-rust/.githooks/
+      reconcile: mirror # deleted
+
+    # .github
+    - path: .github/actions
+      source: github://naa0yama/boilerplate-rust/.github/actions/
+      reconcile: mirror # deleted
+    - path: .github/rulesets
+      source: github://naa0yama/boilerplate-rust/.github/rulesets/
+      reconcile: mirror # deleted
+    - path: .github/workflows
+      source: github://naa0yama/boilerplate-rust/.github/workflows/
+
+    - path: .github/actionlint.yaml
+      source: github://naa0yama/boilerplate-rust/.github/actionlint.yaml
+    - path: .github/codeql-config.yml
+      source: github://naa0yama/boilerplate-rust/.github/codeql-config.yml
+    - path: .github/labeler.yml
+      source: github://naa0yama/boilerplate-rust/.github/labeler.yml
+    - path: .github/labels.json
+      source: github://naa0yama/boilerplate-rust/.github/labels.json
+      reconcile: mirror # deleted
+    - path: .github/release.yml
+      source: github://naa0yama/boilerplate-rust/.github/release.yml
+    - path: .github/tagpr-template.md
+      source: github://naa0yama/boilerplate-rust/.github/tagpr-template.md
+
+    # .mise
+    - path: .mise/config.devcontainer.toml
+      source: github://naa0yama/boilerplate-rust/.mise/config.devcontainer.toml
+    - path: .mise/config.tagpr.toml
+      source: github://naa0yama/boilerplate-rust/.mise/config.tagpr.toml
+    - path: .mise/overrides.toml
+      source: github://naa0yama/boilerplate-rust/.mise/overrides.toml
+      reconcile: create_only
+    - path: .mise/tasks.toml
+      source: github://naa0yama/boilerplate-rust/.mise/tasks.toml
+
+    # .vscode
+    - path: .vscode
+      source: github://naa0yama/boilerplate-rust/.vscode/
+
+    # ast-rules
+    - path: ast-rules
+      source: github://naa0yama/boilerplate-rust/ast-rules/
+
+    # others
+    - path: .clippy.toml
+      source: github://naa0yama/boilerplate-rust/.clippy.toml
+    - path: .dockerignore
+      source: github://naa0yama/boilerplate-rust/.dockerignore
+    - path: .editorconfig
+      source: github://naa0yama/boilerplate-rust/.editorconfig
+    - path: .gitignore
+      source: github://naa0yama/boilerplate-rust/.gitignore
+    - path: .gitleaksignore
+      source: github://naa0yama/boilerplate-rust/.gitleaksignore
+    - path: .octocov.yml
+      source: github://naa0yama/boilerplate-rust/.octocov.yml
+    - path: .tagpr
+      source: github://naa0yama/boilerplate-rust/.tagpr
+    - path: .worktreeinclude
+      source: github://naa0yama/boilerplate-rust/.worktreeinclude
+    - path: deny.toml
+      source: github://naa0yama/boilerplate-rust/deny.toml
+    - path: Dockerfile
+      source: github://naa0yama/boilerplate-rust/Dockerfile
+    - path: dprint.jsonc
+      source: github://naa0yama/boilerplate-rust/dprint.jsonc
+    - path: LICENSE
+      source: github://naa0yama/boilerplate-rust/LICENSE
+    - path: mise.devcontainer.toml
+      source: github://naa0yama/boilerplate-rust/mise.devcontainer.toml
+    - path: mise.tagpr.toml
+      source: github://naa0yama/boilerplate-rust/mise.tagpr.toml
+    - path: mise.toml
+      source: github://naa0yama/boilerplate-rust/mise.toml
+    - path: renovate.json
+      source: github://naa0yama/boilerplate-rust/renovate.json
+    - path: rust-toolchain.toml
+      source: github://naa0yama/boilerplate-rust/rust-toolchain.toml
+    - path: sgconfig.yml
+      source: github://naa0yama/boilerplate-rust/sgconfig.yml
+
+  via: pull_request
+  commit_message: "ci: sync managed files"
+  pr_title: "chore: sync files"
+  pr_body: |
+    ## Summary
+    Automated file sync.

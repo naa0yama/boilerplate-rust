@@ -39,7 +39,7 @@ fi
 export PATH="$HOME/.local/bin:$PATH"
 if ! command -v mise > /dev/null 2>&1; then
 	echo "Installing mise..."
-	curl -fsSL https://mise.jdx.dev/install.sh | sh
+	curl -fsSL --retry 3 --retry-delay 2 --retry-connrefused https://mise.jdx.dev/install.sh | sh
 fi
 mise --version
 
