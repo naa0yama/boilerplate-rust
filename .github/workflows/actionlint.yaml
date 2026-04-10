@@ -30,7 +30,7 @@ jobs:
 
       - name: Check workflow files
         run: |
-          bash <(curl "https://raw.githubusercontent.com/rhysd/actionlint/${ACTIONLINT_VERSION}/scripts/download-actionlint.bash")
+          bash <(curl -sfSL --retry 3 --retry-delay 2 --retry-connrefused "https://raw.githubusercontent.com/rhysd/actionlint/${ACTIONLINT_VERSION}/scripts/download-actionlint.bash")
           ./actionlint -verbose -format "$(cat .github/workflows/actionlint-format.txt)" | tee results.sarif
         shell: bash
 

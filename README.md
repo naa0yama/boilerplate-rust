@@ -78,10 +78,14 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 │   └── pre-push                # プッシュ前チェック
 ├── .github/                    # GitHub Actions & 設定
 │   ├── actions/                # カスタムアクション
+│   ├── infra/                  # gh-infra マニフェスト (リポジトリ設定の宣言的管理)
 │   ├── rulesets/               # Protection rulesets
 │   ├── workflows/              # CI/CD ワークフロー
 │   ├── labeler.yml
 │   └── release.yml
+├── .mise/                      # mise タスク定義
+│   ├── tasks.toml              # 共通タスク定義 (boilerplate から管理)
+│   └── overrides.toml          # プロジェクト固有のタスク上書き
 ├── .vscode/                    # VS Code設定
 │   ├── launch.json             # デバッグ設定
 │   └── settings.json           # ワークスペース設定
@@ -111,7 +115,7 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 ├── Dockerfile                  # Dockerイメージ定義
 ├── dprint.jsonc                # Dprint フォーマッター設定
 ├── LICENSE                     # ライセンスファイル
-├── mise.toml                   # ツール管理 & タスクランナー
+├── mise.toml                   # ツール管理 (タスクは .mise/ を参照)
 ├── README.md                   # このファイル
 ├── renovate.json               # Renovate自動依存関係更新設定
 ├── rust-toolchain.toml         # Rust toolchain バージョン固定
