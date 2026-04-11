@@ -1,5 +1,30 @@
 # Changelog
 
+## [v0.1.3](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.2...v0.1.3) - 2026-04-11
+
+### Documentation 🗒️
+
+- build(devcontainer): use localWorkspaceFolderBasename for container name by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/326
+- ci: dynamic build matrix with project-config.json by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/328
+
+### Development Environment 🔧
+
+- chore(deps): update dependency dprint to v0.53.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/320
+- chore(deps): update taiki-e/install-action action to v2.71.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/321
+- chore(deps): update taiki-e/install-action action to v2.71.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/323
+- build(devcontainer): switch to shared volumes and env-based token by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/324
+- chore(deps): update docker/dockerfile docker tag to v1.23.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/317
+- chore(deps): update taiki-e/install-action action to v2.71.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/325
+- chore(deps): update docker/login-action action to v4.1.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/327
+- chore(deps): update taiki-e/install-action action to v2.71.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/329
+- chore(deps): update taiki-e/install-action action to v2.71.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/330
+- chore(deps): update rust docker tag to v1.94.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/294
+- chore(deps): update rust docker tag to v1.94.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/332
+
+### Other Changes
+
+- Revert "chore(deps): update rust docker tag to v1.94.0" by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/331
+
 ## [v0.1.2](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.1...v0.1.2) - 2026-04-08
 
 ### Documentation 🗒️
