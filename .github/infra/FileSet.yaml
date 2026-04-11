@@ -5,10 +5,11 @@ metadata:
 
 spec:
   repositories:
-    - name: boilerplate-rust
-    - name: chezmage
-    - name: dna-assistant
-    - name: dtvmgr
+  # - name: boilerplate-rust
+  # - name: chezmage
+  # - name: dna-assistant
+  # - name: dtvmgr
+  # - name: fterm
 
   files:
     # .claude
@@ -32,9 +33,28 @@ spec:
     - path: .github/rulesets
       source: github://naa0yama/boilerplate-rust/.github/rulesets/
       reconcile: mirror # deleted
-    - path: .github/workflows
-      source: github://naa0yama/boilerplate-rust/.github/workflows/
 
+    # .github/workflows
+    - path: .github/workflows/_orchestrator.yaml
+      source: github://naa0yama/boilerplate-rust/.github/workflows/_orchestrator.yaml
+    - path: .github/workflows/actionlint-format.txt
+      source: github://naa0yama/boilerplate-rust/.github/workflows/actionlint-format.txt
+    - path: .github/workflows/label-sync.yaml
+      source: github://naa0yama/boilerplate-rust/.github/workflows/label-sync.yaml
+    - path: .github/workflows/miri.yaml
+      source: github://naa0yama/boilerplate-rust/.github/workflows/miri.yaml
+    - path: .github/workflows/pr-labeler.yaml
+      source: github://naa0yama/boilerplate-rust/.github/workflows/pr-labeler.yaml
+    - path: .github/workflows/release.yaml
+      source: github://naa0yama/boilerplate-rust/.github/workflows/release.yaml
+    - path: .github/workflows/rust-ci.yaml
+      source: github://naa0yama/boilerplate-rust/.github/workflows/rust-ci.yaml
+    - path: .github/workflows/tagpr.yaml
+      source: github://naa0yama/boilerplate-rust/.github/workflows/tagpr.yaml
+
+    - path: .github/project-config.json
+      source: github://naa0yama/boilerplate-rust/.github/project-config.json
+      reconcile: create_only
     - path: .github/actionlint.yaml
       source: github://naa0yama/boilerplate-rust/.github/actionlint.yaml
     - path: .github/codeql-config.yml
@@ -94,9 +114,11 @@ spec:
     - path: LICENSE
       source: github://naa0yama/boilerplate-rust/LICENSE
     - path: mise.devcontainer.toml
-      source: github://naa0yama/boilerplate-rust/mise.devcontainer.toml
+      source: /dev/null
+      reconcile: mirror # deleted
     - path: mise.tagpr.toml
-      source: github://naa0yama/boilerplate-rust/mise.tagpr.toml
+      source: /dev/null
+      reconcile: mirror # deleted
     - path: mise.toml
       source: github://naa0yama/boilerplate-rust/mise.toml
     - path: renovate.json
