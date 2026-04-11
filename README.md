@@ -82,6 +82,7 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 │   ├── rulesets/               # Protection rulesets
 │   ├── workflows/              # CI/CD ワークフロー
 │   ├── labeler.yml
+│   ├── project-config.json         # CI/リリース設定 (ビルドターゲット・タイムアウト・apt パッケージ等)
 │   └── release.yml
 ├── .mise/                      # mise タスク定義
 │   ├── tasks.toml              # 共通タスク定義 (boilerplate から管理)

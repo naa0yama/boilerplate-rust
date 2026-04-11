@@ -8,243 +8,195 @@ repositories:
   - name: chezmage
   - name: dna-assistant
   - name: dtvmgr
+  - name: fterm
 
 defaults:
   spec:
     visibility: public
     archived: false
     labels:
-      - name: help wanted
-        description: Extra attention is needed
-        color: 008672
-      - name: wontfix
-        description: This will not be worked on
-        color: ffffff
-      - name: datasource:github-releases
-        description: "Source: GitHub Releases"
-        color: 1e7de8
-      - name: datasource:npm
-        description: "Source: npm"
-        color: 1e7de8
-      - name: depType:linting
-        description: "Dependency type: linting"
-        color: 28a745
-      - name: depType:tests
-        description: "Dependency type: tests"
-        color: 28a745
-      - name: versioning:poetry
-        description: "Versioning: Poetry"
-        color: 14b8a6
-      - name: core
-        description: Changes to core application code
-        color: e11d48
-      - name: depType:dockerfile-automerge
-        description: "Dependency type: Dockerfile (automerge)"
-        color: 28a745
-      - name: manager:github-actions
-        description: "Manager: GitHub Actions"
-        color: 8b5cf6
-      - name: update-lockFileMaintenance
-        description: "Update type: lockfile maintenance"
-        color: f97316
-      - name: "depType:"
-        description: "Dependency type: unspecified"
-        color: 28a745
-      - name: update-digest
-        description: "Update type: digest"
-        color: f97316
-      - name: datasource:pypi
-        description: "Source: PyPI"
-        color: 1e7de8
+      # Defaults
       - name: bug
         description: Something isn't working
         color: d73a4a
+      - name: documentation
+        description: Improvements or additions to documentation
+        color: 0075ca
       - name: duplicate
         description: This issue or pull request already exists
         color: cfd3d7
-      - name: manager:cargo
-        description: "Manager: Cargo"
-        color: 8b5cf6
-      - name: update-minor
-        description: "Update type: minor"
-        color: f97316
-      - name: update-pin
-        description: "Update type: pin"
-        color: f97316
-      - name: manager:npm
-        description: "Manager: npm"
-        color: 8b5cf6
-      - name: manager:pep621
-        description: "Manager: PEP 621"
-        color: 8b5cf6
-      - name: tagpr:major
-        description: Bump major version (tagpr auto-label)
-        color: 5319e7
-      - name: datasource:git-tags
-        description: "Source: Git tags"
-        color: 1e7de8
-      - name: depType:final
-        description: "Dependency type: Dockerfile final stage"
-        color: 28a745
-      - name: manager:mise
-        description: "Manager: mise"
-        color: 8b5cf6
-      - name: datasource:git-refs
-        description: "Source: Git refs"
-        color: 1e7de8
-      - name: depType:syntax
-        description: "Dependency type: Dockerfile syntax"
-        color: 28a745
-      - name: depType:devDependencies
-        description: "Dependency type: devDependencies (npm)"
-        color: 28a745
-      - name: tagpr
-        description: Created by tagpr for release management
-        color: 5319e7
-      - name: datasource:github-tags
-        description: "Source: GitHub Tags"
-        color: 1e7de8
-      - name: tagpr:minor
-        description: Bump minor version (tagpr auto-label)
-        color: 5319e7
-      - name: versioning:pep440
-        description: "Versioning: PEP 440"
-        color: 14b8a6
-      - name: managers:dockerfile
-        color: ededed
-      - name: depType:mise-tool
-        color: ededed
-      - name: ignore-for-release
-        description: Exclude from release notes
-        color: ededed
-      - name: update-major
-        description: "Update type: major"
-        color: f97316
-      - name: manager:poetry
-        description: "Manager: Poetry"
-        color: 8b5cf6
-      - name: security
-        description: Vulnerability disclosure or security fix
-        color: ee0701
-      - name: depType:dependencies
-        description: "Dependency type: production"
-        color: 28a745
-      - name: depType:dev
-        description: "Dependency type: dev (Python)"
-        color: 28a745
-      - name: update-
-        description: "Update type: unspecified"
-        color: f97316
-      - name: good first issue
-        description: Good for newcomers
-        color: 7057ff
-      - name: github-actions
-        description: Changes to GitHub Actions workflows
-        color: ffd412
-      - name: backport
-        description: Backport from template or upstream repository
-        color: 0e8a16
-      - name: depType:stage
-        description: "Dependency type: Dockerfile stage"
-        color: 28a745
-      - name: update-pinDigest
-        description: "Update type: pin digest"
-        color: f97316
-      - name: renovate-config
-        description: Changes to Renovate configuration
-        color: 027fa0
-      - name: depType:dev-dependencies
-        description: "Dependency type: development"
-        color: 28a745
-      - name: update-patch
-        description: "Update type: patch"
-        color: f97316
-      - name: "manager:"
-        description: "Manager: unspecified"
-        color: 8b5cf6
-      - name: versioning:git
-        description: "Versioning: Git"
-        color: 14b8a6
       - name: enhancement
         description: New feature or request
         color: a2eeef
+      - name: good first issue
+        description: Good for newcomers
+        color: 7057ff
+      - name: help wanted
+        description: Extra attention is needed
+        color: 008672
+      - name: invalid
+        description: This doesn't seem right
+        color: e4e669
       - name: question
         description: Further information is requested
         color: d876e3
-      - name: major
-        description: Bump major version
-        color: b60205
-      - name: manager:regex
-        description: "Manager: regex"
-        color: 8b5cf6
-      - name: "datasource:"
-        description: "Source: unspecified"
-        color: 1e7de8
-      - name: manager:asdf
-        description: "Manager: asdf"
-        color: 8b5cf6
-      - name: versioning:npm
-        description: "Versioning: npm"
-        color: 14b8a6
-      - name: versioning:ubuntu
-        description: "Versioning: Ubuntu"
-        color: 14b8a6
+      - name: wontfix
+        description: This will not be worked on
+        color: ffffff
+      - name: security
+        description: Vulnerability disclosure or security fix
+        color: ee0701
+
+      # Custom
+      - name: backport
+        description: Backport from template or upstream repository
+        color: 0e8a16
+
+      # tagpr
+      - name: tagpr
+        description: Created by tagpr for release management
+        color: 5319e7
+      - name: tagpr:minor
+        description: Bump minor version (tagpr auto-label)
+        color: 5319e7
+      - name: tagpr:major
+        description: Bump major version (tagpr auto-label)
+        color: 5319e7
+      - name: ignore-for-release
+        description: Exclude from release notes
+        color: ededed
+
+      # Labeler
+      - name: core
+        description: Changes to core application code
+        color: e11d48
       - name: renovate
         description: Dependency update by Renovate
         color: 027fa0
-      - name: versioning:docker
-        description: "Versioning: Docker"
-        color: 14b8a6
-      - name: versioning:semver
-        description: "Versioning: semver"
-        color: 14b8a6
-      - name: depType:workspace.dependencies
-        color: ededed
-      - name: minor
-        description: Bump minor version
-        color: fbca04
-      - name: datasource:crate
-        description: "Source: crates.io"
-        color: 1e7de8
-      - name: manager:dockerfile
-        description: "Manager: Dockerfile"
-        color: 8b5cf6
-      - name: depType:build-system.requires
-        description: "Dependency type: build system requires"
-        color: 28a745
-      - name: "versioning:"
-        description: "Versioning: unspecified"
-        color: 14b8a6
+      - name: renovate-config
+        description: Changes to Renovate configuration
+        color: 027fa0
+      - name: github-actions
+        description: Changes to GitHub Actions workflows
+        color: ffd412
       - name: develop
         description: Development branch changes
         color: bfd4f2
       - name: tests
         description: Changes to test files
         color: "257759"
-      - name: depType:action
-        description: "Dependency type: GitHub Actions"
-        color: 28a745
-      - name: versioning:cargo
-        description: "Versioning: Cargo"
-        color: 14b8a6
-      - name: depType:docs
-        description: "Dependency type: documentation"
-        color: 28a745
-      - name: depType:repository
-        description: "Dependency type: repository"
-        color: 28a745
-      - name: manager:pre-commit
-        description: "Manager: pre-commit"
-        color: 8b5cf6
-      - name: documentation
-        description: Improvements or additions to documentation
-        color: 0075ca
-      - name: invalid
-        description: This doesn't seem right
-        color: e4e669
+
+      # Renovate — datasource
+      - name: "datasource:"
+        description: "Source: unspecified"
+        color: 1e7de8
+      - name: datasource:crate
+        description: "Source: crates.io"
+        color: 1e7de8
       - name: datasource:docker
         description: "Source: Docker Hub"
         color: 1e7de8
+      - name: datasource:git-refs
+        description: "Source: Git refs"
+        color: 1e7de8
+      - name: datasource:git-tags
+        description: "Source: Git tags"
+        color: 1e7de8
+      - name: datasource:github-releases
+        description: "Source: GitHub Releases"
+        color: 1e7de8
+      - name: datasource:github-tags
+        description: "Source: GitHub Tags"
+        color: 1e7de8
+
+      # Renovate — depType
+      - name: "depType:"
+        description: "Dependency type: unspecified"
+        color: 28a745
+      - name: depType:action
+        description: "Dependency type: GitHub Actions"
+        color: 28a745
+      - name: depType:dockerfile-automerge
+        description: "Dependency type: Dockerfile (automerge)"
+        color: 28a745
+      - name: depType:final
+        description: "Dependency type: Dockerfile final stage"
+        color: 28a745
+      - name: depType:mise-tool
+        description: "Dependency type: mise tool"
+        color: 28a745
+      - name: depType:stage
+        description: "Dependency type: Dockerfile stage"
+        color: 28a745
+      - name: depType:syntax
+        description: "Dependency type: Dockerfile syntax"
+        color: 28a745
+      - name: depType:workspace.dependencies
+        description: "Dependency type: Cargo workspace"
+        color: 28a745
+
+      # Renovate — manager
+      - name: "manager:"
+        description: "Manager: unspecified"
+        color: 8b5cf6
+      - name: manager:cargo
+        description: "Manager: Cargo"
+        color: 8b5cf6
+      - name: manager:dockerfile
+        description: "Manager: Dockerfile"
+        color: 8b5cf6
+      - name: manager:github-actions
+        description: "Manager: GitHub Actions"
+        color: 8b5cf6
+      - name: manager:mise
+        description: "Manager: mise"
+        color: 8b5cf6
+      - name: manager:regex
+        description: "Manager: regex"
+        color: 8b5cf6
+
+      # Renovate — update type
+      - name: "update-"
+        description: "Update type: unspecified"
+        color: f97316
+      - name: update-digest
+        description: "Update type: digest"
+        color: f97316
+      - name: update-lockFileMaintenance
+        description: "Update type: lockfile maintenance"
+        color: f97316
+      - name: update-major
+        description: "Update type: major"
+        color: f97316
+      - name: update-minor
+        description: "Update type: minor"
+        color: f97316
+      - name: update-patch
+        description: "Update type: patch"
+        color: f97316
+      - name: update-pin
+        description: "Update type: pin"
+        color: f97316
+      - name: update-pinDigest
+        description: "Update type: pin digest"
+        color: f97316
+
+      # Renovate — versioning
+      - name: "versioning:"
+        description: "Versioning: unspecified"
+        color: 14b8a6
+      - name: versioning:cargo
+        description: "Versioning: Cargo"
+        color: 14b8a6
+      - name: versioning:docker
+        description: "Versioning: Docker"
+        color: 14b8a6
+      - name: versioning:git
+        description: "Versioning: Git"
+        color: 14b8a6
+      - name: versioning:semver
+        description: "Versioning: semver"
+        color: 14b8a6
       - name: versioning:semver-coerced
         description: "Versioning: semver (coerced)"
         color: 14b8a6
@@ -283,8 +235,6 @@ defaults:
             contexts:
               - context: CI Gate
                 app: github-actions
-              - context: actions-summary
-                app: github-actions
               - context: codeql-analyze
                 app: github-actions
           non_fast_forward: true
@@ -308,4 +258,4 @@ defaults:
       sha_pinning_required: true
       workflow_permissions: read
       can_approve_pull_requests: false
-      fork_pr_approval: all
+      fork_pr_approval: all_external_contributors
