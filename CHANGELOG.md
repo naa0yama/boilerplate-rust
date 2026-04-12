@@ -1,14 +1,20 @@
 # Changelog
 
 ## [v0.1.4](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.3...v0.1.4) - 2026-04-12
+
 ### Documentation 🗒️
+
 - ci(infra): restructure gh-infra manifests to per-repo template format by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/339
+
 ### Development Environment 🔧
+
 - chore(deps): update rust crate rand to v0.10.1 [security] by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/333
 - chore(deps): update taiki-e/install-action action to v2.72.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/335
 - chore: optimize workspace deps, translate comments, update infra config by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/336
 - chore(deps): update dependency aqua:ast-grep/ast-grep to v0.42.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/337
+
 ### Other Changes
+
 - chore: ignore .claude/scheduled_tasks.lock by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/338
 
 ## [v0.1.3](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.2...v0.1.3) - 2026-04-11
