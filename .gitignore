@@ -40,6 +40,8 @@ tmp/
 .claude/skills/gh-infra/
 .claude/skills/import-into/
 .claude/skills/repository-manifest/
+.github/infra/File.yaml
+.github/infra/Repository.yaml
 # END gh-infra skills
 
 # RustRover

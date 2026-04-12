@@ -1,16 +1,10 @@
 apiVersion: gh-infra/v1
-kind: FileSet
+kind: File
 metadata:
-  owner: naa0yama
+  owner: <% .Repo.Owner %>
+  name: <% .Repo.Name %>
 
 spec:
-  repositories:
-    # - name: boilerplate-rust
-    - name: chezmage
-    # - name: dna-assistant
-    # - name: dtvmgr
-    # - name: fterm
-
   files:
     # .claude
     - path: .claude/settings.json
@@ -31,7 +25,7 @@ spec:
       source: github://naa0yama/boilerplate-rust/.github/actions/
       reconcile: mirror # deleted
     - path: .github/rulesets
-      source: github://naa0yama/boilerplate-rust/.github/rulesets/
+      source: /dev/null
       reconcile: mirror # deleted
 
     # .github/workflows

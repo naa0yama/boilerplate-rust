@@ -39,7 +39,7 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "" }
 run = "cargo test --doc"
 
 ["test:trace"]
-description = "Run tests with OTel tracing (restarts OpenObserve for clean traces)"
+description = "Run tests against a fresh OpenObserve instance (restarts O2 for clean traces)"
 run = """
 mise run o2:stop
 mise run o2
@@ -191,6 +191,9 @@ for src in "${src_skills}"/*/; do
   gitignore_entries="${gitignore_entries}.claude/skills/${name}/
 "
 done
+gitignore_entries="${gitignore_entries}.github/infra/File.yaml
+.github/infra/Repository.yaml
+"
 echo "Deployed skills:${deployed}"
 
 # Update .gitignore: replace managed block in-place, or append if not present
