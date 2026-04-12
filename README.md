@@ -79,7 +79,6 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 ├── .github/                    # GitHub Actions & 設定
 │   ├── actions/                # カスタムアクション
 │   ├── infra/                  # gh-infra マニフェスト (リポジトリ設定の宣言的管理)
-│   ├── rulesets/               # Protection rulesets
 │   ├── workflows/              # CI/CD ワークフロー
 │   ├── labeler.yml
 │   ├── project-config.json         # CI/リリース設定 (ビルドターゲット・タイムアウト・apt パッケージ等)
