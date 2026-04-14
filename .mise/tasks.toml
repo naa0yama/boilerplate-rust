@@ -47,18 +47,28 @@ echo 'OpenObserve restarted with clean state'
 cargo test --all-targets
 """
 
+# I/O-only and TUI functions in gh-sync are excluded via #[cfg_attr(coverage_nightly, coverage(off))].
+# cargo-llvm-cov automatically sets --cfg coverage_nightly when using a nightly toolchain,
+# which activates the #[coverage(off)] attribute on annotated functions.
+# No --ignore-filename-regex needed: exclusion is per-function, not per-file.
 [coverage]
 description = "Generate LCOV coverage report and verify thresholds"
 env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
 run = """
-cargo llvm-cov --all-features --fail-under-lines 90
-cargo llvm-cov --all-features --lcov --output-path target/lcov.info
+rustup component add llvm-tools-preview --toolchain nightly-2026-01-15
+
+cargo +nightly-2026-01-15 llvm-cov --all-features --fail-under-lines 90
+cargo +nightly-2026-01-15 llvm-cov --all-features --lcov --output-path target/lcov.info
 """
 
 ["coverage:html"]
 description = "Generate HTML coverage report and open"
 env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
-run = "cargo llvm-cov --all-features --html --open"
+run = """
+rustup component add llvm-tools-preview --toolchain nightly-2026-01-15
+
+cargo +nightly-2026-01-15 llvm-cov --all-features --html --open
+"""
 
 [fmt]
 description = "Run all formatters"
