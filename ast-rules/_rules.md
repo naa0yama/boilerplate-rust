@@ -177,8 +177,8 @@ async fn load_config() -> Result<Config, Error> {
 ```rust
 fn connect_to_database() -> Connection {
     // ハードコードされた認証情報 - セキュリティリスク
-    let password = "super_secret_password_123";
-    let api_key = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+    let password = "super_secret_password_123"; // gitleaks:allow
+    let api_key = "sk-XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"; // gitleaks:allow
 
     Database::connect("localhost", "admin", password)
 }
