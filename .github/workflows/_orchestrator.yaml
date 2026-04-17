@@ -87,11 +87,14 @@ jobs:
 
   rust-ci:
     needs: detect-changes
+    # !cancelled() breaks the auto-skip chain on push events, where
+    # detect-changes is intentionally skipped (it only runs on PRs).
     if: >-
-      github.event_name == 'push'
-      || (github.event_name == 'pull_request'
-          && github.event.action != 'closed'
-          && needs.detect-changes.outputs.rust == 'true')
+      !cancelled()
+      && (github.event_name == 'push'
+          || (github.event_name == 'pull_request'
+              && github.event.action != 'closed'
+              && needs.detect-changes.outputs.rust == 'true'))
     uses: ./.github/workflows/rust-ci.yaml
     permissions:
       contents: write # octocov badge push
