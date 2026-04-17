@@ -35,4 +35,4 @@ jobs:
           elif [[ "$PR_TITLE" =~ ^docs(\(|:)                               ]]; then label=documentation
           else echo "No matching prefix in: $PR_TITLE"; exit 0
           fi
-          gh pr edit "$PR_NUMBER" --add-label "$label"
+          gh pr edit "$PR_NUMBER" --add-label "$label" --repo "$GITHUB_REPOSITORY"
