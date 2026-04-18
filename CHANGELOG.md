@@ -1,15 +1,23 @@
 # Changelog
 
 ## [v0.1.4](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.3...v0.1.4) - 2026-04-18
+
 ### Bug Fixes 🐌
+
 - fix(ci): run rust-ci on push to update coverage badges by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/363
+
 ### Documentation 🗒️
+
 - ci(infra): restructure gh-infra manifests to per-repo template format by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/339
 - build: switch coverage tasks to pinned nightly toolchain by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/346
 - build: replace gh-infra with gh-sync and add draft release publish by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/350
+
 ### Dependency Updates 📦
+
 - chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/342
+
 ### Development Environment 🔧
+
 - chore(deps): update taiki-e/install-action action to v2.72.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/335
 - chore: optimize workspace deps, translate comments, update infra config by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/336
 - chore(deps): update dependency aqua:ast-grep/ast-grep to v0.42.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/337
@@ -26,7 +34,9 @@
 - chore(deps): update actions/github-script action to v9 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/352
 - ci: update PR labeling and fix rustls-webpki security advisory by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/362
 - chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/365
+
 ### Other Changes
+
 - chore(deps): update rust crate rand to v0.10.1 [security] by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/333
 - chore: ignore .claude/scheduled_tasks.lock by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/338
 - chore(deps): update dependency usage to v3.2.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/360
