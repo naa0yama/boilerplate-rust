@@ -263,7 +263,7 @@ spec:
         non_fast_forward: true
         deletion: true
         creation: false
-        required_linear_history: true
+        required_linear_history: false
         required_signatures: true
 files:
   # .cargo
