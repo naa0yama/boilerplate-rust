@@ -1,5 +1,11 @@
 # Changelog
 
+## [v0.1.5](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.4...v0.1.5) - 2026-04-18
+
+### Bug Fixes 🐌
+
+- fix(ci): add pre-tagpr wait step to handle GitHub commit-to-PR index lag by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/370
+
 ## [v0.1.4](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.3...v0.1.4) - 2026-04-18
 
 ### Bug Fixes 🐌
