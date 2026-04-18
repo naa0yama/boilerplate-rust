@@ -12,8 +12,8 @@ spec:
     discussions: false
   web_commit_signoff_required: true
   merge_strategy:
-    allow_merge_commit: true
-    allow_squash_merge: false
+    allow_merge_commit: false
+    allow_squash_merge: true
     allow_rebase_merge: false
     allow_auto_merge: true
     allow_update_branch: true
@@ -252,7 +252,7 @@ spec:
           require_last_push_approval: false
           required_review_thread_resolution: true
           allowed_merge_methods:
-            - merge
+            - squash
         required_status_checks:
           strict_required_status_checks_policy: true
           contexts:
@@ -341,6 +341,12 @@ files:
     strategy: replace
   - path: .github/tagpr-template.md
     strategy: replace
+
+  # .github/gh-sync
+  - path: .github/gh-sync/config.yaml
+    strategy: delete
+  - path: .github/gh-sync/schema.json
+    strategy: delete
 
   # .github/rulesets
   - path: .github/rulesets/default_branch.json
