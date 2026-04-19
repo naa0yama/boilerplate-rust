@@ -396,7 +396,7 @@ files:
 
   # .vscode
   - path: .vscode/launch.json
-    strategy: patch
+    strategy: replace
     preserve_markers: true
   - path: .vscode/settings.json
     strategy: replace
@@ -451,7 +451,7 @@ files:
   - path: .worktreeinclude
     strategy: replace
   - path: Cargo.toml
-    strategy: patch
+    strategy: replace
     preserve_markers: true
   - path: Dockerfile
     strategy: replace
@@ -462,7 +462,7 @@ files:
   - path: dprint.jsonc
     strategy: replace
   - path: mise.toml
-    strategy: patch
+    strategy: replace
     preserve_markers: true
   - path: renovate.json
     strategy: replace
