@@ -8,6 +8,7 @@ categories = ["command-line-utilities"]
 edition.workspace = true
 keywords = ["cli", "tool"]
 license.workspace = true
+publish.workspace = true
 repository.workspace = true
 description = "A CLI tool built following project rules standards"
 
