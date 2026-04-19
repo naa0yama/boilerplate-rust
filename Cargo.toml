@@ -3,6 +3,9 @@
 # -
 [workspace]
 resolver = "3"
+# gh-sync:keep-start
+# Project-specific dependencies are listed here.
+
 members = [
 	"crates/brust",
 ]
@@ -12,11 +15,17 @@ version = "0.1.5"
 edition = "2024"
 license = "AGPL-3.0-only"
 repository = "https://github.com/naa0yama/boilerplate-rust"
+# gh-sync:keep-end
 
 # - -------------------------------------------------------------------------------------------------
 # - Dependencies
 # -
 [workspace.dependencies]
+# gh-sync:keep-start
+# Project-specific dependencies are listed here.
+
+# gh-sync:keep-end
+
 # Core
 anyhow = "1.0"
 clap = { version = "4.5.45", default-features = false, features = ["std", "derive", "help", "usage", "error-context", "color", "suggestions"] }
