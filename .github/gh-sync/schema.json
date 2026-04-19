@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
 	"title": "gh-sync manifest",
-	"description": "Repository settings — compatible with gh-infra Kind: Repository spec (all fields optional)",
+	"description": "Template sync configuration for gh-sync",
 	"type": "object",
 	"required": ["upstream", "files"],
 	"additionalProperties": false,
@@ -26,7 +26,7 @@
 		"spec": {
 			"type": "object",
 			"additionalProperties": false,
-			"description": "Repository settings — compatible with gh-infra Kind: Repository spec (all fields optional)",
+			"description": "Repository settings — compatible (all fields optional)",
 			"properties": {
 				"description": {
 					"type": "string",
@@ -49,6 +49,10 @@
 					"type": "array",
 					"items": { "type": "string" },
 					"description": "Topic tags (full list, not additive)"
+				},
+				"web_commit_signoff_required": {
+					"type": "boolean",
+					"description": "Require contributors to sign off on web-based commits"
 				},
 				"release_immutability": {
 					"type": "boolean",
@@ -84,10 +88,6 @@
 						}
 					}
 				},
-				"web_commit_signoff_required": {
-					"type": "boolean",
-					"description": "Require contributors to sign off on web-based commits"
-				},
 				"features": {
 					"type": "object",
 					"additionalProperties": false,
@@ -109,17 +109,33 @@
 						"allow_rebase_merge": { "type": "boolean" },
 						"allow_auto_merge": {
 							"type": "boolean",
-							"description": "Allow auto-merge on pull requests"
+							"description": "Automatically merge when all checks pass"
 						},
 						"allow_update_branch": {
 							"type": "boolean",
-							"description": "Allow updating a pull request's branch"
+							"description": "Allow updating PR branches"
 						},
 						"auto_delete_head_branches": { "type": "boolean" },
-						"merge_commit_title": { "type": "string" },
-						"merge_commit_message": { "type": "string" },
-						"squash_merge_commit_title": { "type": "string" },
-						"squash_merge_commit_message": { "type": "string" }
+						"merge_commit_title": {
+							"type": "string",
+							"enum": ["PR_TITLE", "MERGE_MESSAGE"],
+							"description": "Title format for merge commits"
+						},
+						"merge_commit_message": {
+							"type": "string",
+							"enum": ["PR_BODY", "PR_TITLE", "BLANK"],
+							"description": "Body format for merge commits"
+						},
+						"squash_merge_commit_title": {
+							"type": "string",
+							"enum": ["PR_TITLE", "COMMIT_OR_PR_TITLE"],
+							"description": "Title format for squash commits"
+						},
+						"squash_merge_commit_message": {
+							"type": "string",
+							"enum": ["PR_BODY", "COMMIT_MESSAGES", "BLANK"],
+							"description": "Body format for squash commits"
+						}
 					}
 				},
 				"actions": {
@@ -164,11 +180,11 @@
 						"fork_pr_approval": {
 							"type": "string",
 							"enum": [
-								"none",
-								"all_external_contributors",
-								"all_contributors"
+								"first_time_contributors_new_to_github",
+								"first_time_contributors",
+								"all_external_contributors"
 							],
-							"description": "Fork pull request approval policy: none / all_external_contributors / all_contributors"
+							"description": "Fork pull request approval policy"
 						}
 					}
 				},
@@ -202,7 +218,17 @@
 									"type": "object",
 									"additionalProperties": false,
 									"properties": {
-										"role": { "type": "string" },
+										"role": {
+											"type": "string",
+											"enum": [
+												"admin",
+												"maintain",
+												"write",
+												"triage",
+												"read"
+											],
+											"description": "Built-in repository role that may bypass the ruleset"
+										},
 										"team": { "type": "string" },
 										"app": { "type": "string" },
 										"org-admin": { "type": "boolean" },
@@ -261,28 +287,16 @@
 									"pull_request": {
 										"type": "object",
 										"additionalProperties": false,
-										"description": "Pull request review requirements",
 										"properties": {
 											"required_approving_review_count": {
 												"type": "integer",
-												"minimum": 0,
-												"description": "Number of required approving reviews"
+												"minimum": 0
 											},
-											"dismiss_stale_reviews_on_push": {
-												"type": "boolean",
-												"description": "Dismiss approved reviews when new commits are pushed"
-											},
-											"require_code_owner_review": {
-												"type": "boolean",
-												"description": "Require review from a code owner"
-											},
-											"require_last_push_approval": {
-												"type": "boolean",
-												"description": "Require approval of the most recent push"
-											},
+											"dismiss_stale_reviews_on_push": { "type": "boolean" },
+											"require_code_owner_review": { "type": "boolean" },
+											"require_last_push_approval": { "type": "boolean" },
 											"required_review_thread_resolution": {
-												"type": "boolean",
-												"description": "Require all review threads to be resolved before merging"
+												"type": "boolean"
 											},
 											"allowed_merge_methods": {
 												"type": "array",
@@ -290,7 +304,7 @@
 													"type": "string",
 													"enum": ["squash", "merge", "rebase"]
 												},
-												"description": "Allowed merge methods for pull requests"
+												"description": "Merge methods allowed for pull requests"
 											}
 										}
 									},
@@ -309,7 +323,11 @@
 													"additionalProperties": false,
 													"properties": {
 														"context": { "type": "string" },
-														"app": { "type": "string" }
+														"app": { "type": "string" },
+														"integration_id": {
+															"type": "integer",
+															"description": "GitHub App integration ID resolved from the app slug"
+														}
 													}
 												}
 											}
@@ -380,6 +398,10 @@
 						"type": "string",
 						"minLength": 1,
 						"description": "Explicit patch file path (patch strategy only; defaults to .github/gh-sync/patches/<path>.patch)"
+					},
+					"preserve_markers": {
+						"type": "boolean",
+						"description": "Preserve gh-sync:keep-start/keep-end marker blocks from the local file. Only used when strategy is 'patch' or 'replace'."
 					}
 				}
 			}
