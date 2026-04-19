@@ -14,6 +14,7 @@ members = [
 version = "0.1.5"
 edition = "2024"
 license = "AGPL-3.0-only"
+publish = false
 repository = "https://github.com/naa0yama/boilerplate-rust"
 # gh-sync:keep-end
 
