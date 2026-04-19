@@ -95,6 +95,9 @@ spec:
     - name: tests
       description: Changes to test files
       color: "257759"
+    - name: gh-sync-drift
+      description: Changes to gh-sync drift
+      color: "257759"
 
     # Renovate — datasource
     - name: "datasource:"
