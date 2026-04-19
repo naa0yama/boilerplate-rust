@@ -343,6 +343,8 @@ files:
     strategy: replace
 
   # .github/gh-sync
+  - path: .github/gh-sync/patches/.gitkeep
+    strategy: create_only
   - path: .github/gh-sync/config.yaml
     strategy: delete
   - path: .github/gh-sync/schema.json
@@ -395,6 +397,7 @@ files:
   # .vscode
   - path: .vscode/launch.json
     strategy: patch
+    preserve_markers: true
   - path: .vscode/settings.json
     strategy: replace
 
@@ -449,6 +452,7 @@ files:
     strategy: replace
   - path: Cargo.toml
     strategy: patch
+    preserve_markers: true
   - path: Dockerfile
     strategy: replace
   - path: LICENSE
@@ -459,6 +463,7 @@ files:
     strategy: replace
   - path: mise.toml
     strategy: patch
+    preserve_markers: true
   - path: renovate.json
     strategy: replace
   - path: rust-toolchain.toml
