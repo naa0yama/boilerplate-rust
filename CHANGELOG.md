@@ -1,9 +1,13 @@
 # Changelog
 
 ## [v0.1.6](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.5...v0.1.6) - 2026-04-19
+
 ### Development Environment 🔧
+
 - chore(deps): update taiki-e/install-action action to v2.75.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/372
+
 ### Other Changes
+
 - chore(gh-sync): add preserve_markers support for project-specific sections by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/374
 - chore: update gh-sync to v0.3.0 by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/375
 - chore: disable publishing to crates.io by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/376
