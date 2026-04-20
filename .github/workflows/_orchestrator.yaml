@@ -220,7 +220,12 @@ jobs:
 
   ci-gate:
     name: CI Gate
-    if: always() && github.event.action != 'closed'
+    # !contains(...,'cancelled') suppresses the gate when concurrency
+    # cancel-in-progress cancels upstream jobs; skipped != cancelled.
+    if: >-
+      !cancelled()
+      && !contains(needs.*.result, 'cancelled')
+      && github.event.action != 'closed'
     needs: [rust-ci, miri, audit, container, docs-ci, codeql, actionlint]
     runs-on: ubuntu-latest
     timeout-minutes: 5
