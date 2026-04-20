@@ -4,7 +4,7 @@ on:
   push:
     branches: [main]
   pull_request:
-    types: [opened, synchronize, reopened, closed]
+    types: [opened, synchronize, reopened]
   schedule:
     - cron: "0 18 * * *" # daily at 03:00 JST
 
@@ -17,7 +17,7 @@ concurrency:
 jobs:
   detect-changes:
     name: detect-changes
-    if: github.event_name == 'pull_request' && github.event.action != 'closed'
+    if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -93,7 +93,6 @@ jobs:
       !cancelled()
       && (github.event_name == 'push'
           || (github.event_name == 'pull_request'
-              && github.event.action != 'closed'
               && needs.detect-changes.outputs.rust == 'true'))
     uses: ./.github/workflows/rust-ci.yaml
     permissions:
@@ -105,7 +104,6 @@ jobs:
     needs: detect-changes
     if: >-
       github.event_name == 'pull_request'
-      && github.event.action != 'closed'
       && needs.detect-changes.outputs.miri == 'true'
     uses: ./.github/workflows/miri.yaml
     permissions:
@@ -118,7 +116,6 @@ jobs:
     if: >-
       github.event_name == 'schedule'
       || (github.event_name == 'pull_request'
-          && github.event.action != 'closed'
           && needs.detect-changes.outputs.audit == 'true')
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -135,7 +132,6 @@ jobs:
     needs: detect-changes
     if: >-
       github.event_name == 'pull_request'
-      && github.event.action != 'closed'
       && needs.detect-changes.outputs.container == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 15
@@ -155,7 +151,6 @@ jobs:
     needs: detect-changes
     if: >-
       github.event_name == 'pull_request'
-      && github.event.action != 'closed'
       && needs.detect-changes.outputs.docs == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 5
@@ -172,7 +167,7 @@ jobs:
     if: >-
       github.event_name == 'push'
       || github.event_name == 'schedule'
-      || (github.event_name == 'pull_request' && github.event.action != 'closed')
+      || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
@@ -188,7 +183,7 @@ jobs:
     name: actionlint
     if: >-
       github.event_name == 'schedule'
-      || (github.event_name == 'pull_request' && github.event.action != 'closed')
+      || github.event_name == 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:
@@ -201,23 +196,6 @@ jobs:
           persist-credentials: false
       - uses: ./.github/actions/act-actionlint
 
-  cleanup:
-    name: cleanup
-    if: >-
-      github.event_name == 'pull_request'
-      && github.event.action == 'closed'
-      && github.event.pull_request.merged == true
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      actions: write # Required to manage GitHub Actions artifacts
-      packages: write # Required to delete package versions
-    steps:
-      - uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
-        with:
-          persist-credentials: false
-      - uses: ./.github/actions/act-cleanup
-
   ci-gate:
     name: CI Gate
     # !contains(...,'cancelled') suppresses the gate when concurrency
@@ -225,7 +203,6 @@ jobs:
     if: >-
       !cancelled()
       && !contains(needs.*.result, 'cancelled')
-      && github.event.action != 'closed'
     needs: [rust-ci, miri, audit, container, docs-ci, codeql, actionlint]
     runs-on: ubuntu-latest
     timeout-minutes: 5
