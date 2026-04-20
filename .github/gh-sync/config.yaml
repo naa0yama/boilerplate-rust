@@ -374,6 +374,8 @@ files:
     strategy: replace
   - path: .github/workflows/actionlint-format.txt
     strategy: replace
+  - path: .github/workflows/cleanup.yaml
+    strategy: replace
   - path: .github/workflows/miri.yaml
     strategy: replace
   - path: .github/workflows/pr-labeler.yaml
