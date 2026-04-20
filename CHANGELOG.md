@@ -1,10 +1,14 @@
 # Changelog
 
 ## [v0.1.7](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.6...v0.1.7) - 2026-04-20
+
 ### Development Environment 🔧
+
 - ci: suppress ci-gate on concurrency cancellation by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/379
 - ci: split cleanup into a dedicated workflow by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/381
+
 ### Other Changes
+
 - chore: update gh-sync to v0.3.3 and add gh-sync-drift label by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/377
 - chore: update gh-sync to v0.3.4 by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/380
 
