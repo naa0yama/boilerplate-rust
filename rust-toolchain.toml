@@ -1,5 +1,8 @@
 [toolchain]
+# gh-sync:keep-start
 channel = "1.94.0"
+# gh-sync:keep-end
+
 components = [
 	"cargo",
 	"clippy",
@@ -11,5 +14,7 @@ components = [
 ]
 targets = [
 	"x86_64-unknown-linux-gnu",
+	# gh-sync:keep-start
+	# gh-sync:keep-end
 ]
 profile = "default"
