@@ -25,6 +25,9 @@ repository = "https://github.com/naa0yama/boilerplate-rust"
 # gh-sync:keep-start
 # Project-specific dependencies are listed here.
 
+## Core
+clap = { version = "4.5.45", default-features = false, features = ["std", "derive", "help", "usage", "error-context", "color", "suggestions"] }
+
 ## Data
 reqwest = { version = "0.13.1", default-features = false, features = ["blocking", "rustls-no-provider"] }
 rustls = { version = "0.23", default-features = false, features = ["ring", "std", "tls12"] }
@@ -38,7 +41,6 @@ rand = { version = "0.10", default-features = false, features = ["thread_rng"] }
 
 ## Core
 anyhow = "1.0"
-clap = { version = "4.5.45", default-features = false, features = ["std", "derive", "help", "usage", "error-context", "color", "suggestions"] }
 
 ## Logging
 tracing = "0.1.41"
