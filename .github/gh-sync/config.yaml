@@ -460,6 +460,7 @@ files:
     preserve_markers: true
   - path: Dockerfile
     strategy: replace
+    preserve_markers: true
   - path: LICENSE
     strategy: replace
   - path: deny.toml
@@ -473,6 +474,7 @@ files:
     strategy: replace
   - path: rust-toolchain.toml
     strategy: replace
+    preserve_markers: true
   - path: sgconfig.yml
     strategy: replace
 
