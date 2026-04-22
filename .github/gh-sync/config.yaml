@@ -380,7 +380,17 @@ files:
     strategy: replace
   - path: .github/workflows/pr-labeler.yaml
     strategy: replace
+  - path: .github/workflows/actionlint.yaml
+    strategy: delete
+  - path: .github/workflows/audit.yaml
+    strategy: delete
+  - path: .github/workflows/codeql.yaml
+    strategy: delete
+  - path: .github/workflows/docs-ci.yaml
+    strategy: delete
   - path: .github/workflows/label-sync.yaml
+    strategy: delete
+  - path: .github/workflows/prebuild-container.yaml
     strategy: delete
   - path: .github/workflows/release.yaml
     strategy: replace
