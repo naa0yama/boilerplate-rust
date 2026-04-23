@@ -457,6 +457,7 @@ files:
     strategy: replace
   - path: .gitignore
     strategy: replace
+    preserve_markers: true
   - path: .gitleaksignore
     strategy: replace
   - path: .octocov.yml
@@ -465,6 +466,7 @@ files:
     strategy: replace
   - path: .worktreeinclude
     strategy: replace
+    preserve_markers: true
   - path: Cargo.toml
     strategy: replace
     preserve_markers: true
