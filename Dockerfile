@@ -186,3 +186,8 @@ alias cc="claude --dangerously-skip-permissions"
 
 _DOC_
 EOF
+
+# gh-sync:keep-start
+# Project-specific dependencies are listed here.
+
+# gh-sync:keep-end
