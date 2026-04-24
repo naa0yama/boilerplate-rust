@@ -20,6 +20,13 @@ use crate::telemetry::metrics::Meters;
 ///
 /// Returns an error if the URL is invalid, the TCP connection fails, the server
 /// returns a network-level error, or the response body cannot be read.
+#[cfg_attr(
+    feature = "otel",
+    tracing::instrument(
+        skip(meters),
+        fields(otel.kind = ?opentelemetry::trace::SpanKind::Client)
+    )
+)]
 pub fn fetch_url(url: &str, meters: &Meters) -> anyhow::Result<()> {
     let parsed = reqwest::Url::parse(url).context("invalid URL")?;
     let host = parsed.host_str().unwrap_or("unknown").to_owned();

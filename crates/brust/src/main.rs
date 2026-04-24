@@ -108,6 +108,10 @@ fn build_resource() -> opentelemetry_sdk::Resource {
                 env!("CARGO_PKG_VERSION"),
             ),
             opentelemetry::KeyValue::new(
+                opentelemetry_semantic_conventions::attribute::SERVICE_INSTANCE_ID,
+                gethostname::gethostname().to_string_lossy().into_owned(),
+            ),
+            opentelemetry::KeyValue::new(
                 opentelemetry_semantic_conventions::attribute::VCS_REF_HEAD_REVISION,
                 env!("GIT_HASH"),
             ),
@@ -139,6 +143,10 @@ fn init_otel() -> OtelProviders {
                     .with_resource(resource.clone())
                     .with_batch_exporter(span_exporter)
                     .build();
+                opentelemetry::global::set_text_map_propagator(
+                    opentelemetry_sdk::propagation::TraceContextPropagator::new(),
+                );
+                opentelemetry::global::set_tracer_provider(tracer_provider.clone());
                 let tracer = opentelemetry::trace::TracerProvider::tracer(
                     &tracer_provider,
                     env!("CARGO_PKG_NAME"),
