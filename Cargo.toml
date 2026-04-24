@@ -54,7 +54,7 @@ sysinfo = { version = "0.38", default-features = false, features = ["system"] }
 opentelemetry-semantic-conventions = { version = "0.31", default-features = false, features = ["semconv_experimental"] }
 
 ## Hostname (optional, behind `otel` feature)
-gethostname = "0.5"
+gethostname = "1.0"
 
 ## OpenTelemetry (optional, behind `otel` feature)
 opentelemetry = { version = "0.31", default-features = false, features = ["trace", "metrics", "logs"] }
