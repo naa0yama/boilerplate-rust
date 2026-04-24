@@ -41,6 +41,8 @@ run = "cargo test --doc"
 ["test:trace"]
 description = "Run tests against a fresh OpenObserve instance (restarts O2 for clean traces)"
 run = """
+#!/usr/bin/env bash
+set -euo pipefail
 mise run o2:stop
 mise run o2
 echo 'OpenObserve restarted with clean state'
@@ -55,6 +57,8 @@ cargo test --all-targets
 description = "Generate LCOV coverage report and verify thresholds"
 env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
 run = """
+#!/usr/bin/env bash
+set -euo pipefail
 rustup component add llvm-tools-preview --toolchain nightly-2026-01-15
 
 cargo +nightly-2026-01-15 llvm-cov --all-features --fail-under-lines 90
@@ -65,6 +69,8 @@ cargo +nightly-2026-01-15 llvm-cov --all-features --lcov --output-path target/lc
 description = "Generate HTML coverage report and open"
 env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
 run = """
+#!/usr/bin/env bash
+set -euo pipefail
 rustup component add llvm-tools-preview --toolchain nightly-2026-01-15
 
 cargo +nightly-2026-01-15 llvm-cov --all-features --html --open
@@ -73,6 +79,8 @@ cargo +nightly-2026-01-15 llvm-cov --all-features --html --open
 [fmt]
 description = "Run all formatters"
 run = """
+#!/usr/bin/env bash
+set -euo pipefail
 cargo fmt
 dprint fmt
 """
@@ -80,6 +88,8 @@ dprint fmt
 ["fmt:check"]
 description = "Check all formatting"
 run = """
+#!/usr/bin/env bash
+set -euo pipefail
 cargo fmt -- --check
 dprint check
 """
@@ -103,6 +113,8 @@ depends = ["fmt:check", "clippy:strict", "ast-grep"]
 ["lint:gh"]
 description = "Lint GitHub Actions workflows"
 run = """
+#!/usr/bin/env bash
+set -euo pipefail
 actionlint
 ghalint run
 ghalint run-action
@@ -140,6 +152,7 @@ run = "cargo sweep --time 1"
 ["claudecode:install"]
 description = "Install Claude Code to ~/.local/bin via official installer"
 run = """
+#!/usr/bin/env bash
 set -euo pipefail
 if command -v claude > /dev/null 2>&1; then
   echo "Claude Code already installed: $(claude --version)"
@@ -155,6 +168,7 @@ curl -sfSL --retry 3 --retry-delay 2 --retry-connrefused https://claude.ai/insta
 ["badges:init"]
 description = "Initialize orphan badges branch with empty placeholder files"
 run = """
+#!/usr/bin/env bash
 set -euo pipefail
 
 # Idempotent: skip if remote badges branch already exists
@@ -185,6 +199,7 @@ echo 'badges branch initialized. Badges will be generated on first CI run.'
 ["o2:install"]
 description = "Install OpenObserve Enterprise to ~/.local/bin"
 run = """
+#!/usr/bin/env bash
 set -euo pipefail
 
 install_dir="${HOME}/.local/bin"
@@ -231,6 +246,8 @@ echo "OpenObserve ${version} installed to ${target}"
 description = "Start OpenObserve (OTLP HTTP via :5080, UI :5080)"
 env = { OTEL_EXPORTER_OTLP_ENDPOINT = "" }
 run = """
+#!/usr/bin/env bash
+set -euo pipefail
 if ! command -v openobserve > /dev/null 2>&1; then
   echo 'Error: openobserve not found. Run "mise run o2:install" first.' >&2
   exit 1
@@ -261,6 +278,7 @@ pkill -x openobserve 2>/dev/null && while pgrep -x openobserve > /dev/null; do s
 ["codeql:install"]
 description = "Create CodeQL database and download query packs"
 run = """
+#!/usr/bin/env bash
 set -euo pipefail
 
 db_dir="target/codeql-db"
@@ -292,6 +310,7 @@ echo '    Run analysis: mise run codeql'
 [codeql]
 description = "Run CodeQL analysis (SARIF output)"
 run = """
+#!/usr/bin/env bash
 set -euo pipefail
 
 db_dir="target/codeql-db"
