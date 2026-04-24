@@ -19,19 +19,30 @@ ast-rules/
 
 ## OTel / Tracing Setup
 
-- OTel is enabled by default (`default = ["otel"]`).
+- OTel is enabled by default (`default = ["otel", "process-metrics"]`).
 - Set `OTEL_EXPORTER_OTLP_ENDPOINT` env var to activate OTLP export.
 - Without the env var (or empty), only the `fmt` layer is active.
 - Build without OTel: `mise run build -- --no-default-features`.
 - Test tasks automatically set `OTEL_EXPORTER_OTLP_ENDPOINT=""` to prevent OTel panics.
-- Feature flag in `Cargo.toml`:
+- Feature flags in `Cargo.toml`:
   ```toml
   [features]
-  default = ["otel"]
+  default = ["otel", "process-metrics"]
   otel = [
+  	"dep:gethostname",
   	"dep:opentelemetry",
   	"dep:opentelemetry_sdk",
   	"dep:opentelemetry-otlp",
   	"dep:tracing-opentelemetry",
+  	"dep:opentelemetry-appender-tracing",
+  	"dep:opentelemetry-semantic-conventions",
+  ]
+  # Collects OTel-semconv process metrics. Requires `otel`. Disable with --no-default-features.
+  process-metrics = [
+  	"otel",
+  	"dep:sysinfo",
   ]
   ```
+- `service.instance.id` is set to `gethostname::gethostname()` (CLI: one instance per host).
+- `TraceContextPropagator` and `global::set_tracer_provider()` are set at provider init.
+- Transport: HTTP/proto (`http-proto` + `reqwest-blocking-client`), port 4318.
