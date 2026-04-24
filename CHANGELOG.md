@@ -1,5 +1,43 @@
 # Changelog
 
+## [v0.1.8](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.7...v0.1.8) - 2026-04-24
+
+### Features 🎉
+
+- feat(otel): add gethostname-based service.instance.id and TraceContextPropagator by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/404
+- feat(otel): add service.instance.id and TraceContextPropagator by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/406
+
+### Bug Fixes 🐌
+
+- fix(ci): pin mise to v2026.4.18 and fix task_config.includes order by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/393
+
+### Development Environment 🔧
+
+- chore(deps): update taiki-e/install-action action to v2.75.9 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/382
+- chore(deps): update actions/cache action to v5.0.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/386
+- chore(deps): update taiki-e/install-action action to v2.75.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/387
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/388
+- chore(deps): update dependency aqua:embarkstudios/cargo-deny to v0.19.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/389
+- chore(deps): update taiki-e/install-action action to v2.75.11 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/390
+- chore(deps): update taiki-e/install-action action to v2.75.12 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/391
+- chore(deps): update taiki-e/install-action action to v2.75.13 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/392
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/397
+- chore(deps): update dependency aqua:embarkstudios/cargo-deny to v0.19.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/398
+- chore(deps): update rust docker tag to v1.94.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/399
+- chore(deps): update taiki-e/install-action action to v2.75.15 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/401
+- chore(deps): update devcontainers/ci action to v0.3.1900000448 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/402
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/403
+- chore(deps): update dependency aqua:cli/cli to v2.90.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/357
+
+### Other Changes
+
+- chore: move optional deps into gh-sync keep markers by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/384
+- chore(deps): update gh-sync to v0.3.5 by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/385
+- chore: enable gh-sync preserve_markers for Dockerfile and rust-toolchain.toml by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/394
+- chore: remove gh-sync keep markers from rust-toolchain.toml by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/395
+- chore(gh-sync): add delete strategies for removed workflow files by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/396
+- chore(gh-sync): update to v0.3.6 and add preserve_markers by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/400
+
 ## [v0.1.7](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.6...v0.1.7) - 2026-04-20
 
 ### Development Environment 🔧
