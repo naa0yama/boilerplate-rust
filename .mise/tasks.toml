@@ -166,34 +166,29 @@ curl -sfSL --retry 3 --retry-delay 2 --retry-connrefused https://claude.ai/insta
 """
 
 ["badges:init"]
-description = "Initialize orphan badges branch with empty placeholder files"
+description = "Initialize badges branch with placeholder SVGs for octocov"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Idempotent: skip if remote badges branch already exists
-if git ls-remote --heads origin badges | grep -q badges; then
-  echo 'Remote badges branch already exists — skipping.'
-  exit 0
+if git show-ref --verify --quiet refs/heads/badges; then
+  echo "Error: 'badges' branch already exists. Delete it first: git branch -D badges" >&2
+  exit 1
 fi
 
-# Create orphan branch in a temporary worktree
-tmp="$(mktemp -d)"
-trap 'git worktree remove --force "${tmp}" 2>/dev/null; rm -rf "${tmp}"' EXIT
-git worktree add --detach "${tmp}"
-git -C "${tmp}" config --local --unset core.hookspath 2>/dev/null || true
-cd "${tmp}"
-git checkout --orphan badges
-git rm -rf . > /dev/null 2>&1
-git clean -fd > /dev/null 2>&1
+tmpdir=$(mktemp -d)
+trap 'git worktree remove --force "$tmpdir" 2>/dev/null || true; rm -rf "$tmpdir"' EXIT
 
-# Empty placeholders — octocov overwrites these on first CI run
-touch coverage.svg time.svg
-git add coverage.svg time.svg
-git commit -m "chore: initialize badges branch"
-git push origin badges
+git worktree add --orphan -b badges "$tmpdir"
 
-echo 'badges branch initialized. Badges will be generated on first CI run.'
+_svg='<svg xmlns="http://www.w3.org/2000/svg"/>'
+printf '%s' "$_svg" > "$tmpdir/coverage.svg"
+printf '%s' "$_svg" > "$tmpdir/time.svg"
+
+git -C "$tmpdir" add coverage.svg time.svg
+git -C "$tmpdir" commit -m "chore: initialize badges branch [skip ci]"
+
+echo "Badges branch initialized. Run: git push origin badges"
 """
 
 ["o2:install"]
