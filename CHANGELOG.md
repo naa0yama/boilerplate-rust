@@ -1,5 +1,25 @@
 # Changelog
 
+## [v0.1.9](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.8...v0.1.9) - 2026-04-26
+
+### Bug Fixes 🐌
+
+- fix(ci): push coverage badges via GitHub Git Data API by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/412
+- fix(ci): use --input - for git tree and commit API calls by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/413
+
+### Dependency Updates 📦
+
+- chore(deps): update rust crate assert_cmd to v2.2.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/407
+
+### Development Environment 🔧
+
+- chore(deps): update taiki-e/install-action action to v2.75.17 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/408
+- chore(deps): update taiki-e/install-action action to v2.75.18 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/410
+
+### Other Changes
+
+- chore(mise): refactor badges:init to use git worktree add --orphan by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/411
+
 ## [v0.1.8](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.7...v0.1.8) - 2026-04-24
 
 ### Features 🎉
