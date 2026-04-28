@@ -7,6 +7,8 @@ set -euo pipefail
 
 readonly TRAEFIK_BIN="${HOME}/.local/bin/traefik"
 readonly TRAEFIK_CONFIG="${HOME}/.config/traefik/traefik.yml"
+readonly TRAEFIK_DYNAMIC_DIR="${HOME}/.config/traefik/dynamic"
+readonly TRAEFIK_DYNAMIC_CONTAINER_PATH=/traefik-dynamic
 readonly TRAEFIK_SERVICE="${HOME}/.config/systemd/user/traefik.service"
 readonly TRAEFIK_PORT_ROUTER=8080
 readonly TRAEFIK_PORT_DASHBOARD=8081
@@ -54,9 +56,67 @@ _ports() {
 	_jsonc "${devcontainer_json}" | jq -r '.portsAttributes | keys[]' 2>/dev/null || true
 }
 
+# Find container ID for the current workspace (running or stopped).
+# Uses devcontainer.local_folder label (set by devcontainer CLI) so the lookup
+# is stable across branch changes inside the container.
+_container_id() {
+	local workspace
+	workspace="$(_workspace)"
+	docker ps -aq --filter "label=devcontainer.local_folder=${workspace}"
+}
+
+# Find running container ID only.
+_running_container_id() {
+	local workspace
+	workspace="$(_workspace)"
+	docker ps -q --filter "label=devcontainer.local_folder=${workspace}"
+}
+
 _ensure_network() {
 	docker network inspect devcontainer-traefik >/dev/null 2>&1 \
 		|| docker network create devcontainer-traefik
+}
+
+# Write traefik file-provider YAML for all ports of one container.
+# Usage: _write_routes <container_id> <project> <branch> <ip> <ports_newline_separated>
+_write_routes() {
+	local cid="${1}" project="${2}" branch="${3}" ip="${4}" ports="${5}"
+	local cid_short="${cid:0:12}"
+	local dest="${TRAEFIK_DYNAMIC_DIR}/${project}-${cid_short}.yml"
+	local bt='`'
+
+	{
+		printf 'http:\n'
+		printf '  routers:\n'
+		while IFS= read -r port; do
+			[ -z "${port}" ] && continue
+			local router="p${port}-${branch}--${project}"
+			local fqdn="p${port}.${branch}.${project}.localhost"
+			printf '    %s:\n' "${router}"
+			printf '      rule: "Host(%s%s%s)"\n' "${bt}" "${fqdn}" "${bt}"
+			printf '      entryPoints:\n'
+			printf '        - web\n'
+			printf '      service: %s\n' "${router}"
+		done <<< "${ports}"
+		printf '  services:\n'
+		while IFS= read -r port; do
+			[ -z "${port}" ] && continue
+			local router="p${port}-${branch}--${project}"
+			printf '    %s:\n' "${router}"
+			printf '      loadBalancer:\n'
+			printf '        servers:\n'
+			printf '          - url: "http://%s:%s"\n' "${ip}" "${port}"
+		done <<< "${ports}"
+	} > "${dest}"
+	echo "Wrote ${dest}"
+}
+
+# Remove the file-provider YAML for a container.
+_remove_routes() {
+	local cid="${1}" project="${2}"
+	local cid_short="${cid:0:12}"
+	local dest="${TRAEFIK_DYNAMIC_DIR}/${project}-${cid_short}.yml"
+	rm -f "${dest}" && echo "Removed ${dest}"
 }
 
 # Query GitHub releases API for the latest traefik tag (e.g. "v3.4.1")
@@ -178,7 +238,7 @@ cmd_setup() {
 	echo "traefik: $(_traefik_installed)"
 
 	_ensure_network
-	mkdir -p "$(dirname "${TRAEFIK_CONFIG}")" "$(dirname "${TRAEFIK_SERVICE}")"
+	mkdir -p "$(dirname "${TRAEFIK_CONFIG}")" "$(dirname "${TRAEFIK_SERVICE}")" "${TRAEFIK_DYNAMIC_DIR}"
 
 	# "traefik" entrypoint name overrides Traefik v3's built-in default (:8080).
 	# Without this, api.insecure creates an implicit "traefik" entrypoint at :8080
@@ -186,14 +246,17 @@ cmd_setup() {
 	cat > "${TRAEFIK_CONFIG}" << YAML
 entryPoints:
   web:
-    address: ":${TRAEFIK_PORT_ROUTER}"
+    address: "localhost:${TRAEFIK_PORT_ROUTER}"
   traefik:
-    address: ":${TRAEFIK_PORT_DASHBOARD}"
+    address: "localhost:${TRAEFIK_PORT_DASHBOARD}"
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
     exposedByDefault: false
     network: devcontainer-traefik
+  file:
+    directory: "${TRAEFIK_DYNAMIC_DIR}"
+    watch: true
 api:
   dashboard: true
   insecure: true
@@ -253,28 +316,15 @@ cmd_up() {
 	ports="$(_ports)"
 
 	if [ -z "${ports}" ]; then
-		echo "Warning: no portsAttributes found in devcontainer.json, skipping traefik labels." >&2
+		echo "Warning: no portsAttributes found in devcontainer.json." >&2
 	fi
 
-	# bt holds a literal backtick; using a variable avoids command substitution
-	# inside double-quoted strings when building the traefik Host() rule.
-	local bt router fqdn port
-	bt='`'
-
-	run_args='["--label=traefik.enable=true"'
-	run_args="${run_args},\"--label=devcontainer.project=${project}\""
-	run_args="${run_args},\"--label=devcontainer.branch=${branch}\""
-
-	while IFS= read -r port; do
-		[ -z "${port}" ] && continue
-		router="p${port}-${branch}--${project}"
-		fqdn="p${port}.${branch}.${project}.localhost"
-		run_args="${run_args},\"--label=traefik.http.routers.${router}.rule=Host(${bt}${fqdn}${bt})\""
-		run_args="${run_args},\"--label=traefik.http.routers.${router}.entrypoints=web\""
-		run_args="${run_args},\"--label=traefik.http.services.${router}.loadbalancer.server.port=${port}\""
-	done <<< "${ports}"
-
-	run_args="${run_args}]"
+	run_args='["--label=devcontainer.project='"${project}"'"'
+	run_args="${run_args},\"--env=TRAEFIK_MANAGED=1\""
+	run_args="${run_args},\"--env=TRAEFIK_PROJECT=${project}\""
+	run_args="${run_args},\"--env=TRAEFIK_DYNAMIC_DIR=${TRAEFIK_DYNAMIC_CONTAINER_PATH}\""
+	run_args="${run_args},\"--mount=type=bind,source=${TRAEFIK_DYNAMIC_DIR},target=${TRAEFIK_DYNAMIC_CONTAINER_PATH}\""
+	run_args="${run_args},\"--add-host=host.docker.internal:host-gateway\"]"
 
 	# --override-config replaces (not merges) devcontainer.json, so we must
 	# merge our runArgs into the full base config before passing it.
@@ -294,10 +344,19 @@ cmd_up() {
 		exit 1
 	fi
 
-	if ! docker inspect "${container_id}" \
-		--format '{{range $k,$v := .NetworkSettings.Networks}}{{$k}} {{end}}' \
-		| grep -q devcontainer-traefik; then
+	local container_ip=""
+	container_ip="$(docker inspect "${container_id}" \
+		--format '{{(index .NetworkSettings.Networks "devcontainer-traefik").IPAddress}}' \
+		2>/dev/null || true)"
+	if [ -z "${container_ip}" ]; then
 		docker network connect devcontainer-traefik "${container_id}"
+		container_ip="$(docker inspect "${container_id}" \
+			--format '{{(index .NetworkSettings.Networks "devcontainer-traefik").IPAddress}}' \
+			2>/dev/null || true)"
+	fi
+
+	if [ -n "${ports}" ] && [ -n "${container_ip}" ]; then
+		_write_routes "${container_id}" "${project}" "${branch}" "${container_ip}" "${ports}"
 	fi
 
 	# Splash
@@ -327,70 +386,46 @@ cmd_up() {
 }
 
 cmd_down() {
-	local workspace project branch container_id
+	local project container_id
 
 	_host_check
 
-	workspace="$(_workspace)"
 	project="$(_project)"
-	branch="$(_branch)"
-
-	container_id="$(docker ps -aq \
-		--filter "label=devcontainer.project=${project}" \
-		--filter "label=devcontainer.branch=${branch}")"
+	container_id="$(_container_id)"
 
 	if [ -z "${container_id}" ]; then
-		echo "No devcontainer found for ${project} / ${branch}"
+		echo "No devcontainer found for ${project}"
 		return 0
 	fi
 
+	_remove_routes "${container_id}" "${project}"
 	docker rm -f "${container_id}"
-	echo "Stopped: ${project} / ${branch} (${container_id})"
+	echo "Stopped: ${project} (${container_id})"
 }
 
 _exec_and_watch() {
-	local workspace grace cancelled
+	local workspace
 
 	workspace="$(_workspace)"
 
 	devcontainer exec --workspace-folder "${workspace}" bash || true
 
-	grace=10
-	cancelled=0
-	trap 'cancelled=1' INT
-	echo ""
-	echo "Shell exited. Stopping container in ${grace}s... (Ctrl+C to cancel)"
-	for i in $(seq "${grace}" -1 1); do
-		printf "\r  %ds remaining..." "${i}"
-		sleep 1
-		if [ "${cancelled}" -eq 1 ]; then
-			echo ""
-			echo "Stop cancelled. Reconnect: mise run dev:exec"
-			trap - INT
-			return 0
-		fi
-	done
-	echo ""
-	trap - INT
-
-	cmd_down
+	# Background stop so the TTY is returned immediately; 10s allows reconnects
+	echo "Shell exited. Container stopping in 10s... (mise run dev:exec to reconnect)"
+	( sleep 10 && cmd_down ) &
 }
 
 cmd_exec() {
-	local project branch container_id
+	local container_id
 
 	_host_check
 
-	project="$(_project)"
-	branch="$(_branch)"
-
-	container_id="$(docker ps -q \
-		--filter "label=devcontainer.project=${project}" \
-		--filter "label=devcontainer.branch=${branch}")"
+	container_id="$(_running_container_id)"
 
 	if [ -z "${container_id}" ]; then
 		echo "Container not running. Starting..."
 		cmd_up
+		return
 	fi
 
 	_exec_and_watch
@@ -399,9 +434,8 @@ cmd_exec() {
 cmd_status() {
 	_host_check
 	docker ps \
-		--filter "label=traefik.enable=true" \
 		--filter "label=devcontainer.project" \
-		--format 'table {{.Names}}\t{{.Status}}\t{{.Label "devcontainer.project"}}\t{{.Label "devcontainer.branch"}}'
+		--format 'table {{.ID}}\t{{.Status}}\t{{.Label "devcontainer.project"}}'
 }
 
 # ---------------------------------------------------------------------------
