@@ -32,6 +32,88 @@ code .
 
 3. VS Codeのコマンドパレット（`Ctrl+Shift+P` / `Cmd+Shift+P`）から「Dev Containers: Reopen in Container」を選択
 
+## devcontainer CLI + traefik による開発環境 (WSL2)
+
+VS Code を使わず tmux + yazi + claude code などで複数 worktree / 複数プロジェクトを
+並行開発する場合は、devcontainer CLI と traefik を組み合わせる方法を使います。
+ポート衝突なしに各 devcontainer へ `p<port>.<branch>.<project>.localhost` で
+アクセスできます。
+
+### ホスト前提条件
+
+WSL2 ホストに以下が必要です。いずれもユーザーグローバルの mise で管理します
+(プロジェクトの `mise.toml` には含まれていません)。
+
+```bash
+# Node.js (devcontainer-cli の実行に必要)
+mise use --global node@lts
+
+# devcontainer CLI
+mise use --global devcontainer-cli@0.86.0
+```
+
+### 初回セットアップ (WSL2 ホストで1回だけ実行)
+
+前提条件のインストール後、以下を実行します。
+traefik バイナリの取得・設定・systemd user service への登録を一括で行います。
+
+```bash
+mise run traefik:setup
+```
+
+traefik の状態確認:
+
+```bash
+systemctl --user status traefik
+```
+
+### devcontainer の起動と停止
+
+```bash
+mise run dev:up      # 現在の worktree の devcontainer を起動
+mise run dev:down    # 現在の worktree の devcontainer を停止・削除
+mise run dev:exec    # 稼働中の devcontainer に bash で接続
+mise run dev:status  # 稼働中の devcontainer 一覧を表示
+```
+
+`dev:up` は `devcontainer.json` の `portsAttributes` に定義された全ポートに対して
+traefik ルーティングを自動設定します。起動後に以下の形式の URL が表示されます。
+
+```
+http://p<port>.<branch>.<project>.localhost
+```
+
+例 (ポート `5080`、ブランチ `feature/add-auth`、プロジェクト `boilerplate-rust`):
+
+```
+http://p5080.feature-add-auth.boilerplate-rust.localhost
+```
+
+### 複数 worktree での利用
+
+```bash
+# 1つ目の worktree
+cd /path/to/boilerplate-rust
+mise run dev:up
+# -> http://p5080.main.boilerplate-rust.localhost
+
+# 2つ目の worktree (別ブランチ)
+cd /path/to/boilerplate-rust-feat
+mise run dev:up
+# -> http://p5080.feature-x.boilerplate-rust.localhost
+```
+
+ブランチ名は DNS ラベル形式 (小文字英数字とハイフン、63文字以内) に自動変換されます。
+
+## オプションツール
+
+`codeql` など普段使わないツールは `.mise/tools.optional.toml` で管理しています。
+必要な時だけ明示的にインストールします:
+
+```bash
+mise install --config-file .mise/tools.optional.toml
+```
+
 ## 使い方
 
 すべてのタスクは `mise run <task>` で実行します。
@@ -71,7 +153,8 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 ├── .devcontainer/              # Dev Container設定
 │   ├── devcontainer.json       # Dev Container設定ファイル
 │   ├── initializeCommand.sh    # 初期化コマンド
-│   └── postStartCommand.sh     # 起動後コマンド
+│   ├── postStartCommand.sh     # 起動後コマンド
+│   └── traefik.sh              # devcontainer CLI + traefik ルーティング管理スクリプト
 ├── .githooks/                  # Git hooks (mise run 連携)
 │   ├── commit-msg              # Conventional Commits 検証
 │   ├── pre-commit              # コミット前チェック
@@ -85,7 +168,8 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 │   └── release.yml
 ├── .mise/                      # mise タスク定義
 │   ├── tasks.toml              # 共通タスク定義 (boilerplate から管理)
-│   └── overrides.toml          # プロジェクト固有のタスク上書き
+│   ├── overrides.toml          # プロジェクト固有のタスク上書き
+│   └── tools.optional.toml     # オプションツール定義 (mise install --config-file で個別インストール)
 ├── .vscode/                    # VS Code設定
 │   ├── launch.json             # デバッグ設定
 │   └── settings.json           # ワークスペース設定
