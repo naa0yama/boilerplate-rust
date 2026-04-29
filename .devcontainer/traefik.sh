@@ -161,20 +161,20 @@ _traefik_install_version() {
 	tmpfile="$(mktemp)"
 	checksums_file="$(mktemp)"
 
-	echo "Downloading traefik ${version} (${arch})..."
+	echo "Downloading traefik ${version} (${arch})..." >&2
 	if ! curl -fSL --retry 3 --retry-delay 2 --retry-connrefused -o "${tmpfile}" "${url}"; then
 		rm -f "${tmpfile}" "${checksums_file}"
 		exit 1
 	fi
 
-	echo "Verifying checksum..."
+	echo "Verifying checksum..." >&2
 	if ! curl -fSL --retry 3 --retry-delay 2 --retry-connrefused -o "${checksums_file}" "${checksums_url}"; then
 		rm -f "${tmpfile}" "${checksums_file}"
 		echo "Error: failed to download checksums file" >&2
 		exit 1
 	fi
 
-	expected="$(grep "${filename}" "${checksums_file}" | awk '{print $1}')"
+	expected="$(awk -v f="${filename}" '$2==f{print $1}' "${checksums_file}")"
 	actual="$(sha256sum "${tmpfile}" | awk '{print $1}')"
 	rm -f "${checksums_file}"
 
@@ -190,10 +190,14 @@ _traefik_install_version() {
 	fi
 
 	mkdir -p "${HOME}/.local/bin"
-	tar -xzf "${tmpfile}" -C "${HOME}/.local/bin" traefik
+	if ! tar -xzf "${tmpfile}" -C "${HOME}/.local/bin" traefik; then
+		rm -f "${tmpfile}"
+		echo "Error: failed to extract traefik binary" >&2
+		exit 1
+	fi
 	rm -f "${tmpfile}"
 	chmod +x "${TRAEFIK_BIN}"
-	echo "Installed traefik ${version} to ${TRAEFIK_BIN}"
+	echo "Installed traefik ${version} to ${TRAEFIK_BIN}" >&2
 }
 
 # Check installed version vs latest; install or update as needed.
@@ -217,7 +221,7 @@ _traefik_ensure_latest() {
 		_traefik_install_version "${latest}"
 		echo "installed"
 	elif [ "${installed}" != "${latest}" ]; then
-		echo "Updating traefik ${installed} -> ${latest}"
+		echo "Updating traefik ${installed} -> ${latest}" >&2
 		_traefik_install_version "${latest}"
 		echo "updated"
 	else
@@ -246,9 +250,9 @@ cmd_setup() {
 	cat > "${TRAEFIK_CONFIG}" << YAML
 entryPoints:
   web:
-    address: "localhost:${TRAEFIK_PORT_ROUTER}"
+    address: ":${TRAEFIK_PORT_ROUTER}"
   traefik:
-    address: "localhost:${TRAEFIK_PORT_DASHBOARD}"
+    address: ":${TRAEFIK_PORT_DASHBOARD}"
 providers:
   docker:
     endpoint: "unix:///var/run/docker.sock"
@@ -323,6 +327,7 @@ cmd_up() {
 	run_args="${run_args},\"--env=TRAEFIK_MANAGED=1\""
 	run_args="${run_args},\"--env=TRAEFIK_PROJECT=${project}\""
 	run_args="${run_args},\"--env=TRAEFIK_DYNAMIC_DIR=${TRAEFIK_DYNAMIC_CONTAINER_PATH}\""
+	run_args="${run_args},\"--env=TRAEFIK_API_BASE=http://host.docker.internal:${TRAEFIK_PORT_DASHBOARD}\""
 	run_args="${run_args},\"--mount=type=bind,source=${TRAEFIK_DYNAMIC_DIR},target=${TRAEFIK_DYNAMIC_CONTAINER_PATH}\""
 	run_args="${run_args},\"--add-host=host.docker.internal:host-gateway\"]"
 
@@ -398,9 +403,12 @@ cmd_down() {
 		return 0
 	fi
 
-	_remove_routes "${container_id}" "${project}"
-	docker rm -f "${container_id}"
-	echo "Stopped: ${project} (${container_id})"
+	while IFS= read -r cid; do
+		[ -z "${cid}" ] && continue
+		_remove_routes "${cid}" "${project}"
+		docker rm -f "${cid}" > /dev/null
+		echo "Stopped: ${project} (${cid})"
+	done <<< "${container_id}"
 }
 
 _exec_and_watch() {
@@ -410,9 +418,18 @@ _exec_and_watch() {
 
 	devcontainer exec --workspace-folder "${workspace}" bash || true
 
-	# Background stop so the TTY is returned immediately; 10s allows reconnects
+	# Capture the specific container ID at bash-exit time so the background job
+	# targets only this container, not a new one started by a concurrent dev:up.
+	local exited_cid exited_project
+	exited_cid="$(_running_container_id)"
+	exited_project="$(_project)"
+
 	echo "Shell exited. Container stopping in 10s... (mise run dev:exec to reconnect)"
-	( sleep 10 && cmd_down ) &
+	if [ -n "${exited_cid}" ]; then
+		( sleep 10
+		  _remove_routes "${exited_cid}" "${exited_project}"
+		  docker rm -f "${exited_cid}" > /dev/null 2>&1 || true ) &
+	fi
 }
 
 cmd_exec() {
