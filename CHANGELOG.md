@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.1.10](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.9...v0.1.10) - 2026-04-29
+
+### Features 🎉
+
+- feat(devcontainer): add devcontainer CLI + traefik routing support by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/414
+
+### Development Environment 🔧
+
+- chore(deps): update taiki-e/install-action action to v2.75.19 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/415
+- chore(deps): update dependency usage to v3.2.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/417
+
 ## [v0.1.9](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.8...v0.1.9) - 2026-04-26
 
 ### Bug Fixes 🐌
