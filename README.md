@@ -36,7 +36,7 @@ code .
 
 VS Code を使わず tmux + yazi + claude code などで複数 worktree / 複数プロジェクトを
 並行開発する場合は、devcontainer CLI と traefik を組み合わせる方法を使います。
-ポート衝突なしに各 devcontainer へ `p<port>.<branch>.<project>.localhost` で
+ポート衝突なしに各 devcontainer へ `p<port>.<branch>.<project>.localhost:8080` で
 アクセスできます。
 
 ### ホスト前提条件
@@ -80,13 +80,13 @@ mise run dev:status  # 稼働中の devcontainer 一覧を表示
 traefik ルーティングを自動設定します。起動後に以下の形式の URL が表示されます。
 
 ```
-http://p<port>.<branch>.<project>.localhost
+http://p<port>.<branch>.<project>.localhost:8080
 ```
 
 例 (ポート `5080`、ブランチ `feature/add-auth`、プロジェクト `boilerplate-rust`):
 
 ```
-http://p5080.feature-add-auth.boilerplate-rust.localhost
+http://p5080.feature-add-auth.boilerplate-rust.localhost:8080
 ```
 
 ### 複数 worktree での利用
@@ -95,12 +95,12 @@ http://p5080.feature-add-auth.boilerplate-rust.localhost
 # 1つ目の worktree
 cd /path/to/boilerplate-rust
 mise run dev:up
-# -> http://p5080.main.boilerplate-rust.localhost
+# -> http://p5080.main.boilerplate-rust.localhost:8080
 
 # 2つ目の worktree (別ブランチ)
 cd /path/to/boilerplate-rust-feat
 mise run dev:up
-# -> http://p5080.feature-x.boilerplate-rust.localhost
+# -> http://p5080.feature-x.boilerplate-rust.localhost:8080
 ```
 
 ブランチ名は DNS ラベル形式 (小文字英数字とハイフン、63文字以内) に自動変換されます。
