@@ -75,6 +75,11 @@ if [ -S "${_gpg_rtdir}/gnupg/S.gpg-agent" ]; then
 fi
 unset _gpg_rtdir _gpg_home
 
+# SSH: populate known_hosts with github.com host keys inside the container
+mkdir -p ~/.ssh && chmod 700 ~/.ssh
+ssh-keyscan -H github.com > ~/.ssh/known_hosts 2>/dev/null
+chmod 600 ~/.ssh/known_hosts
+
 chmod +x .githooks/*
 git config --local --unset core.hookspath || true
 mise trust -y /app

@@ -155,9 +155,10 @@ RUN echo "**** Directory Create ****" && \
 	~/.local/share \
 	~/.local/share/claude \
 	~/.local/share/mise \
+	~/.ssh \
 	\
 	&& \
-	chmod 700 ~/.gnupg && \
+	chmod 700 ~/.gnupg ~/.ssh && \
 	touch \
 	~/.claude.json \
 	~/.gitconfig \
