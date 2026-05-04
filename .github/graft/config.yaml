@@ -95,9 +95,6 @@ spec:
     - name: tests
       description: Changes to test files
       color: "257759"
-    - name: gh-sync-drift
-      description: Changes to gh-sync drift
-      color: "257759"
 
     # Renovate — datasource
     - name: "datasource:"
@@ -230,7 +227,7 @@ spec:
         - "k1low/gh-setup@*"
         - "k1low/octocov-action@*"
         - "mozilla-actions/sccache-action@*"
-        - "naa0yama/gh-sync@*"
+        - "naa0yama/graft@*"
         - "songmu/tagpr@*"
         - "swatinem/rust-cache@*"
         - "taiki-e/install-action@*"
@@ -289,7 +286,7 @@ files:
   - path: .devcontainer/postStartCommand.sh
     strategy: replace
   - path: .devcontainer/traefik.sh
-    strategy: replace
+    strategy: delete
 
   # .githooks
   - path: .githooks/commit-msg
@@ -347,9 +344,16 @@ files:
   - path: .github/tagpr-template.md
     strategy: replace
 
-  # .github/gh-sync
-  - path: .github/gh-sync/patches/.gitkeep
+  # .github/graft
+  - path: .github/graft/patches/.gitkeep
     strategy: create_only
+  - path: .github/graft/config.yaml
+    strategy: delete
+  - path: .github/graft/schema.json
+    strategy: delete
+
+  - path: .github/gh-sync/patches/.gitkeep
+    strategy: delete
   - path: .github/gh-sync/config.yaml
     strategy: delete
   - path: .github/gh-sync/schema.json

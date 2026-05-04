@@ -157,15 +157,15 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 ├── .devcontainer/              # Dev Container設定
 │   ├── devcontainer.json       # Dev Container設定ファイル
 │   ├── initializeCommand.sh    # 初期化コマンド
-│   ├── postStartCommand.sh     # 起動後コマンド
-│   └── traefik.sh              # devcontainer CLI + traefik ルーティング管理スクリプト
+│   └── postStartCommand.sh     # 起動後コマンド
 ├── .githooks/                  # Git hooks (mise run 連携)
 │   ├── commit-msg              # Conventional Commits 検証
+│   ├── post-checkout           # tmux ペイン名を repo:branch に設定
 │   ├── pre-commit              # コミット前チェック
 │   └── pre-push                # プッシュ前チェック
 ├── .github/                    # GitHub Actions & 設定
 │   ├── actions/                # カスタムアクション
-│   ├── gh-sync/                # gh-sync マニフェスト (テンプレートリポジトリからのファイル同期設定)
+│   ├── graft/                  # graft マニフェスト (テンプレートリポジトリからのファイル同期設定)
 │   ├── workflows/              # CI/CD ワークフロー
 │   ├── labeler.yml
 │   ├── project-config.json         # CI/リリース設定 (ビルドターゲット・タイムアウト・apt パッケージ等)

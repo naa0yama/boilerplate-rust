@@ -3,7 +3,7 @@
 # -
 [workspace]
 resolver = "3"
-# gh-sync:keep-start
+# graft:keep-start
 # Project-specific dependencies are listed here.
 
 members = [
@@ -16,13 +16,13 @@ edition = "2024"
 license = "AGPL-3.0-only"
 publish = false
 repository = "https://github.com/naa0yama/boilerplate-rust"
-# gh-sync:keep-end
+# graft:keep-end
 
 # - -------------------------------------------------------------------------------------------------
 # - Dependencies
 # -
 [workspace.dependencies]
-# gh-sync:keep-start
+# graft:keep-start
 # Project-specific dependencies are listed here.
 
 ## Core
@@ -37,7 +37,7 @@ serde_json = "1.0.137"
 ## Random
 rand = { version = "0.10", default-features = false, features = ["thread_rng"] }
 
-# gh-sync:keep-end
+# graft:keep-end
 
 ## Core
 anyhow = "1.0"
