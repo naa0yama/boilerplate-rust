@@ -7,21 +7,21 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			// gh-sync:keep-start
+			// graft:keep-start
 			"name": "Debug executable 'brust'",
-			// gh-sync:keep-end
+			// graft:keep-end
 			"cargo": {
 				"args": [
 					"build",
-					// gh-sync:keep-start
+					// graft:keep-start
 					"--bin=brust",
 					"--package=brust"
-					// gh-sync:keep-end
+					// graft:keep-end
 				],
 				"filter": {
-					// gh-sync:keep-start
+					// graft:keep-start
 					"name": "brust",
-					// gh-sync:keep-end
+					// graft:keep-end
 					"kind": "bin"
 				}
 			},
@@ -31,22 +31,22 @@
 		{
 			"type": "lldb",
 			"request": "launch",
-			// gh-sync:keep-start
+			// graft:keep-start
 			"name": "Debug unit tests in executable 'brust'",
-			// gh-sync:keep-end
+			// graft:keep-end
 			"cargo": {
 				"args": [
 					"test",
 					"--no-run",
-					// gh-sync:keep-start
+					// graft:keep-start
 					"--bin=brust",
 					"--package=brust"
-					// gh-sync:keep-end
+					// graft:keep-end
 				],
 				"filter": {
-					// gh-sync:keep-start
+					// graft:keep-start
 					"name": "brust",
-					// gh-sync:keep-end
+					// graft:keep-end
 					"kind": "bin"
 				}
 			},

@@ -89,7 +89,7 @@ wait
 echo "Starting OpenObserve..."
 mise run o2
 
-# gh-sync:keep-start
+# graft:keep-start
 # Project-specific dependencies are listed here.
 
-# gh-sync:keep-end
+# graft:keep-end

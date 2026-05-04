@@ -1,7 +1,7 @@
 {
 	"$schema": "http://json-schema.org/draft-07/schema#",
-	"title": "gh-sync manifest",
-	"description": "Template sync configuration for gh-sync",
+	"title": "graft manifest",
+	"description": "Template sync configuration for graft",
 	"type": "object",
 	"required": ["upstream", "files"],
 	"additionalProperties": false,
@@ -397,11 +397,11 @@
 					"patch": {
 						"type": "string",
 						"minLength": 1,
-						"description": "Explicit patch file path (patch strategy only; defaults to .github/gh-sync/patches/<path>.patch)"
+						"description": "Explicit patch file path (patch strategy only; defaults to .github/graft/patches/<path>.patch)"
 					},
 					"preserve_markers": {
 						"type": "boolean",
-						"description": "Preserve gh-sync:keep-start/keep-end marker blocks from the local file. Only used when strategy is 'patch' or 'replace'."
+						"description": "Preserve graft:keep-start/keep-end marker blocks from the local file. Only used when strategy is 'patch' or 'replace'."
 					}
 				}
 			}
