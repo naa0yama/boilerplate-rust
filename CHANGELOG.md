@@ -1,11 +1,17 @@
 # Changelog
 
 ## [v0.1.11](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.10...v0.1.11) - 2026-05-04
+
 ### Features 🎉
+
 - feat(devcontainer): use XDG_RUNTIME_DIR for SSH and GPG socket forwarding by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/428
+
 ### Documentation 🗒️
+
 - chore: rename gh-sync to graft by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/434
+
 ### Development Environment 🔧
+
 - chore(deps): update dependency ghalint to v1.5.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/418
 - chore(deps): update dependency zizmor to v1.16.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/419
 - chore(deps): update mozilla-actions/sccache-action action to v0.0.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/423
