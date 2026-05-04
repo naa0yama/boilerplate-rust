@@ -63,10 +63,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	sudo \
 	wget
 
-# gh-sync:keep-start
+# graft:keep-start
 # Project-specific dependencies are listed here.
 
-# gh-sync:keep-end
+# graft:keep-end
 
 RUN echo "**** Create user ****" && \
 	set -euxo pipefail && \
@@ -135,7 +135,8 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
 	apt-get -y install --no-install-recommends \
-	shellcheck
+	shellcheck \
+	tmux
 
 # User level settings
 USER ${USER_NAME}
@@ -154,7 +155,9 @@ RUN echo "**** Directory Create ****" && \
 	~/.local/bin \
 	~/.local/share \
 	~/.local/share/claude \
-	~/.local/share/mise && \
+	~/.local/share/mise \
+	\
+	&& \
 	chmod 700 ~/.gnupg && \
 	touch \
 	~/.claude.json \
@@ -204,7 +207,7 @@ alias cc="claude --dangerously-skip-permissions"
 _DOC_
 EOF
 
-# gh-sync:keep-start
+# graft:keep-start
 # Project-specific dependencies are listed here.
 
-# gh-sync:keep-end
+# graft:keep-end
