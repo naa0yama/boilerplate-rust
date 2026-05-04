@@ -135,8 +135,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
 	apt-get -y install --no-install-recommends \
-	shellcheck \
-	tmux
+	shellcheck
 
 # User level settings
 USER ${USER_NAME}
