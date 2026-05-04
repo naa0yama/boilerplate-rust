@@ -63,10 +63,10 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	sudo \
 	wget
 
-# gh-sync:keep-start
+# graft:keep-start
 # Project-specific dependencies are listed here.
 
-# gh-sync:keep-end
+# graft:keep-end
 
 RUN echo "**** Create user ****" && \
 	set -euxo pipefail && \
@@ -154,8 +154,11 @@ RUN echo "**** Directory Create ****" && \
 	~/.local/bin \
 	~/.local/share \
 	~/.local/share/claude \
-	~/.local/share/mise && \
-	chmod 700 ~/.gnupg && \
+	~/.local/share/mise \
+	~/.ssh \
+	\
+	&& \
+	chmod 700 ~/.gnupg ~/.ssh && \
 	touch \
 	~/.claude.json \
 	~/.gitconfig \
@@ -204,7 +207,7 @@ alias cc="claude --dangerously-skip-permissions"
 _DOC_
 EOF
 
-# gh-sync:keep-start
+# graft:keep-start
 # Project-specific dependencies are listed here.
 
-# gh-sync:keep-end
+# graft:keep-end
