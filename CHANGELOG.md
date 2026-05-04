@@ -1,5 +1,33 @@
 # Changelog
 
+## [v0.1.11](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.10...v0.1.11) - 2026-05-04
+
+### Features 🎉
+
+- feat(devcontainer): use XDG_RUNTIME_DIR for SSH and GPG socket forwarding by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/428
+
+### Documentation 🗒️
+
+- chore: rename gh-sync to graft by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/434
+
+### Development Environment 🔧
+
+- chore(deps): update dependency ghalint to v1.5.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/418
+- chore(deps): update dependency zizmor to v1.16.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/419
+- chore(deps): update mozilla-actions/sccache-action action to v0.0.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/423
+- chore(deps): update dependency jdx/mise to v2026.4.19 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/424
+- chore(deps): update taiki-e/install-action action to v2.75.20 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/425
+- chore(deps): update taiki-e/install-action action to v2.75.21 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/427
+- chore(deps): update dependency jdx/mise to v2026.4.20 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/426
+- chore(deps): update k1low/octocov-action action to v1.5.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/429
+- chore(deps): update taiki-e/install-action action to v2.75.22 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/430
+- chore(deps): update dependency zizmor to v1.24.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/421
+- chore(deps): update dependency aqua:cli/cli to v2.91.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/420
+- chore(deps): update dependency jdx/mise to v2026.4.22 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/431
+- chore(deps): update dependency jdx/mise to v2026.4.23 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/433
+- chore(deps): update dependency openobserve/openobserve to v0.80.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/432
+- chore(deps): update dependency jdx/mise to v2026.4.24 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/435
+
 ## [v0.1.10](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.9...v0.1.10) - 2026-04-29
 
 ### Features 🎉
