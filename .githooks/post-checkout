@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# $3 = 1: branch checkout, 0: file checkout
+if [ "${3:-0}" != "1" ]; then
+    exit 0
+fi
+
+if [ -z "${TMUX:-}" ]; then
+    exit 0
+fi
+
+repo=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null) || exit 0
+branch=$(git branch --show-current 2>/dev/null) || exit 0
+[ -n "$repo" ] && [ -n "$branch" ] || exit 0
+
+tmux set-option -p @pane-name "${repo}:${branch}" 2>/dev/null || true

@@ -160,6 +160,7 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 │   └── postStartCommand.sh     # 起動後コマンド
 ├── .githooks/                  # Git hooks (mise run 連携)
 │   ├── commit-msg              # Conventional Commits 検証
+│   ├── post-checkout           # tmux ペイン名を repo:branch に設定
 │   ├── pre-commit              # コミット前チェック
 │   └── pre-push                # プッシュ前チェック
 ├── .github/                    # GitHub Actions & 設定
