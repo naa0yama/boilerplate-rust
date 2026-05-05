@@ -6,7 +6,7 @@ if [ "${3:-0}" != "1" ]; then
     exit 0
 fi
 
-# TMUX check uses ${TMUX:-} (empty default) to avoid set -u unbound-variable error.
+# Skip if not inside a tmux session; ${TMUX:-} avoids set -u error when TMUX is unset.
 if [ -z "${TMUX:-}" ]; then
     exit 0
 fi
@@ -24,10 +24,8 @@ if [ -n "$remote_url" ]; then
     # Guard: sed passes the raw URL unchanged when the pattern does not match
     # (non-GitHub host, local path, etc.), so validate before use.
     if [[ "$owner_repo" =~ ^[^/]+/[^/]+$ ]]; then
-        repo_owner="${owner_repo%%/*}"
-        repo_name="${owner_repo##*/}"
-        if [ -n "$_git_user" ] && [ "$repo_owner" = "$_git_user" ]; then
-            repo="$repo_name"
+        if [ -n "$_git_user" ] && [ "${owner_repo%%/*}" = "$_git_user" ]; then
+            repo="${owner_repo##*/}"
         else
             repo="$owner_repo"
         fi
