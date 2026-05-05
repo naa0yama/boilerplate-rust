@@ -73,6 +73,7 @@ fi
 unset _gpg_rtdir _gpg_home
 
 # SSH: populate known_hosts with github.com host keys inside the container
+# Idempotent: ~/.ssh may not exist if the host bind-mount was not set up yet.
 mkdir -p ~/.ssh && chmod 700 ~/.ssh
 ssh-keyscan -H github.com > ~/.ssh/known_hosts 2>/dev/null
 chmod 600 ~/.ssh/known_hosts
