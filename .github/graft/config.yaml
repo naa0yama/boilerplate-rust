@@ -129,6 +129,9 @@ spec:
     - name: depType:dockerfile-automerge
       description: "Dependency type: Dockerfile (automerge)"
       color: 28a745
+    - name: depType:shell-automerge
+      description: "Dependency type: shell script (automerge)"
+      color: 28a745
     - name: depType:final
       description: "Dependency type: Dockerfile final stage"
       color: 28a745
@@ -163,6 +166,9 @@ spec:
       color: 8b5cf6
     - name: manager:regex
       description: "Manager: regex"
+      color: 8b5cf6
+    - name: managers:dockerfile
+      description: "Manager: Dockerfile (managers)"
       color: 8b5cf6
 
     # Renovate — update type
@@ -206,6 +212,12 @@ spec:
       color: 14b8a6
     - name: versioning:semver
       description: "Versioning: semver"
+      color: 14b8a6
+    - name: versioning:calver:YYYY.M.D
+      description: "Versioning: calver (YYYY.M.D)"
+      color: 14b8a6
+    - name: versioning:github-actions
+      description: "Versioning: GitHub Actions"
       color: 14b8a6
     - name: versioning:semver-coerced
       description: "Versioning: semver (coerced)"
