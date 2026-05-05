@@ -201,7 +201,7 @@ case ":$PATH:" in
 	*) export PATH="$HOME/.local/bin:$PATH" ;;
 esac
 export XDG_RUNTIME_DIR="/run/user/$(id -u)"
-export GPG_TTY=$(tty 2>/dev/null || true)
+export GPG_TTY="$(tty 2>/dev/null || true)"
 alias cc="claude --dangerously-skip-permissions"
 
 _DOC_
