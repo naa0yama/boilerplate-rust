@@ -1,5 +1,13 @@
 # Changelog
 
+## [v0.1.12](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.11...v0.1.12) - 2026-05-05
+### Bug Fixes 🐌
+- fix(githooks): resolve repo name from remote URL in devcontainer by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/439
+### Development Environment 🔧
+- chore(deps): update taiki-e/install-action action to v2.75.23 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/436
+### Other Changes
+- chore: update graft, add labels, simplify devcontainer GPG check by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/438
+
 ## [v0.1.11](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.10...v0.1.11) - 2026-05-04
 
 ### Features 🎉
