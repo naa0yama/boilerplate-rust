@@ -10,7 +10,26 @@ if [ -z "${TMUX:-}" ]; then
     exit 0
 fi
 
-repo=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null) || exit 0
+# Resolve repo name: prefer remote URL (works in devcontainer where workspaceFolder is /app)
+_git_user=$(git config github.user 2>/dev/null || printf '')
+remote_url=$(git remote get-url origin 2>/dev/null || printf '')
+repo=""
+if [ -n "$remote_url" ]; then
+    owner_repo=$(printf '%s' "$remote_url" | sed -E 's#^.+[:/]([^/]+)/([^/]+)$#\1/\2#' | sed 's#\.git$##')
+    if [[ "$owner_repo" =~ ^[^/]+/[^/]+$ ]]; then
+        repo_owner="${owner_repo%%/*}"
+        repo_name="${owner_repo##*/}"
+        if [ -n "$_git_user" ] && [ "$repo_owner" = "$_git_user" ]; then
+            repo="$repo_name"
+        else
+            repo="$owner_repo"
+        fi
+    fi
+fi
+if [ -z "$repo" ]; then
+    repo=$(basename "$(git rev-parse --show-toplevel 2>/dev/null)" 2>/dev/null) || exit 0
+fi
+
 branch=$(git branch --show-current 2>/dev/null) || exit 0
 [ -n "$repo" ] && [ -n "$branch" ] || exit 0
 
