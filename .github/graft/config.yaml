@@ -303,6 +303,8 @@ files:
   # .githooks
   - path: .githooks/commit-msg
     strategy: replace
+  - path: .githooks/post-checkout
+    strategy: replace
   - path: .githooks/pre-commit
     strategy: replace
   - path: .githooks/pre-push
