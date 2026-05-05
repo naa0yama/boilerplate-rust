@@ -65,13 +65,10 @@ chmod 700 "${_gpg_home}"
 # Without this guard, VS Code (which provides its own GPG forwarding) would have
 # gpg.conf polluted with no-autostart, breaking all GPG operations.
 _gpg_rtdir="${XDG_RUNTIME_DIR:-/run/user/$(id -u)}"
-if [ -S "${_gpg_rtdir}/gnupg/S.gpg-agent" ]; then
-	_gpg_conf="${_gpg_home}/gpg.conf"
-	if [ ! -f "${_gpg_conf}" ] || ! grep -q '^no-autostart' "${_gpg_conf}"; then
-		echo "no-autostart" >> "${_gpg_conf}"
-		echo "GPG: added 'no-autostart' to ${_gpg_conf}"
-	fi
-	unset _gpg_conf
+if [ -S "${_gpg_rtdir}/gnupg/S.gpg-agent" ] && \
+   ! grep -sq '^no-autostart' "${_gpg_home}/gpg.conf"; then
+	echo "no-autostart" >> "${_gpg_home}/gpg.conf"
+	echo "GPG: added 'no-autostart' to ${_gpg_home}/gpg.conf"
 fi
 unset _gpg_rtdir _gpg_home
 
