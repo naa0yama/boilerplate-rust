@@ -1,5 +1,16 @@
 # Changelog
 
+## [v0.1.13](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.12...v0.1.13) - 2026-05-06
+### Features 🎉
+- refactor(devcontainer): simplify shell scripts and fix infra config by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/445
+### Development Environment 🔧
+- chore(deps): update dependency jdx/mise to v2026.4.25 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/442
+- chore(deps): update dependency openobserve/openobserve to v0.80.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/446
+- chore(deps): update taiki-e/install-action action to v2.75.25 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/447
+### Other Changes
+- chore(graft): add .githooks/post-checkout to sync manifest by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/444
+- chore(deps): update dependency naa0yama/graft to v0.5.4 by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/448
+
 ## [v0.1.12](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.11...v0.1.12) - 2026-05-05
 
 ### Bug Fixes 🐌
