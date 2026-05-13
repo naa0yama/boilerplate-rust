@@ -1,9 +1,13 @@
 # Changelog
 
 ## [v0.1.14](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.13...v0.1.14) - 2026-05-13
+
 ### Documentation 🗒️
+
 - chore: adopt nextest, add check:no-plans gate, remove codeql by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/469
+
 ### Development Environment 🔧
+
 - chore(deps): update taiki-e/install-action action to v2.75.26 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/449
 - chore(deps): update dependency mozilla/sccache to v0.15.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/452
 - chore(deps): update dependency jdx/mise to v2026.4.27 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/451
@@ -21,7 +25,9 @@
 - chore(deps): update taiki-e/install-action action to v2.77.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/466
 - chore(deps): update dependency jdx/mise to v2026.5.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/467
 - chore(deps): update actions/labeler action to v6.1.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/468
+
 ### Other Changes
+
 - chore(deps): update dependency graft to v0.5.5 by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/458
 
 ## [v0.1.13](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.12...v0.1.13) - 2026-05-06
