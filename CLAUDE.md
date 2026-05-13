@@ -26,6 +26,7 @@ All tasks use `mise run <task>`:
 | Lint                  | `mise run lint`               |
 | Lint (GitHub Actions) | `mise run lint:gh`            |
 | AST rules             | `mise run ast-grep`           |
+| Check no plans        | `mise run check:no-plans`     |
 | Pre-commit (required) | `mise run pre-commit`         |
 | Pre-push              | `mise run pre-push`           |
 | Coverage              | `mise run coverage`           |
@@ -40,8 +41,6 @@ All tasks use `mise run <task>`:
 | O2 (install)          | `mise run o2:install`         |
 | O2 (start)            | `mise run o2`                 |
 | O2 (stop)             | `mise run o2:stop`            |
-| CodeQL (install)      | `mise run codeql:install`     |
-| CodeQL (analyze)      | `mise run codeql`             |
 | Dev (start)           | `mise run dev:up`             |
 | Dev (stop)            | `mise run dev:down`           |
 | Dev (exec)            | `mise run dev:exec`           |
@@ -60,8 +59,22 @@ Allowed types: feat, update, fix, style, refactor, docs, perf, test, build, ci, 
 2. Implement
 3. Run `mise run test` — all tests must pass
 4. Stage only the relevant files
-5. Run `mise run pre-commit` (runs clean:sweep, fmt:check, clippy:strict, ast-grep, lint:gh)
+5. Run `mise run pre-commit` (runs clean:sweep, fmt:check, clippy:strict, ast-grep, lint:gh, check:no-plans)
 6. If errors, fix → re-stage → re-run `mise run pre-commit`
+
+## Token-Efficient Commands
+
+Prefer these low-output patterns to reduce context token consumption:
+
+**mise run (targeted)**
+
+- `mise run test` — full suite
+- `mise run test -- test_name` — substring match; `--` separates mise args from nextest args
+
+**code search**
+
+- Prefer rust-analyzer-lsp symbol search / go-to-definition over `grep`/`find` for Rust code navigation
+- Use `grep -l` (filenames only) when file content is not needed
 
 ## Code Comments
 
