@@ -152,7 +152,7 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
-rustup component add llvm-tools-preview --toolchain nightly-2026-01-15 --quiet
+rustup component add llvm-tools-preview --toolchain nightly-2026-01-15
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 _threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
@@ -166,7 +166,7 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
-rustup component add llvm-tools-preview --toolchain nightly-2026-01-15 --quiet
+rustup component add llvm-tools-preview --toolchain nightly-2026-01-15
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 _threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
