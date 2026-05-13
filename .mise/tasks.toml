@@ -152,12 +152,12 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
-rustup component add llvm-tools-preview --toolchain nightly-2026-01-15
-
+rustup component add llvm-tools-preview --toolchain nightly-2026-01-15 --quiet
+quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 _threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
 if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo +nightly-2026-01-15 llvm-cov nextest --all-features --fail-under-lines 90 --lcov --output-path target/lcov.info --test-threads "$_threads"
+cargo +nightly-2026-01-15 llvm-cov nextest --all-features --fail-under-lines 90 --lcov --output-path target/lcov.info --test-threads "$_threads" $quiet
 """
 
 ["coverage:html"]
@@ -166,11 +166,11 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
-rustup component add llvm-tools-preview --toolchain nightly-2026-01-15
-
+rustup component add llvm-tools-preview --toolchain nightly-2026-01-15 --quiet
+quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 _threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-cargo +nightly-2026-01-15 llvm-cov nextest --all-features --html --open --test-threads "$_threads"
+cargo +nightly-2026-01-15 llvm-cov nextest --all-features --html --open --test-threads "$_threads" $quiet
 """
 
 [deny]
