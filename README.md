@@ -109,15 +109,6 @@ mise run dev:up
 
 ブランチ名は DNS ラベル形式 (小文字英数字とハイフン、63文字以内) に自動変換されます。
 
-## オプションツール
-
-`codeql` など普段使わないツールは `.mise/tools.optional.toml` で管理しています。
-必要な時だけ明示的にインストールします:
-
-```bash
-mise install --config-file .mise/tools.optional.toml
-```
-
 ## 使い方
 
 すべてのタスクは `mise run <task>` で実行します。
@@ -145,7 +136,7 @@ mise run ast-grep         # ast-grep カスタムルールチェック
 ### コミット前チェック
 
 ```bash
-mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep + lint:gh
+mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep + lint:gh + check:no-plans
 ```
 
 ## プロジェクト構造
@@ -172,8 +163,7 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 │   └── release.yml
 ├── .mise/                      # mise タスク定義
 │   ├── tasks.toml              # 共通タスク定義 (boilerplate から管理)
-│   ├── overrides.toml          # プロジェクト固有のタスク上書き
-│   └── tools.optional.toml     # オプションツール定義 (mise install --config-file で個別インストール)
+│   └── overrides.toml          # プロジェクト固有のタスク上書き
 ├── .vscode/                    # VS Code設定
 │   ├── launch.json             # デバッグ設定
 │   └── settings.json           # ワークスペース設定

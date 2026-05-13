@@ -428,7 +428,7 @@ files:
   - path: .mise/tasks.toml
     strategy: replace
   - path: .mise/tools.optional.toml
-    strategy: create_only
+    strategy: delete
 
   # .vscode
   - path: .vscode/launch.json
