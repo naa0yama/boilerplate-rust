@@ -82,9 +82,7 @@ fn current_pid() -> Pid {
 /// multi-core hosts) into the 0..1 fraction required by
 /// `process.cpu.utilization`.
 fn logical_cpu_count() -> u32 {
-    let n = std::thread::available_parallelism()
-        .map(NonZeroUsize::get)
-        .unwrap_or(1);
+    let n = std::thread::available_parallelism().map_or(1, NonZeroUsize::get);
     u32::try_from(n).unwrap_or(1)
 }
 
