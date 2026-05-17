@@ -1,11 +1,17 @@
 # Changelog
 
 ## [v0.1.15](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.14...v0.1.15) - 2026-05-17
+
 ### Bug Fixes 🐌
+
 - fix(coverage): bump nightly toolchain to nightly-2026-03-15 by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/487
+
 ### Dependency Updates 📦
+
 - chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/490
+
 ### Development Environment 🔧
+
 - chore(deps): update dependency openobserve/openobserve to v0.80.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/475
 - chore(deps): update dependency jdx/mise to v2026.5.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/474
 - chore(deps): update github/codeql-action action to v4.35.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/476
@@ -19,7 +25,9 @@
 - chore(deps): update taiki-e/install-action action to v2.77.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/486
 - chore(deps): update taiki-e/install-action action to v2.77.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/489
 - chore(deps): update dependency jdx/mise to v2026.5.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/488
+
 ### Other Changes
+
 - build: add unexpected_cfgs lint to suppress coverage_nightly cfg warning by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/470
 - chore: update graft merge commit settings by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/472
 - chore: bump Rust toolchain to 1.95.0 by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/481
