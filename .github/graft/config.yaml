@@ -276,6 +276,15 @@ spec:
         creation: false
         required_linear_history: false
         required_signatures: true
+    - name: badges
+      target: branch
+      enforcement: active
+      conditions:
+        ref_name:
+          include:
+            - refs/heads/badges
+      rules:
+        deletion: true
 files:
   # .cargo
   - path: .cargo/config.toml
@@ -451,6 +460,14 @@ files:
   - path: ast-rules/no-hardcoded-credentials.yml
     strategy: replace
   - path: ast-rules/secure-random-required.yml
+    strategy: replace
+  - path: ast-rules/no-real-asn.yml
+    strategy: replace
+  - path: ast-rules/no-real-fqdn.yml
+    strategy: replace
+  - path: ast-rules/no-real-ipv4.yml
+    strategy: replace
+  - path: ast-rules/no-real-ipv6.yml
     strategy: replace
 
   # docs/o2-dashboards
