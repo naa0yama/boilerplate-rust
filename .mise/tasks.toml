@@ -36,6 +36,7 @@ description = "Reject .claude/artifacts/*.md files"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 if find .claude/artifacts -name '*.md' -print -quit 2>/dev/null | grep -q .; then
   echo 'Error: .claude/artifacts/ contains unabsorbed .md files.' >&2
   echo 'Absorb design decisions into docs/specs/, then delete the files.' >&2
@@ -56,6 +57,7 @@ description = "Install Claude Code to ~/.local/bin via official installer"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 if command -v claude > /dev/null 2>&1; then
   echo "Claude Code already installed: $(claude --version)"
   exit 0
@@ -78,6 +80,9 @@ depends = ["lint", "test", "coverage", "build:release", "lint:gh"]
 [setup]
 description = "Initial project setup"
 run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
 if [ -d .githooks ]; then chmod +x .githooks/*; fi
 """
 
@@ -91,6 +96,7 @@ depends = ["ast-grep:text"]
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 # All rules on all files (non-testdata rules)
 sg scan --error --color never \
   --off=no-real-ipv4 --off=no-real-ipv6 --off=no-real-asn --off=no-real-fqdn
@@ -106,6 +112,7 @@ description = "grep-P testdata-policy check for md/json/jsonl (RFC-reserved valu
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 # ast-grep generic language is not supported in 0.42.x; use grep -P (ugrep PCRE2) instead.
 # Output format: [rule-id] description\\n  file:line:content  (one per violation)
 _text_check() {
@@ -163,6 +170,7 @@ description = "Debug build"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 cargo build $quiet
 """
@@ -172,6 +180,7 @@ description = "Release build (with auditable dependency info)"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 cargo auditable build --release $quiet
 """
@@ -185,6 +194,7 @@ description = "Compile check"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 cargo check --all-targets --all-features $quiet
 """
@@ -194,6 +204,7 @@ description = "Run clippy lints"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 cargo clippy --all-targets --all-features $quiet
 """
@@ -203,6 +214,7 @@ description = "Run clippy lints (warnings as errors)"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 cargo clippy --all-targets --all-features $quiet -- -D warnings
 """
@@ -217,6 +229,7 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 rustup component add llvm-tools-preview --toolchain nightly-2026-03-15
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
@@ -231,6 +244,7 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 rustup component add llvm-tools-preview --toolchain nightly-2026-03-15
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
@@ -247,6 +261,7 @@ description = "Run all formatters"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 cargo fmt
 dprint fmt
 """
@@ -256,6 +271,7 @@ description = "Check all formatting"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 cargo fmt -- --check
 dprint check
 """
@@ -269,6 +285,7 @@ description = "Lint GitHub Actions workflows"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 actionlint
 ghalint run
 ghalint run-action
@@ -285,6 +302,7 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "" }
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 _threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
@@ -298,6 +316,7 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "" }
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--quiet"
 cargo test --doc $quiet
 """
@@ -307,6 +326,7 @@ description = "Run tests against a fresh OpenObserve instance (restarts O2 for c
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 mise run o2:stop
 mise run o2
 echo 'OpenObserve restarted with clean state'
@@ -348,6 +368,7 @@ env = { OTEL_EXPORTER_OTLP_ENDPOINT = "" }
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
+
 if ! command -v openobserve > /dev/null 2>&1; then
   echo 'Error: openobserve not found. Run "mise run o2:install" first.' >&2
   exit 1
@@ -418,6 +439,9 @@ echo "OpenObserve ${version} installed to ${target}"
 ["o2:stop"]
 description = "Stop OpenObserve"
 run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
 pkill -x openobserve 2>/dev/null && while pgrep -x openobserve > /dev/null; do sleep 0.1; done || true
 """
 
