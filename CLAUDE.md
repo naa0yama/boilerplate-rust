@@ -53,6 +53,28 @@ Conventional Commits: `<type>: <description>` or `<type>(<scope>): <description>
 
 Allowed types: feat, update, fix, style, refactor, docs, perf, test, build, ci, chore, remove, revert
 
+## Artifacts Convention
+
+When using `subagent-driven-development`, save progress to:
+
+```
+.claude/artifacts/
+  plans/        # session feature plans (ephemeral)
+  <task-slug>/  # subagent work (PLAN.md, IMPL.md, REVIEW.md)
+```
+
+All files are ephemeral. Absorb design decisions into `docs/specs/`,
+then delete the artifacts.
+
+`check:no-plans` (runs in `pre-commit`) blocks commit when unabsorbed `.md`
+files exist under `.claude/artifacts/` — except task dirs where `PLAN.md`
+has `status: active` (in-progress tasks are exempt from blocking).
+
+Each task's `PLAN.md` frontmatter (required):
+
+- `status`: `active` (in-progress) or `completed` (code review passed)
+- `source_spec`: path to the originating plan file in `plans/`
+
 ## Workflow
 
 1. Write tests (for new features / bug fixes)
