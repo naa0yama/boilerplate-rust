@@ -5,6 +5,66 @@
 ### Bug Fixes 🐌
 
 - fix(tasks): align nightly toolchain and test flags by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/544
+- fix(release-manager): use github.request() to avoid ref URL encoding by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/550
+
+### Documentation 🗒️
+
+- ci(release): replace tagpr with self-managed release-manager by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/547
+
+### Dependency Updates 📦
+
+- chore(deps): update group:opentelemetry (minor) by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/545
+
+### Development Environment 🔧
+
+- chore(deps): update taiki-e/install-action action to v2.78.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/504
+- chore(deps): update dependency jdx/mise to v2026.5.8 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/506
+- chore(deps): update taiki-e/install-action action to v2.78.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/509
+- chore(deps): update zizmorcore/zizmor-action action to v0.5.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/510
+- chore(deps): update github/codeql-action action to v4.35.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/512
+- chore(deps): update dependency jdx/mise to v2026.5.9 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/511
+- chore(deps): update taiki-e/install-action action to v2.78.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/516
+- chore(deps): update dependency jdx/mise to v2026.5.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/515
+- chore(deps): update zizmorcore/zizmor-action action to v0.5.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/517
+- chore(deps): update taiki-e/install-action action to v2.78.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/518
+- chore(deps): update taiki-e/install-action action to v2.79.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/519
+- chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/520
+- chore(deps): update dependency jdx/mise to v2026.5.11 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/521
+- chore(deps): update taiki-e/install-action action to v2.79.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/522
+- chore(deps): update dependency jdx/mise to v2026.5.12 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/524
+- chore(deps): update taiki-e/install-action action to v2.79.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/525
+- chore(deps): update dependency aqua:ast-grep/ast-grep to v0.42.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/526
+- chore(deps): update taiki-e/install-action action to v2.79.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/528
+- chore(deps): update dependency jdx/mise to v2026.5.13 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/529
+- chore(deps): update dependency github:rust-secure-code/cargo-auditable to v0.7.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/530
+- chore(deps): update taiki-e/install-action action to v2.79.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/531
+- chore(deps): update dependency aqua:embarkstudios/cargo-deny to v0.19.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/532
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/533
+- chore(deps): update dependency jdx/mise to v2026.5.14 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/534
+- chore(deps): update taiki-e/install-action action to v2.79.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/535
+- chore(deps): update dependency jdx/mise to v2026.5.15 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/536
+- chore(deps): update taiki-e/install-action action to v2.79.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/537
+- chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/538
+- chore(deps): update taiki-e/install-action action to v2.79.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/539
+- chore(deps): update taiki-e/install-action action to v2.79.8 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/541
+- chore(deps): update all action update to v2.79.9 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/542
+- chore(deps): update all action update to v2.79.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/549
+
+### Other Changes
+
+- chore(tasks): add bash shebang and set -euo pipefail to mise task scripts by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/508
+- chore(deps): update graft to 0.5.7 by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/513
+- chore(devcontainer): rename container user from cuser to user by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/543
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.15...v0.1.17
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
+### Bug Fixes 🐌
+
+- fix(tasks): align nightly toolchain and test flags by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/544
 
 ### Documentation 🗒️
 
