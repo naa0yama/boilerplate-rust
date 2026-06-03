@@ -1,20 +1,26 @@
 # Changelog
 
 ## [v0.1.14](https://github.com/naa0yama/boilerplate-rust/compare/v0.1.15...v0.1.14) - 2026-06-03
+
 ### Features 🎉
+
 - feat(otel): add gethostname-based service.instance.id and TraceContextPropagator by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/404
 - feat(otel): add service.instance.id and TraceContextPropagator by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/406
 - feat(devcontainer): add devcontainer CLI + traefik routing support by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/414
 - feat(devcontainer): use XDG_RUNTIME_DIR for SSH and GPG socket forwarding by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/428
 - refactor(devcontainer): simplify shell scripts and fix infra config by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/445
+
 ### Bug Fixes 🐌
+
 - fix(ci): run rust-ci on push to update coverage badges by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/363
 - fix(ci): add pre-tagpr wait step to handle GitHub commit-to-PR index lag by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/370
 - fix(ci): pin mise to v2026.4.18 and fix task_config.includes order by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/393
 - fix(ci): push coverage badges via GitHub Git Data API by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/412
 - fix(ci): use --input - for git tree and commit API calls by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/413
 - fix(githooks): resolve repo name from remote URL in devcontainer by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/439
+
 ### Documentation 🗒️
+
 - chore: fmt by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/25
 - chore: Update README.md by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/122
 - update: .claude/skills by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/136
@@ -37,7 +43,9 @@
 - build: replace gh-infra with gh-sync and add draft release publish by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/350
 - chore: rename gh-sync to graft by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/434
 - chore: adopt nextest, add check:no-plans gate, remove codeql by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/469
+
 ### Dependency Updates 📦
+
 - chore(deps): pin rust crate assert_cmd to =2.0.17 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/18
 - chore(deps): pin dependencies by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/23
 - chore(deps): update all dev-dependencies update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/104
@@ -57,7 +65,9 @@
 - chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/310
 - chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/342
 - chore(deps): update rust crate assert_cmd to v2.2.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/407
+
 ### Development Environment 🔧
+
 - chore(deps): update dependency dprint/dprint to v0.50.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/9
 - chore(deps): update dependency evilmartians/lefthook to v1.12.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/3
 - chore(deps): update dependency rui314/mold to v2.40.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/5
@@ -367,7 +377,9 @@
 - chore(deps): update taiki-e/install-action action to v2.77.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/466
 - chore(deps): update dependency jdx/mise to v2026.5.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/467
 - chore(deps): update actions/labeler action to v6.1.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/468
+
 ### Other Changes
+
 - chore: Configure Renovate by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/1
 - chore(config): migrate renovate config by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/32
 - feat: add CodeQL by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/116
