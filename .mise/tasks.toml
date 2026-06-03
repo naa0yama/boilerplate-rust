@@ -247,7 +247,7 @@ quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet -
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 _threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
 if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo +nightly-2026-03-15 llvm-cov nextest --all-features --fail-under-lines 90 --lcov --output-path target/lcov.info --test-threads "$_threads" $quiet
+cargo +nightly-2026-03-15 llvm-cov nextest --all-targets --all-features --fail-under-lines 90 --lcov --output-path target/lcov.info --test-threads "$_threads" $quiet
 """
 
 ["coverage:html"]
@@ -261,7 +261,7 @@ rustup component add llvm-tools-preview --toolchain nightly-2026-03-15
 quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 _threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-cargo +nightly-2026-03-15 llvm-cov nextest --all-features --html --open --test-threads "$_threads" $quiet
+cargo +nightly-2026-03-15 llvm-cov nextest --all-targets --all-features --html --open --test-threads "$_threads" $quiet
 """
 
 [deny]
@@ -306,7 +306,13 @@ zizmor --persona=pedantic .github/
 
 [miri]
 description = "Run Miri to detect undefined behavior"
-run = "cargo +nightly miri test"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+rustup component add miri --toolchain nightly-2026-03-15
+cargo +nightly-2026-03-15 miri test
+"""
 
 [test]
 description = "Run tests"
@@ -319,7 +325,7 @@ quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet -
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 _threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
 if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo nextest run --all-targets --test-threads "$_threads" $quiet "$@"
+cargo nextest run --all-targets --all-features --test-threads "$_threads" $quiet "$@"
 """
 
 ["test:doc"]
@@ -346,13 +352,13 @@ quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet -
 _cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
 _threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
 if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo nextest run --all-targets --test-threads "$_threads" $quiet
+cargo nextest run --all-targets --all-features --test-threads "$_threads" $quiet
 """
 
 ["test:watch"]
 description = "TDD watch mode"
 env = { OTEL_EXPORTER_OTLP_ENDPOINT = "" }
-run = "cargo watch -x 'nextest run --all-targets'"
+run = "cargo watch -x 'nextest run --all-targets --all-features'"
 
 # =============================================================================
 # Dev / Infra
