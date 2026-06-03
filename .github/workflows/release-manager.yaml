@@ -298,12 +298,11 @@ jobs:
               if (e.status !== 404) throw e;
             }
 
-            // Resolve release/next HEAD
-            const { data: branchRef } = await github.request('GET /repos/{owner}/{repo}/git/ref/heads/release/next', {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            });
-            const commitSha = branchRef.object.sha;
+            // Use the push event SHA as the tag target.
+            // release/next may already be auto-deleted when GitHub merges the PR,
+            // so reading it is unreliable. context.sha is the merge commit on main,
+            // which is exactly the commit that should carry the release tag.
+            const commitSha = context.sha;
 
             // Create annotated tag object (server-side, no GPG key required)
             const { data: tagObj } = await github.rest.git.createTag({
@@ -321,11 +320,17 @@ jobs:
               sha: tagObj.sha,
             });
 
-            // Delete release/next branch so the next feature push creates a fresh one
-            await github.request('DELETE /repos/{owner}/{repo}/git/refs/heads/release/next', {
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-            });
+            // Delete release/next if it still exists (auto-delete may have beaten us).
+            // GitHub returns 422 (not 404) when deleting a non-existent ref in some
+            // API versions, so both are treated as "already gone".
+            try {
+              await github.request('DELETE /repos/{owner}/{repo}/git/refs/heads/release/next', {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+            } catch (e) {
+              if (e.status !== 404 && e.status !== 422) throw e;
+            }
 
             core.setOutput('tag', tag);
 
