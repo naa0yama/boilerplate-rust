@@ -186,7 +186,6 @@ mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep +
 ├── .editorconfig               # エディター設定
 ├── .gitignore                  # Git除外設定
 ├── .octocov.yml                # カバレッジレポート設定
-├── .tagpr                      # タグ&リリース設定
 ├── Cargo.lock                  # 依存関係のロックファイル
 ├── Cargo.toml                  # ワークスペース設定と共有依存関係
 ├── deny.toml                   # cargo-deny 設定
