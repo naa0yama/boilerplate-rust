@@ -32,14 +32,26 @@ echo "Badges branch initialized. Run: git push origin badges"
 """
 
 ["check:no-plans"]
-description = "Reject .claude/artifacts/*.md files"
+description = "Reject unabsorbed .claude/artifacts/*.md files"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
 
-if find .claude/artifacts -name '*.md' -print -quit 2>/dev/null | grep -q .; then
-  echo 'Error: .claude/artifacts/ contains unabsorbed .md files.' >&2
-  echo 'Absorb design decisions into docs/specs/, then delete the files.' >&2
+rejected=""
+while IFS= read -r f; do
+  dir=$(dirname "$f")
+  plan="$dir/PLAN.md"
+  # task dir with an active PLAN.md → in progress, skip entire dir
+  if [[ -f "$plan" ]] && head -5 "$plan" | grep -q 'status: active'; then
+    continue
+  fi
+  rejected="${rejected}  ${f}"$'\n'
+done < <(find .claude/artifacts -name '*.md' 2>/dev/null)
+
+if [ -n "$rejected" ]; then
+  echo 'Error: .claude/artifacts/ contains unabsorbed .md files:' >&2
+  printf '%s' "$rejected" >&2
+  echo 'Absorb design decisions into docs/specs/, then delete.' >&2
   exit 1
 fi
 """
