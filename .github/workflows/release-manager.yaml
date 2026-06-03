@@ -161,6 +161,8 @@ jobs:
           NEXT_VERSION: ${{ env.NEXT }}
         with:
           script: |
+            // Use github.request() instead of github.rest.git.* for refs with slashes
+            // (e.g., heads/release/next) to prevent Octokit from URL-encoding them.
             const fs = require('fs');
 
             // 1. Upload each modified file as an independent blob (100 MB limit each)
@@ -175,9 +177,9 @@ jobs:
             }));
 
             // 2. Resolve main HEAD and its tree
-            const { data: mainRef } = await github.rest.git.getRef({
-              ...context.repo,
-              ref: 'heads/main',
+            const { data: mainRef } = await github.request('GET /repos/{owner}/{repo}/git/ref/heads/main', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
             });
             const mainSha = mainRef.object.sha;
             const { data: mainCommit } = await github.rest.git.getCommit({
@@ -204,9 +206,9 @@ jobs:
 
             // 5. Force-update or create release/next ref
             try {
-              await github.rest.git.updateRef({
-                ...context.repo,
-                ref: 'heads/release/next',
+              await github.request('PATCH /repos/{owner}/{repo}/git/refs/heads/release/next', {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
                 sha: commit.sha,
                 force: true,
               });
@@ -279,11 +281,16 @@ jobs:
           RELEASE_TAG: ${{ needs.detect.outputs.release_tag }}
         with:
           script: |
+            // Use github.request() instead of github.rest.git.* for refs with slashes
+            // (e.g., heads/release/next) to prevent Octokit from URL-encoding them.
             const tag = process.env.RELEASE_TAG;
 
             // Guard: skip if tag was created by a concurrent run
             try {
-              await github.rest.git.getRef({ ...context.repo, ref: `tags/${tag}` });
+              await github.request(`GET /repos/{owner}/{repo}/git/ref/tags/${tag}`, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
               core.warning(`Tag ${tag} already exists — skipping creation.`);
               core.setOutput('tag', tag);
               return;
@@ -292,9 +299,9 @@ jobs:
             }
 
             // Resolve release/next HEAD
-            const { data: branchRef } = await github.rest.git.getRef({
-              ...context.repo,
-              ref: 'heads/release/next',
+            const { data: branchRef } = await github.request('GET /repos/{owner}/{repo}/git/ref/heads/release/next', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
             });
             const commitSha = branchRef.object.sha;
 
@@ -315,9 +322,9 @@ jobs:
             });
 
             // Delete release/next branch so the next feature push creates a fresh one
-            await github.rest.git.deleteRef({
-              ...context.repo,
-              ref: 'heads/release/next',
+            await github.request('DELETE /repos/{owner}/{repo}/git/refs/heads/release/next', {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
             });
 
             core.setOutput('tag', tag);
