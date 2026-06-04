@@ -133,7 +133,7 @@ jobs:
           else
             BUMP=$(gh pr list --head release/next --state open \
                    --json labels --jq \
-                   '[.[0].labels[].name | select(startswith("tagpr:"))] | first // "patch"' \
+                   '[(.[0].labels // [])[].name | select(startswith("tagpr:"))] | first // "patch"' \
                    | sed 's/tagpr://')
           fi
           # Step 3: Calculate next version
