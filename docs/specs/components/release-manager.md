@@ -13,12 +13,12 @@ required 120s polling workaround.
 
 ## File Layout
 
-| Path                                     | Role                                                               |
-| ---------------------------------------- | ------------------------------------------------------------------ |
-| `.github/workflows/release-manager.yaml` | Main workflow (replaces `tagpr.yaml`)                              |
-| `.github/workflows/release.yaml`         | Build + upload; called unchanged via `workflow_call`               |
-| `.github/tagpr-template.md`              | PR body template (reused, Go template syntax replaced via python3) |
-| `.github/release.yml`                    | GitHub Release Notes category config                               |
+| Path                                     | Role                                                           |
+| ---------------------------------------- | -------------------------------------------------------------- |
+| `.github/workflows/release-manager.yaml` | Main workflow (replaces `tagpr.yaml`)                          |
+| `.github/workflows/release.yaml`         | Build + upload; called unchanged via `workflow_call`           |
+| `.github/release-manager-pr-template.md` | PR body template (placeholders substituted via bash expansion) |
+| `.github/release.yml`                    | GitHub Release Notes category config                           |
 
 Deleted: `.tagpr`, `.tagpr-version-bump.sh`
 
@@ -95,8 +95,12 @@ respects the existing `.github/release.yml` category configuration.
 
 ### Tag creation
 
-Uses `POST /git/tags` (annotated tag object) + `POST /git/refs` — server-side,
-no GPG key required. Does NOT use `git tag -a` + push.
+Uses `POST /git/refs` only — lightweight tag pointing directly at the signed
+merge commit. The commit's web-flow "Verified" status carries through to the
+tag ref without any GPG key setup (identical to tagpr v0.1.14 behaviour).
+
+Annotated tags (`POST /git/tags`) were dropped because GITHUB_TOKEN cannot
+GPG-sign them, which caused the tag to appear "Unverified" in the GitHub UI.
 
 ## Idempotency Invariants
 
@@ -114,6 +118,12 @@ concurrency:
   cancel-in-progress: false # tag creation must not be cancelled
 ```
 
+`prepare-pr` has an additional **job-level** concurrency group
+`release-manager-prepare-pr` (cancel-in-progress: false). The workflow-level
+group includes `github.ref`, so push and pull_request events land in separate
+groups; without the job-level group, two concurrent `prepare-pr` runs could
+race to force-update `release/next`.
+
 ## Bump Labels
 
 | Label         | Effect               |
@@ -124,14 +134,27 @@ concurrency:
 
 Label names kept identical to tagpr for backward compatibility.
 
-## Open Questions
+## Deployment Checklist
 
-1. **sed targeting**: `^version = "X.Y.Z"` matches only `[workspace.package]`
-   in the current Cargo.toml structure. Re-verify if the file structure changes.
-2. **REST API Verified status**: Commits via `POST /git/commits` with
-   GITHUB_TOKEN should appear "Verified". Confirm on first deployment against
-   branch protection "require signed commits". Escalate to GitHub App token
-   if unverified.
-3. **Tag GPG signing**: `POST /git/tags` creates an annotated tag server-side
-   but does NOT GPG-sign it. Confirm whether the repository enforces signed
-   tags.
+For each new project rolling out release-manager:
+
+- [ ] All crates under `crates/` use `version.workspace = true` (no own `version = "..."`)
+- [ ] Root `Cargo.toml` has `[workspace.package] version = "X.Y.Z"`
+- [ ] Guard passes on first `prepare-pr` run (check job logs)
+- [ ] Tag ruleset `Restrict updates` / `Restrict deletions` — ON recommended
+- [ ] Tag ruleset `Require signed commits` — **OFF** (lightweight tag inherits commit signature; cannot sign the ref itself)
+- [ ] If using release immutability ruleset, confirm first publish succeeds before enabling
+- [ ] `release/next` branch must NOT have `Restrict deletions` ruleset (create-tag deleteRef must work)
+
+## Design Decisions Log
+
+| Fix    | Decision                                                                                   |
+| ------ | ------------------------------------------------------------------------------------------ |
+| Fix 2  | `git describe` replaced by `gh api releases/latest` — avoids shallow clone failures        |
+| Fix 3  | Job-level concurrency group on prepare-pr serialises push vs PR event runs                 |
+| Fix 5  | `cargo update --workspace` instead of `generate-lockfile` — updates only workspace members |
+| Fix 7  | `<!-- release-manager:notes -->` marker preserves user-editable PR body content            |
+| Fix 9  | `gh label create --force` on each prepare-pr run — idempotent label bootstrap              |
+| Fix 10 | Guard rejects crates with own `version = "..."` — unsupported by workspace-based bump      |
+| Fix 11 | Lightweight tag (ref → commit SHA) restores "Verified" status lost with annotated tags     |
+| Fix 12 | 403/422 tolerance on deleteRef; published-Release detection skips redundant release job    |

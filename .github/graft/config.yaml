@@ -363,8 +363,10 @@ files:
     strategy: create_only
   - path: .github/release.yml
     strategy: replace
-  - path: .github/tagpr-template.md
+  - path: .github/release-manager-pr-template.md
     strategy: replace
+  - path: .github/tagpr-template.md
+    strategy: delete
 
   # .github/graft
   - path: .github/graft/patches/.gitkeep
