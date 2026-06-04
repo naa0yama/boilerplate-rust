@@ -4,6 +4,21 @@
 
 ### Bug Fixes 🐌
 
+- fix(release-manager): harden workflow with idempotency fixes by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/559
+- fix(release-manager): guard jq against null labels on push event by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/561
+
+### Development Environment 🔧
+
+- chore(deps): update dependency aqua:embarkstudios/cargo-deny to v0.19.8 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/560
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.19...v0.1.20
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
+### Bug Fixes 🐌
+
 - fix(release-manager): create draft GitHub Release in create-tag job by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/557
 
 **Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.18...v0.1.19
