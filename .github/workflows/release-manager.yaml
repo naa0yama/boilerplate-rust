@@ -22,6 +22,8 @@ jobs:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     timeout-minutes: 5
+    permissions:
+      contents: read
     outputs:
       is_release_merge: ${{ steps.detect.outputs.is_release_merge }}
       skip: ${{ steps.detect.outputs.skip }}
@@ -72,6 +74,9 @@ jobs:
       (github.event_name != 'pull_request' && needs.detect.outputs.is_release_merge == 'false' && needs.detect.outputs.skip != 'true'))
     runs-on: ubuntu-latest
     timeout-minutes: 15
+    concurrency:
+      group: release-manager-prepare-pr
+      cancel-in-progress: false
     permissions:
       contents: write # Required to push release/next branch via REST API
       pull-requests: write # Required to create and update release PR
@@ -105,8 +110,20 @@ jobs:
           GITHUB_EVENT_NAME: ${{ github.event_name }}
           PR_LABELS_JSON: ${{ toJson(github.event.pull_request.labels) }}
         run: |
+          set -euo pipefail
+
           # Step 1: Read current version from main
           CURRENT=$(grep -m1 '^version = ' Cargo.toml | sed 's/version = "\(.*\)"/\1/')
+
+          # Fix 10: guard against crates with their own version declarations
+          violators=$(find crates -name Cargo.toml -exec grep -l '^version = "' {} \; 2>/dev/null || true)
+          if [ -n "${violators}" ]; then
+            echo "::error::release-manager only supports workspace-inherited versions."
+            echo "The following crates declare their own version:"
+            echo "${violators}"
+            echo "Convert them to 'version.workspace = true' to use release-manager."
+            exit 1
+          fi
 
           # Step 2: Determine bump type from labels
           if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
@@ -130,12 +147,13 @@ jobs:
           echo "CURRENT=${CURRENT}" >> "$GITHUB_ENV"
           echo "NEXT=${NEXT}"       >> "$GITHUB_ENV"
 
-          # Step 4: Bump version in Cargo.toml and regenerate Cargo.lock
+          # Step 4: Bump version in Cargo.toml and update lockfile (workspace members only)
           sed -i "s/^version = \"${CURRENT}\"/version = \"${NEXT}\"/" Cargo.toml
-          cargo generate-lockfile
+          cargo update --workspace
 
-          # Step 5: Find previous tag
-          PREV_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+          # Step 5: Find previous tag via REST API (avoids git history depth issues)
+          PREV_TAG=$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" \
+                     --jq '.tag_name' 2>/dev/null || echo "")
 
           # Step 6: Generate changelog via GitHub Release Notes API
           CHANGELOG=$(gh api "repos/${GITHUB_REPOSITORY}/releases/generate-notes" \
@@ -227,18 +245,29 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          body=$(python3 - <<'PYEOF'
-          import os
-          changelog = open('/tmp/release-changelog.md').read()
-          tmpl = open('.github/tagpr-template.md').read()
-          print(tmpl
-            .replace('{{.NextVersion}}', f'v{os.environ["NEXT"]}')
-            .replace('{{.Changelog}}',   changelog))
-          PYEOF
-          )
+          set -euo pipefail
 
-          PR_NUM=$(gh pr list --head release/next --state open --json number \
-                   --jq '.[0].number // empty')
+          # Fix 9: ensure labels exist (idempotent; --force updates color only)
+          gh label create tagpr       --color ededed --force >/dev/null 2>&1 || true
+          gh label create tagpr:minor --color ededed --force >/dev/null 2>&1 || true
+          gh label create tagpr:major --color ededed --force >/dev/null 2>&1 || true
+
+          # Render template: substitute placeholders via bash parameter expansion
+          changelog=$(cat /tmp/release-changelog.md)
+          tmpl=$(cat .github/release-manager-pr-template.md)
+          body="${tmpl//\{\{.NextVersion\}\}/v${NEXT}}"
+          body="${body//\{\{.Changelog\}\}/${changelog}}"
+
+          # Fix 7: preserve user-editable section below marker
+          marker='<!-- release-manager:notes -->'
+          pr_info=$(gh pr list --head release/next --state open \
+                    --json number,body --jq '.[0] // empty')
+          existing=$(printf '%s' "${pr_info}" | jq -r '.body // empty')
+          PR_NUM=$(printf '%s' "${pr_info}" | jq -r '.number // empty')
+          if [[ "${existing}" == *"${marker}"* ]]; then
+            notes="${existing#*"${marker}"}"
+            body="${body%%"${marker}"*}${marker}${notes}"
+          fi
 
           if [ -n "${PR_NUM}" ]; then
             gh pr edit "${PR_NUM}" \
@@ -274,7 +303,7 @@ jobs:
     permissions:
       contents: write # Required to create tags and delete release/next branch
     steps:
-      - name: Create annotated tag and clean up release branch
+      - name: Create lightweight tag and clean up release branch
         id: tag
         uses: actions/github-script@3a2844b7e9c422d3c10d287c895573f7108da1b3 # v9.0.0
         env:
@@ -285,64 +314,69 @@ jobs:
             // (e.g., heads/release/next) to prevent Octokit from URL-encoding them.
             const tag = process.env.RELEASE_TAG;
 
-            // Guard: skip if tag was created by a concurrent run
-            try {
-              await github.request(`GET /repos/{owner}/{repo}/git/ref/tags/${tag}`, {
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-              });
-              core.warning(`Tag ${tag} already exists — skipping creation.`);
-              core.setOutput('tag', tag);
-              return;
-            } catch (e) {
-              if (e.status !== 404) throw e;
-            }
-
             // Use the push event SHA as the tag target.
             // release/next may already be auto-deleted when GitHub merges the PR,
             // so reading it is unreliable. context.sha is the merge commit on main,
             // which is exactly the commit that should carry the release tag.
             const commitSha = context.sha;
 
-            // Create annotated tag object (server-side, no GPG key required)
-            const { data: tagObj } = await github.rest.git.createTag({
-              ...context.repo,
-              tag,
-              message: `Release ${tag}`,
-              object: commitSha,
-              type: 'commit',
-            });
+            // Fix 1 + Fix 8 + Fix 12(b): tag existence → Release state → output decision
+            let tagExists = false;
+            try {
+              await github.request(`GET /repos/{owner}/{repo}/git/ref/tags/${tag}`, {
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+              });
+              tagExists = true;
+            } catch (e) {
+              if (e.status !== 404) throw e;
+            }
 
-            // Create the ref that makes the tag visible
-            await github.rest.git.createRef({
-              ...context.repo,
-              ref: `refs/tags/${tag}`,
-              sha: tagObj.sha,
-            });
+            if (!tagExists) {
+              // Fix 11: lightweight tag — ref points directly to the signed merge commit
+              // (avoids annotated tag object which cannot be GPG-signed with GITHUB_TOKEN)
+              await github.rest.git.createRef({
+                ...context.repo,
+                ref: `refs/tags/${tag}`,
+                sha: commitSha,
+              });
+            }
 
-            // Create a draft GitHub Release so upload-release-assets can attach binaries.
-            // (upload-release-assets expects the release to exist before it runs.)
-            await github.rest.repos.createRelease({
-              ...context.repo,
-              tag_name: tag,
-              name: tag,
-              draft: true,
-              generate_release_notes: true,
-            });
+            // Fix 1 + Fix 8: check Release state and recover if missing
+            let shouldRunRelease = true;
+            try {
+              const { data: rel } = await github.rest.repos.getReleaseByTag(
+                { ...context.repo, tag });
+              if (!rel.draft) {
+                // Published & immutable — assets already complete, skip release job
+                core.warning(`Release ${tag} already published; skipping release job.`);
+                shouldRunRelease = false;
+              }
+              // draft → continue (allows assets to be re-uploaded with --clobber)
+            } catch (e) {
+              if (e.status !== 404) throw e;
+              // Release missing — create draft so upload-release-assets can attach binaries
+              await github.rest.repos.createRelease({
+                ...context.repo,
+                tag_name: tag,
+                name: tag,
+                draft: true,
+                generate_release_notes: true,
+              });
+            }
 
             // Delete release/next if it still exists (auto-delete may have beaten us).
-            // GitHub returns 422 (not 404) when deleting a non-existent ref in some
-            // API versions, so both are treated as "already gone".
+            // Fix 12(a): also tolerate 403 from branch immutability rulesets.
             try {
               await github.request('DELETE /repos/{owner}/{repo}/git/refs/heads/release/next', {
                 owner: context.repo.owner,
                 repo: context.repo.repo,
               });
             } catch (e) {
-              if (e.status !== 404 && e.status !== 422) throw e;
+              if (![404, 422, 403].includes(e.status)) throw e;
             }
 
-            core.setOutput('tag', tag);
+            core.setOutput('tag', shouldRunRelease ? tag : '');
 
   release:
     name: Build and Release
