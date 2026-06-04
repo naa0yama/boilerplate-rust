@@ -2,6 +2,32 @@
 
 ## What's Changed
 
+### Features 🎉
+
+- refactor(release-manager): rename tagpr labels to release-pr and bump:* by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/580
+
+### Bug Fixes 🐌
+
+- fix(graft): remove tagpr references and add release-manager by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/567
+- fix(release-manager): align label colors with graft config by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/581
+
+### Development Environment 🔧
+
+- chore(deps): update dependency zizmor to v1.25.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/574
+- chore(deps): update dependency aqua:ast-grep/ast-grep to v0.43.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/571
+- chore(deps): update dependency usage to v3.3.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/573
+- chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/578
+- chore(deps): update docker/dockerfile docker tag to v1.24.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/575
+- chore(deps): update dependency openobserve/openobserve to v0.90.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/572
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/569
+- chore(deps): update mise to v2026.5.16 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/570
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.21...v0.1.22
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
 ### Bug Fixes 🐌
 
 - fix(testdata): include 172.30.x.x in IPv4 allowlist regex by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/565
