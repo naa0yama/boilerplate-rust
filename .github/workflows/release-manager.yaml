@@ -248,9 +248,9 @@ jobs:
           set -euo pipefail
 
           # Fix 9: ensure labels exist (idempotent; --force updates color only)
-          gh label create release-pr  --color ededed --force >/dev/null 2>&1 || true
-          gh label create bump:minor  --color ededed --force >/dev/null 2>&1 || true
-          gh label create bump:major  --color ededed --force >/dev/null 2>&1 || true
+          gh label create release-pr  --color 5319e7 --force >/dev/null 2>&1 || true
+          gh label create bump:minor  --color 5319e7 --force >/dev/null 2>&1 || true
+          gh label create bump:major  --color 5319e7 --force >/dev/null 2>&1 || true
 
           # Render template: substitute placeholders via bash parameter expansion
           changelog=$(cat /tmp/release-changelog.md)
