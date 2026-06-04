@@ -34,7 +34,7 @@ on:
   workflow_dispatch: {}
 ```
 
-`pull_request` activates when `tagpr:minor` or `tagpr:major` is added/removed
+`pull_request` activates when `bump:minor` or `bump:major` is added/removed
 on the `release/next` PR. The `prepare-pr` job's `if:` guard filters to only
 the `release/next` head ref.
 
@@ -126,13 +126,11 @@ race to force-update `release/next`.
 
 ## Bump Labels
 
-| Label         | Effect               |
-| ------------- | -------------------- |
-| `tagpr:minor` | Minor version bump   |
-| `tagpr:major` | Major version bump   |
-| (none)        | Patch bump (default) |
-
-Label names kept identical to tagpr for backward compatibility.
+| Label        | Effect               |
+| ------------ | -------------------- |
+| `bump:minor` | Minor version bump   |
+| `bump:major` | Major version bump   |
+| (none)       | Patch bump (default) |
 
 ## Deployment Checklist
 

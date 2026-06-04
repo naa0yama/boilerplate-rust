@@ -128,13 +128,13 @@ jobs:
           # Step 2: Determine bump type from labels
           if [ "${GITHUB_EVENT_NAME}" = "pull_request" ]; then
             BUMP=$(echo "${PR_LABELS_JSON}" \
-                   | jq -r '[.[].name | select(startswith("tagpr:"))] | first // "patch"' \
-                   | sed 's/tagpr://')
+                   | jq -r '[.[].name | select(startswith("bump:"))] | first // "patch"' \
+                   | sed 's/bump://')
           else
             BUMP=$(gh pr list --head release/next --state open \
                    --json labels --jq \
-                   '[(.[0].labels // [])[].name | select(startswith("tagpr:"))] | first // "patch"' \
-                   | sed 's/tagpr://')
+                   '[(.[0].labels // [])[].name | select(startswith("bump:"))] | first // "patch"' \
+                   | sed 's/bump://')
           fi
           # Step 3: Calculate next version
           IFS='.' read -r MAJ MIN PAT <<< "$CURRENT"
@@ -248,9 +248,9 @@ jobs:
           set -euo pipefail
 
           # Fix 9: ensure labels exist (idempotent; --force updates color only)
-          gh label create tagpr       --color ededed --force >/dev/null 2>&1 || true
-          gh label create tagpr:minor --color ededed --force >/dev/null 2>&1 || true
-          gh label create tagpr:major --color ededed --force >/dev/null 2>&1 || true
+          gh label create release-pr  --color ededed --force >/dev/null 2>&1 || true
+          gh label create bump:minor  --color ededed --force >/dev/null 2>&1 || true
+          gh label create bump:major  --color ededed --force >/dev/null 2>&1 || true
 
           # Render template: substitute placeholders via bash parameter expansion
           changelog=$(cat /tmp/release-changelog.md)
@@ -279,7 +279,7 @@ jobs:
               --base main \
               --title "Release for v${NEXT}" \
               --body "${body}" \
-              --label tagpr \
+              --label release-pr \
             || {
               PR_NUM=$(gh pr list --head release/next --state open --json number \
                        --jq '.[0].number')

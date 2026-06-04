@@ -62,15 +62,15 @@ spec:
       description: Backport from template or upstream repository
       color: 0e8a16
 
-    # tagpr
-    - name: tagpr
-      description: Created by tagpr for release management
+    # release-manager
+    - name: release-pr
+      description: Created by release-manager for release management
       color: "5319e7"
-    - name: tagpr:minor
-      description: Bump minor version (tagpr auto-label)
+    - name: bump:minor
+      description: Bump minor version (release-manager auto-label)
       color: "5319e7"
-    - name: tagpr:major
-      description: Bump major version (tagpr auto-label)
+    - name: bump:major
+      description: Bump major version (release-manager auto-label)
       color: "5319e7"
     - name: ignore-for-release
       description: Exclude from release notes
