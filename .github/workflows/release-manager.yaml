@@ -320,6 +320,16 @@ jobs:
               sha: tagObj.sha,
             });
 
+            // Create a draft GitHub Release so upload-release-assets can attach binaries.
+            // (upload-release-assets expects the release to exist before it runs.)
+            await github.rest.repos.createRelease({
+              ...context.repo,
+              tag_name: tag,
+              name: tag,
+              draft: true,
+              generate_release_notes: true,
+            });
+
             // Delete release/next if it still exists (auto-delete may have beaten us).
             // GitHub returns 422 (not 404) when deleting a non-existent ref in some
             // API versions, so both are treated as "already gone".
