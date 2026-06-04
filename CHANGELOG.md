@@ -4,6 +4,16 @@
 
 ### Bug Fixes 🐌
 
+- fix(release-manager): create draft GitHub Release in create-tag job by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/557
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.18...v0.1.19
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
+### Bug Fixes 🐌
+
 - fix(tasks): align nightly toolchain and test flags by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/544
 - fix(release-manager): use github.request() to avoid ref URL encoding by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/550
 - fix(release-manager): use context.sha for tag target in create-tag by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/552
