@@ -2,6 +2,16 @@
 
 ## What's Changed
 
+### Development Environment 🔧
+
+- chore(deps): update all action update to v2.79.12 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/563
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.20...v0.1.21
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
 ### Bug Fixes 🐌
 
 - fix(release-manager): harden workflow with idempotency fixes by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/559
