@@ -20,7 +20,7 @@ required 120s polling workaround.
 | `.github/release-manager-pr-template.md` | PR body template (placeholders substituted via bash expansion) |
 | `.github/release.yml`                    | GitHub Release Notes category config                           |
 
-Deleted: `.tagpr`, `.tagpr-version-bump.sh`
+Deleted: `.tagpr`, `.tagpr-version-bump.sh`, `.mise/config.tagpr.toml`
 
 ## Workflow Triggers
 

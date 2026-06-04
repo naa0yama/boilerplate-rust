@@ -239,7 +239,6 @@ spec:
         - "k1low/gh-setup@*"
         - "k1low/octocov-action@*"
         - "mozilla-actions/sccache-action@*"
-        - "songmu/tagpr@*"
         - "swatinem/rust-cache@*"
         - "taiki-e/install-action@*"
         - "zizmorcore/zizmor-action@*"
@@ -422,18 +421,20 @@ files:
     strategy: delete
   - path: .github/workflows/prebuild-container.yaml
     strategy: delete
+  - path: .github/workflows/release-manager.yaml
+    strategy: replace
   - path: .github/workflows/release.yaml
     strategy: replace
   - path: .github/workflows/rust-ci.yaml
     strategy: replace
   - path: .github/workflows/tagpr.yaml
-    strategy: replace
+    strategy: delete
 
   # .mise
   - path: .mise/config.devcontainer.toml
     strategy: replace
   - path: .mise/config.tagpr.toml
-    strategy: replace
+    strategy: delete
   - path: .mise/overrides.toml
     strategy: create_only
   - path: .mise/tasks.toml
@@ -503,7 +504,7 @@ files:
   - path: .octocov.yml
     strategy: replace
   - path: .tagpr
-    strategy: replace
+    strategy: delete
   - path: .worktreeinclude
     strategy: replace
     preserve_markers: true
