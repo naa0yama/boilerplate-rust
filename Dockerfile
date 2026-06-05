@@ -135,6 +135,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	echo "**** Dependencies ****" && \
 	set -euxo pipefail && \
 	apt-get -y install --no-install-recommends \
+	python3.13-venv \
 	shellcheck
 
 # User level settings
