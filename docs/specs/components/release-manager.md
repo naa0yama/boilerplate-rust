@@ -93,6 +93,9 @@ double-bump on idempotent re-runs. `sed` targets `^version = "X.Y.Z"` at
 GitHub Release Notes API (`POST /repos/{owner}/{repo}/releases/generate-notes`)
 respects the existing `.github/release.yml` category configuration.
 
+`previous_tag_name` is omitted when `PREV_TAG` is empty (first release), so
+the API generates notes from repository creation rather than returning an error.
+
 ### Tag creation
 
 Uses `POST /git/refs` only — lightweight tag pointing directly at the signed
@@ -146,13 +149,13 @@ For each new project rolling out release-manager:
 
 ## Design Decisions Log
 
-| Fix    | Decision                                                                                   |
-| ------ | ------------------------------------------------------------------------------------------ |
-| Fix 2  | `git describe` replaced by `gh api releases/latest` — avoids shallow clone failures        |
-| Fix 3  | Job-level concurrency group on prepare-pr serialises push vs PR event runs                 |
-| Fix 5  | `cargo update --workspace` instead of `generate-lockfile` — updates only workspace members |
-| Fix 7  | `<!-- release-manager:notes -->` marker preserves user-editable PR body content            |
-| Fix 9  | `gh label create --force` on each prepare-pr run — idempotent label bootstrap              |
-| Fix 10 | Guard rejects crates with own `version = "..."` — unsupported by workspace-based bump      |
-| Fix 11 | Lightweight tag (ref → commit SHA) restores "Verified" status lost with annotated tags     |
-| Fix 12 | 403/422 tolerance on deleteRef; published-Release detection skips redundant release job    |
+| Fix    | Decision                                                                                                                                             |
+| ------ | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Fix 2  | `git describe` replaced by `gh api releases/latest` — avoids shallow clone failures                                                                  |
+| Fix 3  | Job-level concurrency group on prepare-pr serialises push vs PR event runs                                                                           |
+| Fix 5  | `cargo update --workspace` instead of `generate-lockfile` — updates workspace members and captures pending transitive dep upgrades in the release PR |
+| Fix 7  | `<!-- release-manager:notes -->` marker preserves user-editable PR body content                                                                      |
+| Fix 9  | `gh label create --force` on each prepare-pr run — idempotent label bootstrap                                                                        |
+| Fix 10 | Guard rejects crates with own `version = "..."` — unsupported by workspace-based bump                                                                |
+| Fix 11 | Lightweight tag (ref → commit SHA) restores "Verified" status lost with annotated tags                                                               |
+| Fix 12 | 403/422 tolerance on deleteRef; published-Release detection skips redundant release job                                                              |
