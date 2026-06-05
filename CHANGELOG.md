@@ -2,6 +2,16 @@
 
 ## What's Changed
 
+### Other Changes
+
+- build(docker): add python3.13-venv to development stage by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/586
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.23...v0.1.24
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
 ### Bug Fixes 🐌
 
 - fix(ast-rules): reduce false positives in IPv4/IPv6 testdata regex by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/583
