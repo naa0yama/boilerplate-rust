@@ -2,6 +2,21 @@
 
 ## What's Changed
 
+### Bug Fixes 🐌
+
+- fix(ast-rules): reduce false positives in IPv4/IPv6 testdata regex by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/583
+- fix(release-manager): guard PREV_TAG and clarify cargo update intent by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/584
+
+### Dependency Updates 📦
+
+- chore(deps): update rust crate sysinfo to 0.39 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/579
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.22...v0.1.23
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
 ### Features 🎉
 
 - refactor(release-manager): rename tagpr labels to release-pr and bump:* by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/580
