@@ -2,6 +2,21 @@
 
 ## What's Changed
 
+### Development Environment 🔧
+
+- chore(deps): lock file maintenance by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/589
+- chore(deps): update mise to v2026.5.18 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/591
+- chore(deps): update all action update to v4.1.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/592
+- chore(deps): update all action update to v2.81.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/593
+- chore(deps): update all action update to v2.81.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/594
+- chore(deps): update dependency github:naa0yama/graft to v0.5.8 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/595
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.24...v0.1.25
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
 ### Other Changes
 
 - build(docker): add python3.13-venv to development stage by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/586
