@@ -1,6 +1,21 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Tree-unchanged guard: skip when staged tree matches HEAD's tree.
+# Covers signing-only amends (rebase --exec --amend -S --no-edit, or
+# manual single amend) where re-running pre-commit yields zero new info.
+# Tree change → squash, fixup, conflict resolve, normal commit — full
+# pre-commit runs. gitleaks always runs in the global hook. pre-push
+# remains the final gate.
+if git rev-parse --verify HEAD >/dev/null 2>&1; then
+    new_tree=$(git write-tree)
+    head_tree=$(git rev-parse "HEAD^{tree}")
+    if [ "$new_tree" = "$head_tree" ]; then
+        echo "pre-commit: tree unchanged (signing-only amend), skipping mise run pre-commit" >&2
+        exit 0
+    fi
+fi
+
 if ! command -v mise &>/dev/null; then
     echo "mise が見つかりません。インストールしてください: https://mise.jdx.dev" >&2
     exit 1
