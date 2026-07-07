@@ -11,3 +11,8 @@ pub mod trace;
 pub const fn app_version() -> &'static str {
     env!("CARGO_PKG_VERSION")
 }
+
+/// Creates the application router with all routes registered.
+pub fn create_router() -> axum::Router {
+    axum::Router::new().route("/health", axum::routing::get(routes::health::handler))
+}

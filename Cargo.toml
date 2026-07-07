@@ -31,7 +31,7 @@ clap = { version = "4.5.45", default-features = false, features = ["std", "deriv
 
 ## Web
 askama = { version = "0.12", default-features = false, features = ["with-axum"] }
-axum = { version = "0.8", default-features = false, features = ["tokio", "http1", "tracing", "macros"] }
+axum = { version = "0.8", default-features = false, features = ["tokio", "http1", "json", "tracing", "macros"] }
 opentelemetry-http = { version = "0.32", default-features = false }
 rust-embed = { version = "8", default-features = false, features = ["interpolate-folder-path"] }
 tokio = { version = "1", default-features = false, features = ["rt-multi-thread", "net", "signal", "macros"] }
