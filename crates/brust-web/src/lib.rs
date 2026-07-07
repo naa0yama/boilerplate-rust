@@ -17,4 +17,15 @@ pub fn create_router() -> axum::Router {
     axum::Router::new()
         .route("/", axum::routing::get(routes::index::handler))
         .route("/health", axum::routing::get(routes::health::handler))
+        .merge(assets::router())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn app_version_is_not_empty() {
+        assert!(!app_version().is_empty());
+    }
 }
