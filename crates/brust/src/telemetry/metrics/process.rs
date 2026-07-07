@@ -246,8 +246,8 @@ fn register_open_fds(
     pid: Pid,
 ) -> ObservableUpDownCounter<i64> {
     meter
-        .i64_observable_up_down_counter(semconv::PROCESS_OPEN_FILE_DESCRIPTOR_COUNT)
-        .with_unit("{count}")
+        .i64_observable_up_down_counter(semconv::PROCESS_UNIX_FILE_DESCRIPTOR_COUNT)
+        .with_unit("{file_descriptor}")
         .with_description(
             "Number of open file descriptors (Unix) or handles (Windows) \
              for this process, as reported by sysinfo.",
