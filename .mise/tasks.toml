@@ -134,6 +134,7 @@ _text_check() {
     --include='*.md' --include='*.json' --include='*.jsonl' \
     --exclude-dir=target --exclude-dir='.claude' \
     --exclude-dir=data --exclude-dir=tmp \
+    --exclude-dir=node_modules \
     . 2>/dev/null || true)
   if [ -n "$excl" ] && [ -n "$raw" ]; then
     out=$(printf '%s\\n' "$raw" | grep -vP "$excl" || true)
