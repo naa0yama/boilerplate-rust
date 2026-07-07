@@ -1,0 +1,61 @@
+@import "tailwindcss";
+@plugin "daisyui" {
+  themes: corporate --default, business --prefersdark;
+}
+
+@source "../../templates/**/*.html";
+@source "../../src/**/*.rs";
+
+:root {
+  --font-sans:
+    "IBM Plex Sans JP",
+    system-ui, -apple-system, "Segoe UI", Roboto,
+    "Hiragino Sans", "Yu Gothic UI", sans-serif;
+  --font-mono:
+    "IBM Plex Mono",
+    "SF Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+
+body { font-family: var(--font-sans); }
+
+code, pre, kbd, samp {
+  font-family: var(--font-mono);
+  font-feature-settings: "liga" 0, "calt" 0;
+  font-variant-ligatures: none;
+}
+
+/* IBM Plex Sans JP — Japanese subset */
+@font-face {
+  font-family: "IBM Plex Sans JP"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/ibm-plex-sans-jp/ibm-plex-sans-jp-japanese-400-normal.woff2") format("woff2");
+  unicode-range: U+3000-30FF, U+4E00-9FFF, U+FF00-FFEF;
+}
+@font-face {
+  font-family: "IBM Plex Sans JP"; font-style: normal; font-weight: 700; font-display: swap;
+  src: url("/fonts/ibm-plex-sans-jp/ibm-plex-sans-jp-japanese-700-normal.woff2") format("woff2");
+  unicode-range: U+3000-30FF, U+4E00-9FFF, U+FF00-FFEF;
+}
+
+/* IBM Plex Sans JP — Latin subset */
+@font-face {
+  font-family: "IBM Plex Sans JP"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/ibm-plex-sans-jp/ibm-plex-sans-jp-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC;
+}
+@font-face {
+  font-family: "IBM Plex Sans JP"; font-style: normal; font-weight: 700; font-display: swap;
+  src: url("/fonts/ibm-plex-sans-jp/ibm-plex-sans-jp-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC;
+}
+
+/* IBM Plex Mono — Latin */
+@font-face {
+  font-family: "IBM Plex Mono"; font-style: normal; font-weight: 400; font-display: swap;
+  src: url("/fonts/ibm-plex-mono/ibm-plex-mono-latin-400-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC;
+}
+@font-face {
+  font-family: "IBM Plex Mono"; font-style: normal; font-weight: 700; font-display: swap;
+  src: url("/fonts/ibm-plex-mono/ibm-plex-mono-latin-700-normal.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+2000-206F, U+20AC;
+}

@@ -1,0 +1,64 @@
+[package]
+name = "brust-web"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+publish.workspace = true
+repository.workspace = true
+description = "A minimal web server boilerplate with Axum, DaisyUI, and OTel"
+
+[lib]
+
+[[bin]]
+name = "brust-web"
+path = "src/main.rs"
+
+[features]
+default = ["otel", "process-metrics"]
+otel = [
+	"dep:opentelemetry",
+	"dep:opentelemetry_sdk",
+	"dep:opentelemetry-otlp",
+	"dep:opentelemetry-http",
+	"dep:tracing-opentelemetry",
+	"dep:opentelemetry-appender-tracing",
+	"dep:opentelemetry-semantic-conventions",
+	"dep:gethostname",
+]
+process-metrics = ["otel", "dep:sysinfo"]
+
+[dependencies]
+anyhow.workspace = true
+askama.workspace = true
+axum.workspace = true
+clap.workspace = true
+reqwest.workspace = true
+rust-embed.workspace = true
+rustls.workspace = true
+tokio.workspace = true
+tower-http.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+
+gethostname = { workspace = true, optional = true }
+opentelemetry = { workspace = true, optional = true }
+opentelemetry-appender-tracing = { workspace = true, optional = true }
+opentelemetry-http = { workspace = true, optional = true }
+opentelemetry-otlp = { workspace = true, optional = true }
+opentelemetry-semantic-conventions = { workspace = true, optional = true }
+opentelemetry_sdk = { workspace = true, optional = true }
+sysinfo = { workspace = true, optional = true }
+tracing-opentelemetry = { workspace = true, optional = true }
+
+[build-dependencies]
+anyhow = "1.0"
+walkdir = "2"
+
+[dev-dependencies]
+assert_cmd.workspace = true
+opentelemetry_sdk = { workspace = true, features = ["testing"] }
+predicates.workspace = true
+tower.workspace = true
+
+[lints]
+workspace = true

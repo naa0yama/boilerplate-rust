@@ -1,0 +1,1 @@
+//! GET /health — liveness probe.
