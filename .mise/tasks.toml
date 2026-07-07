@@ -134,6 +134,7 @@ _text_check() {
     --include='*.md' --include='*.json' --include='*.jsonl' \
     --exclude-dir=target --exclude-dir='.claude' \
     --exclude-dir=data --exclude-dir=tmp \
+    --exclude-dir=node_modules \
     . 2>/dev/null || true)
   if [ -n "$excl" ] && [ -n "$raw" ]; then
     out=$(printf '%s\\n' "$raw" | grep -vP "$excl" || true)
@@ -400,10 +401,7 @@ rm -rf /tmp/openobserve-data
 _root="$(pwd)"
 setsid bash -c ". ${_root}/.devcontainer/o2-env.sh && openobserve" >/dev/null 2>&1 &
 timeout 60 bash -c 'until curl -sf --max-time 1 http://localhost:5080/healthz > /dev/null 2>&1; do sleep 0.5; done'
-_auth=$(printf '%s' "${ZO_ROOT_USER_EMAIL}:${ZO_ROOT_USER_PASSWORD}" | base64 -w0)
-cat > .mcp.json <<MCPEOF
-{"mcpServers":{"o2-dev":{"type":"http","url":"http://localhost:${ZO_HTTP_PORT}/api/default/mcp","headers":{"Authorization":"Basic ${_auth}"}}}}
-MCPEOF
+python3 .devcontainer/gen_mcp_json.py
 bash .devcontainer/o2-import-dashboards.sh
 echo 'OpenObserve started (UI: http://localhost:5080, MCP: .mcp.json)'
 """
@@ -466,3 +464,39 @@ pkill -x openobserve 2>/dev/null && while pgrep -x openobserve > /dev/null; do s
 ["traefik:setup"]
 description = "Setup Traefik as systemd user service for devcontainer routing (run once on host)"
 run = "graft denv traefik setup"
+
+["wireframe"]
+description = "Launch GrapesJS wireframe builder"
+run = "pnpm --dir tools/wireframe exec serve . -l 3001"
+
+["brust-web:serve"]
+description = "Start brust-web dev server"
+run = 'cargo run -p brust-web -- serve --bind 0.0.0.0:3000'
+
+["setup:playwright"]
+description = "Install @playwright/mcp deps and download Chromium browser"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Locate the package.json that declares @playwright/mcp (works before pnpm install)
+_pnpm_dir=$(grep -rl '"@playwright/mcp"' --include='package.json' . \
+  | grep -v node_modules | head -1 | xargs dirname)
+if [ -z "$_pnpm_dir" ]; then
+  echo "Error: no package.json with @playwright/mcp found" >&2
+  exit 1
+fi
+
+pnpm --dir "$_pnpm_dir" install --frozen-lockfile
+
+_playwright_cli=$(find "$_pnpm_dir/node_modules/.pnpm" -name "cli.js" -path "*/playwright/cli.js" | head -1)
+if [ -z "$_playwright_cli" ]; then
+  echo "Error: playwright cli.js not found in pnpm store" >&2
+  exit 1
+fi
+node "$_playwright_cli" install chromium
+
+. .devcontainer/o2-env.sh
+python3 .devcontainer/gen_mcp_json.py
+echo "Playwright MCP ready. Run /mcp in Claude Code to reload."
+"""

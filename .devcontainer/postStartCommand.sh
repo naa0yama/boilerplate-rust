@@ -95,6 +95,6 @@ mise run o2
 # graft:keep-start
 # Project-specific dependencies are listed here.
 
-pnpm install --frozen-lockfile
+mise run setup:playwright
 
 # graft:keep-end
