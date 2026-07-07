@@ -24,3 +24,20 @@ async fn health_returns_200_with_json() {
     let json: serde_json::Value = serde_json::from_slice(&body).unwrap();
     assert_eq!(json["status"], "ok");
 }
+
+#[tokio::test]
+async fn index_returns_200_html() {
+    let app = brust_web::create_router();
+    let response = app
+        .oneshot(Request::builder().uri("/").body(Body::empty()).unwrap())
+        .await
+        .unwrap();
+    assert_eq!(response.status(), StatusCode::OK);
+    let headers = response.headers();
+    assert!(
+        headers["content-type"]
+            .to_str()
+            .unwrap()
+            .contains("text/html")
+    );
+}

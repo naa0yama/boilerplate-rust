@@ -14,5 +14,7 @@ pub const fn app_version() -> &'static str {
 
 /// Creates the application router with all routes registered.
 pub fn create_router() -> axum::Router {
-    axum::Router::new().route("/health", axum::routing::get(routes::health::handler))
+    axum::Router::new()
+        .route("/", axum::routing::get(routes::index::handler))
+        .route("/health", axum::routing::get(routes::health::handler))
 }
