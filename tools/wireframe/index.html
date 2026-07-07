@@ -1,0 +1,32 @@
+<!doctype html>
+<html data-theme="light">
+<head>
+  <meta charset="utf-8" />
+  <link href="./node_modules/grapesjs/dist/css/grapes.min.css" rel="stylesheet" />
+  <link href="./node_modules/daisyui/daisyui.css" rel="stylesheet" />
+  <script src="./node_modules/grapesjs/dist/grapes.min.js"></script>
+  <style>html,body{margin:0;height:100%}#gjs{height:100%}</style>
+</head>
+<body>
+  <div id="gjs"></div>
+  <script type="module">
+    import { daisyBlocks } from './blocks/daisy-blocks.js';
+    const editor = grapesjs.init({
+      container: '#gjs',
+      height: '100vh',
+      fromElement: false,
+      storageManager: false,
+      canvas: {
+        styles:  ['./node_modules/daisyui/daisyui.css'],
+        scripts: ['./node_modules/@tailwindcss/browser/dist/index.global.js'],
+      },
+      blockManager: { blocks: daisyBlocks },
+    });
+    editor.onReady(() => {
+      editor.Canvas.getDocument()
+        .documentElement.setAttribute('data-theme', 'light');
+    });
+    window.editor = editor;
+  </script>
+</body>
+</html>

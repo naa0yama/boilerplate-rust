@@ -1,3 +1,7 @@
 # Project-specific task overrides.
 # Tasks defined here take precedence over tasks.toml because this file
 # appears LAST in the task_config.includes array in mise.toml.
+
+["wireframe"]
+description = "Launch GrapesJS wireframe builder"
+run = "pnpm --dir tools/wireframe exec serve . -l 3001"
