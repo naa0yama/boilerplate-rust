@@ -95,4 +95,8 @@ mise run o2
 # graft:keep-start
 # Project-specific dependencies are listed here.
 
+echo "Setting up Playwright MCP..."
+pnpm --dir crates/brust-web install --frozen-lockfile
+pnpm --dir crates/brust-web exec playwright install chromium --with-deps
+
 # graft:keep-end
