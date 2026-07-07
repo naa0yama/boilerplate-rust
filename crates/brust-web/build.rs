@@ -11,7 +11,7 @@ fn main() -> Result<(), Box<dyn Error>> {
 
     // Rerun triggers — emitted in both modes
     println!("cargo:rerun-if-changed=package.json");
-    println!("cargo:rerun-if-changed=pnpm-lock.yaml");
+    println!("cargo:rerun-if-changed=../../pnpm-lock.yaml");
     println!("cargo:rerun-if-changed=src/styles");
     println!("cargo:rerun-if-env-changed=CSS_PIPELINE_STUB");
 
@@ -20,7 +20,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         .output()
         .is_ok_and(|o| o.status.success());
     // Also stub when lockfile is absent to allow initial `cargo check` before `pnpm install`.
-    let lockfile_exists = Path::new("pnpm-lock.yaml").exists();
+    let lockfile_exists = Path::new("../../pnpm-lock.yaml").exists();
     let stub_mode =
         std::env::var("CSS_PIPELINE_STUB").is_ok() || !pnpm_available || !lockfile_exists;
 
