@@ -11,3 +11,5 @@ minimumReleaseAgeExclude:
   - "daisyui@5.6.5"
   - "tailwindcss@4.3.2"
   - "@playwright/mcp@0.0.77"
+  # Renovate security update: playwright@1.55.1
+  - playwright@1.55.1
