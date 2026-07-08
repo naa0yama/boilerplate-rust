@@ -74,6 +74,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[cfg_attr(miri, ignore)] // reqwest blocking -> setsockopt SO_KEEPALIVE unsupported under Miri
     async fn fetch_url_success_records_metrics() {
         use axum::{Router, routing::get};
         use std::net::SocketAddr;
@@ -98,6 +99,7 @@ mod tests {
     }
 
     #[tokio::test]
+    #[cfg_attr(miri, ignore)] // reqwest blocking -> setsockopt SO_KEEPALIVE unsupported under Miri
     async fn fetch_url_connection_refused_returns_error() {
         let _ = rustls::crypto::ring::default_provider().install_default();
 
