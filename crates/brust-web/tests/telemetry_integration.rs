@@ -40,6 +40,7 @@ fn start_fake_otlp() -> u16 {
 
 #[cfg(feature = "otel")]
 #[test]
+#[cfg_attr(miri, ignore)] // gethostname -> rustix::uname triggers Miri UB on uninit sysname bytes
 fn init_telemetry_otlp_variant_with_fake_receiver() {
     // reqwest uses rustls-no-provider; install ring before building any client
     rustls::crypto::ring::default_provider()
