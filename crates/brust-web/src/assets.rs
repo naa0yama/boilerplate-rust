@@ -79,3 +79,103 @@ pub fn router() -> Router {
         .route("/static/htmx.min.js", get(serve_htmx))
         .route("/fonts/{*path}", get(serve_font))
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use axum::body::Body;
+    use http::{Request, StatusCode};
+    use tower::ServiceExt as _;
+
+    #[test]
+    fn fonts_debug_format_contains_struct_name() {
+        let s = format!("{Fonts:?}");
+        assert!(s.contains("Fonts"), "Debug output was: {s}");
+    }
+
+    #[tokio::test]
+    async fn serve_css_returns_200_with_content_type() {
+        let response = router()
+            .oneshot(
+                Request::builder()
+                    .uri("/static/app.css")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let ct = response.headers()[header::CONTENT_TYPE].to_str().unwrap();
+        assert!(ct.contains("text/css"), "content-type was: {ct}");
+    }
+
+    #[tokio::test]
+    async fn serve_htmx_returns_200_with_content_type() {
+        let response = router()
+            .oneshot(
+                Request::builder()
+                    .uri("/static/htmx.min.js")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let ct = response.headers()[header::CONTENT_TYPE].to_str().unwrap();
+        assert!(ct.contains("javascript"), "content-type was: {ct}");
+    }
+
+    #[tokio::test]
+    async fn serve_font_404_for_nonexistent_file() {
+        let response = router()
+            .oneshot(
+                Request::builder()
+                    .uri("/fonts/nonexistent.woff2")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::NOT_FOUND);
+    }
+
+    #[tokio::test]
+    async fn serve_font_200_woff2_with_cache_control() {
+        let Some(first) = Fonts::iter().find(|p| p.ends_with(".woff2")) else {
+            // No woff2 fonts embedded in this build (stub mode); skip.
+            return;
+        };
+        let uri = format!("/fonts/{first}");
+        let response = router()
+            .oneshot(Request::builder().uri(&uri).body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let ct = response.headers()[header::CONTENT_TYPE].to_str().unwrap();
+        let cc = response.headers()[header::CACHE_CONTROL].to_str().unwrap();
+        if first.ends_with(".woff2") {
+            assert_eq!(ct, "font/woff2");
+        } else {
+            assert_eq!(ct, "application/octet-stream");
+        }
+        assert!(cc.contains("max-age=31536000"), "cache-control was: {cc}");
+    }
+
+    #[tokio::test]
+    async fn serve_font_non_woff2_extension_returns_octet_stream() {
+        // If the embedded fonts include a non-woff2 file, test octet-stream mime.
+        // Otherwise skip (all embedded fonts are woff2).
+        let non_woff2 = Fonts::iter().find(|p| !p.ends_with(".woff2"));
+        let Some(path) = non_woff2 else {
+            return;
+        };
+        let uri = format!("/fonts/{path}");
+        let response = router()
+            .oneshot(Request::builder().uri(&uri).body(Body::empty()).unwrap())
+            .await
+            .unwrap();
+        assert_eq!(response.status(), StatusCode::OK);
+        let ct = response.headers()[header::CONTENT_TYPE].to_str().unwrap();
+        assert_eq!(ct, "application/octet-stream");
+    }
+}
