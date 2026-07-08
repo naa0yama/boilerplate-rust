@@ -5,7 +5,29 @@
   <link href="./node_modules/grapesjs/dist/css/grapes.min.css" rel="stylesheet" />
   <link href="./node_modules/daisyui/daisyui.css" rel="stylesheet" />
   <script src="./node_modules/grapesjs/dist/grapes.min.js"></script>
-  <style>html,body{margin:0;height:100%}#gjs{height:100%}</style>
+  <!-- Tailwind is needed here (not just the canvas iframe) so Blocks-panel
+       thumbnails render DaisyUI components with correct utilities. -->
+  <script src="./node_modules/@tailwindcss/browser/dist/index.global.js"></script>
+  <style>
+    html,body{margin:0;height:100%}
+    #gjs{height:100%}
+    /* Blocks-panel thumbnails: render the actual DaisyUI component at reduced
+       scale so users can visually identify each block. Pointer events are
+       disabled so the preview never intercepts the drag interaction. */
+    .gjs-block .wf-block-preview{
+      transform: scale(0.35);
+      transform-origin: top left;
+      width: 285%;              /* 100 / 0.35 to fill the block tile */
+      height: 285%;
+      pointer-events: none;
+      overflow: hidden;
+      /* Confine position:fixed descendants (Drawer/Toast/Modal) to the
+         thumbnail box instead of the viewport. */
+      position: relative;
+      contain: layout paint;
+    }
+    .gjs-block{ overflow: hidden; }
+  </style>
 </head>
 <body>
   <div id="gjs"></div>
@@ -25,6 +47,9 @@
     editor.onReady(() => {
       editor.Canvas.getDocument()
         .documentElement.setAttribute('data-theme', 'light');
+      // Open the Blocks panel by default so DaisyUI components are visible
+      // without requiring a click on the right-hand toolbar.
+      editor.runCommand('open-blocks');
     });
     window.editor = editor;
   </script>
