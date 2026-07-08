@@ -72,4 +72,47 @@ mod tests {
         let result = fetch_url("", &meters);
         assert!(result.is_err(), "expected error for empty URL");
     }
+
+    #[tokio::test]
+    async fn fetch_url_success_records_metrics() {
+        use axum::{Router, routing::get};
+        use std::net::SocketAddr;
+
+        let _ = rustls::crypto::ring::default_provider().install_default();
+
+        let app = Router::new().route("/", get(|| async { "ok" }));
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("bind failed");
+        let addr: SocketAddr = listener.local_addr().expect("local_addr failed");
+        tokio::spawn(async move {
+            axum::serve(listener, app).await.expect("server error");
+        });
+
+        let url = format!("http://127.0.0.1:{}/", addr.port());
+        let meters = Meters::default();
+        let result = tokio::task::spawn_blocking(move || fetch_url(&url, &meters))
+            .await
+            .expect("spawn_blocking panicked");
+        assert!(result.is_ok(), "expected Ok for successful GET: {result:?}");
+    }
+
+    #[tokio::test]
+    async fn fetch_url_connection_refused_returns_error() {
+        let _ = rustls::crypto::ring::default_provider().install_default();
+
+        // Bind and immediately drop to get a port that is not listening.
+        let listener = tokio::net::TcpListener::bind("127.0.0.1:0")
+            .await
+            .expect("bind failed");
+        let port = listener.local_addr().expect("local_addr").port();
+        drop(listener);
+
+        let url = format!("http://127.0.0.1:{port}/");
+        let meters = Meters::default();
+        let result = tokio::task::spawn_blocking(move || fetch_url(&url, &meters))
+            .await
+            .expect("spawn_blocking panicked");
+        assert!(result.is_err(), "expected error for connection refused");
+    }
 }
