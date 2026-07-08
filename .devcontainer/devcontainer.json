@@ -29,7 +29,9 @@
 		// Cross-project shared: mise managed tool installs
 		"type=volume,source=devcontainer-shared-mise,target=/home/user/.local/share/mise",
 		// Cross-project shared: claude binary versions (symlink target of ~/.local/bin/claude)
-		"type=volume,source=devcontainer-shared-claude,target=/home/user/.local/share/claude"
+		"type=volume,source=devcontainer-shared-claude,target=/home/user/.local/share/claude",
+		// Cross-project shared: Playwright browser binaries (version-pinned per project)
+		"type=volume,source=devcontainer-shared-playwright-browsers,target=/home/user/.cache/ms-playwright"
 	],
 	"customizations": {
 		"vscode": {
@@ -56,6 +58,16 @@
 		}
 	},
 	"portsAttributes": {
+		"3000": {
+			"onAutoForward": "notify",
+			"label": "WebGUI",
+			"requireLocalPort": false
+		},
+		"3001": {
+			"onAutoForward": "notify",
+			"label": "wireframe tool",
+			"requireLocalPort": false
+		},
 		"5080": {
 			"onAutoForward": "notify",
 			"label": "OpenObserve UI",

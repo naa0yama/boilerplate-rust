@@ -1,10 +1,30 @@
 #![allow(clippy::unwrap_used)] // テストコードではunwrapを許可
 #![allow(missing_docs)] // テストコードではdocコメント不要
 
+use std::net::TcpListener;
 use std::time::Duration;
 
 use assert_cmd::cargo_bin_cmd;
 use predicates::prelude::{PredicateBooleanExt, predicate};
+
+/// Spawn a minimal HTTP server that accepts connections and returns 200 for any request.
+/// Reused for both plain HTTP fetch tests and OTLP receiver stubbing.
+fn start_fake_http_server() -> u16 {
+    use std::io::{Read as _, Write as _};
+
+    let listener = TcpListener::bind("127.0.0.1:0").unwrap();
+    let port = listener.local_addr().unwrap().port();
+
+    std::thread::spawn(move || {
+        while let Ok((mut stream, _)) = listener.accept() {
+            let mut buf = [0u8; 4096];
+            let _ = stream.read(&mut buf);
+            let _ = stream.write_all(b"HTTP/1.1 200 OK\r\nContent-Length: 2\r\n\r\nok");
+        }
+    });
+
+    port
+}
 
 #[test]
 #[cfg_attr(miri, ignore)]
@@ -152,4 +172,53 @@ fn test_cli_count_with_name() {
         .success()
         .stdout(predicate::str::contains("Hi, Alice, new world!!"))
         .stdout(predicate::str::contains("finished iteration"));
+}
+
+#[test]
+#[cfg_attr(miri, ignore)]
+fn test_cli_url_fetch_success() {
+    let port = start_fake_http_server();
+
+    let mut cmd = cargo_bin_cmd!("brust");
+    cmd.arg("--url")
+        .arg(format!("http://127.0.0.1:{port}/"))
+        .timeout(Duration::from_secs(15))
+        .assert()
+        .success();
+}
+
+#[test]
+#[cfg_attr(miri, ignore)]
+fn test_cli_url_fetch_connection_refused() {
+    // Bind to get a free port then drop listener → connection refused
+    let port = {
+        let l = TcpListener::bind("127.0.0.1:0").unwrap();
+        l.local_addr().unwrap().port()
+    };
+
+    let mut cmd = cargo_bin_cmd!("brust");
+    cmd.arg("--url")
+        .arg(format!("http://127.0.0.1:{port}/"))
+        .timeout(Duration::from_secs(15))
+        .assert()
+        .success(); // exits 0 even on HTTP error (logs error, continues)
+}
+
+#[cfg(feature = "otel")]
+#[test]
+#[cfg_attr(miri, ignore)]
+fn test_cli_otel_init_and_shutdown() {
+    let port = start_fake_http_server();
+
+    let mut cmd = cargo_bin_cmd!("brust");
+    cmd.arg("--name")
+        .arg("OTel")
+        .env(
+            "OTEL_EXPORTER_OTLP_ENDPOINT",
+            format!("http://127.0.0.1:{port}"),
+        )
+        .timeout(Duration::from_secs(30))
+        .assert()
+        .success()
+        .stdout(predicate::str::contains("Hi, OTel, new world!!"));
 }

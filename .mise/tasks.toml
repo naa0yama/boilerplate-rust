@@ -134,6 +134,7 @@ _text_check() {
     --include='*.md' --include='*.json' --include='*.jsonl' \
     --exclude-dir=target --exclude-dir='.claude' \
     --exclude-dir=data --exclude-dir=tmp \
+    --exclude-dir=node_modules \
     . 2>/dev/null || true)
   if [ -n "$excl" ] && [ -n "$raw" ]; then
     out=$(printf '%s\\n' "$raw" | grep -vP "$excl" || true)
@@ -400,10 +401,7 @@ rm -rf /tmp/openobserve-data
 _root="$(pwd)"
 setsid bash -c ". ${_root}/.devcontainer/o2-env.sh && openobserve" >/dev/null 2>&1 &
 timeout 60 bash -c 'until curl -sf --max-time 1 http://localhost:5080/healthz > /dev/null 2>&1; do sleep 0.5; done'
-_auth=$(printf '%s' "${ZO_ROOT_USER_EMAIL}:${ZO_ROOT_USER_PASSWORD}" | base64 -w0)
-cat > .mcp.json <<MCPEOF
-{"mcpServers":{"o2-dev":{"type":"http","url":"http://localhost:${ZO_HTTP_PORT}/api/default/mcp","headers":{"Authorization":"Basic ${_auth}"}}}}
-MCPEOF
+python3 .devcontainer/gen_mcp_json.py
 bash .devcontainer/o2-import-dashboards.sh
 echo 'OpenObserve started (UI: http://localhost:5080, MCP: .mcp.json)'
 """
@@ -466,3 +464,78 @@ pkill -x openobserve 2>/dev/null && while pgrep -x openobserve > /dev/null; do s
 ["traefik:setup"]
 description = "Setup Traefik as systemd user service for devcontainer routing (run once on host)"
 run = "graft denv traefik setup"
+
+["wireframe:up"]
+description = "Start GrapesJS wireframe builder in background (port 3001)"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+_pidfile="/tmp/wireframe.pid"
+if [ -f "$_pidfile" ] && kill -0 "$(cat "$_pidfile")" 2>/dev/null; then
+  echo "wireframe already running (pid $(cat "$_pidfile"))"
+  exit 0
+fi
+
+_root="$(pwd)"
+setsid bash -c "cd '${_root}' && pnpm --dir tools/wireframe exec serve . -l 3001" \
+  >/tmp/wireframe.log 2>&1 &
+echo $! > "$_pidfile"
+
+timeout 30 bash -c 'until curl -sf --max-time 1 http://localhost:3001/ >/dev/null 2>&1; do sleep 0.3; done' \
+  || { echo "Error: wireframe failed to become ready (see /tmp/wireframe.log)" >&2; exit 1; }
+echo "wireframe started (http://localhost:3001, pid $(cat "$_pidfile"))"
+"""
+
+["wireframe:down"]
+description = "Stop GrapesJS wireframe builder"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+_pidfile="/tmp/wireframe.pid"
+if [ ! -f "$_pidfile" ]; then
+  echo "wireframe not running (no pidfile)"
+  exit 0
+fi
+_pid=$(cat "$_pidfile")
+if kill -0 "$_pid" 2>/dev/null; then
+  # kill process group to reap child node process spawned by setsid
+  kill -TERM -"$_pid" 2>/dev/null || kill -TERM "$_pid" 2>/dev/null || true
+  for _ in $(seq 1 20); do kill -0 "$_pid" 2>/dev/null || break; sleep 0.1; done
+  kill -0 "$_pid" 2>/dev/null && kill -KILL -"$_pid" 2>/dev/null || true
+fi
+rm -f "$_pidfile"
+echo "wireframe stopped"
+"""
+
+["brust-web:serve"]
+description = "Start brust-web dev server"
+run = 'cargo run -p brust-web -- serve --bind 0.0.0.0:3000'
+
+["setup:playwright"]
+description = "Install @playwright/mcp deps and download Chromium browser"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Install workspace deps at repo root (hoists @playwright/mcp into node_modules/.pnpm)
+pnpm install --frozen-lockfile
+
+# Use the playwright CLI bundled with @playwright/mcp so browsers match the MCP-required version.
+# The `playwright` entry inside @playwright/mcp's node_modules is a pnpm symlink, which `find`
+# won't traverse by default — use shell globbing instead.
+shopt -s nullglob
+_cli_paths=(node_modules/.pnpm/@playwright+mcp@*/node_modules/playwright/cli.js)
+shopt -u nullglob
+_playwright_cli="${_cli_paths[0]:-}"
+if [ -z "$_playwright_cli" ]; then
+  echo "Error: @playwright/mcp's playwright cli.js not found" >&2
+  exit 1
+fi
+node "$_playwright_cli" install chromium
+
+. .devcontainer/o2-env.sh
+python3 .devcontainer/gen_mcp_json.py
+echo "Playwright MCP ready. Run /mcp in Claude Code to reload."
+"""

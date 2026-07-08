@@ -95,4 +95,9 @@ mise run o2
 # graft:keep-start
 # Project-specific dependencies are listed here.
 
+mise run setup:playwright
+
+echo "Starting wireframe builder..."
+mise run wireframe:up
+
 # graft:keep-end

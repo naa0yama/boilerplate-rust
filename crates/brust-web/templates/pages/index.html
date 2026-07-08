@@ -1,0 +1,11 @@
+{% extends "shells/minimal.html" %}
+{% import "components/welcome_card.html" as cards %}
+{% block title %}Home{% endblock %}
+{% block body %}
+{% call cards::welcome_card(
+    title="Welcome to brust-web",
+    description="Rust + Axum + DaisyUI boilerplate",
+    link_href="/health",
+    link_label="Health Check"
+) %}
+{% endblock %}

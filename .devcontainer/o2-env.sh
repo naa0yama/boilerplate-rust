@@ -3,7 +3,7 @@
 # Ref: https://openobserve.ai/docs/environment-variables
 
 export ZO_ROOT_USER_EMAIL="dev@o2.test"
-export ZO_ROOT_USER_PASSWORD="dev"
+export ZO_ROOT_USER_PASSWORD="P@ssw0rd"
 export ZO_LOCAL_MODE=true
 export ZO_LOCAL_MODE_STORAGE="disk"
 export ZO_DATA_DIR="/tmp/openobserve-data"

@@ -10,6 +10,8 @@ RUST_LOG = "warn,brust=trace"
 # graft:keep-end
 
 [tools]
+node = "24"
+pnpm = "11.10.0"
 "aqua:ast-grep/ast-grep" = "0.44.0"
 "aqua:cli/cli" = "2.95.0"
 "aqua:EmbarkStudios/cargo-deny" = "0.19.9"

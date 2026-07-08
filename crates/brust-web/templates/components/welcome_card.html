@@ -1,0 +1,11 @@
+{% macro welcome_card(title, description, link_href, link_label) %}
+<div class="card bg-base-100 shadow-md max-w-md mx-auto mt-8">
+  <div class="card-body">
+    <h1 class="card-title text-2xl">{{ title }}</h1>
+    <p class="text-base-content/70">{{ description }}</p>
+    <div class="card-actions mt-4">
+      <a href="{{ link_href }}" class="btn btn-primary">{{ link_label }}</a>
+    </div>
+  </div>
+</div>
+{% endmacro %}
