@@ -479,19 +479,18 @@ run = """
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Locate the package.json that declares @playwright/mcp (works before pnpm install)
-_pnpm_dir=$(grep -rl '"@playwright/mcp"' --include='package.json' . \
-  | grep -v node_modules | head -1 | xargs dirname)
-if [ -z "$_pnpm_dir" ]; then
-  echo "Error: no package.json with @playwright/mcp found" >&2
-  exit 1
-fi
+# Install workspace deps at repo root (hoists @playwright/mcp into node_modules/.pnpm)
+pnpm install --frozen-lockfile
 
-pnpm --dir "$_pnpm_dir" install --frozen-lockfile
-
-_playwright_cli=$(find "$_pnpm_dir/node_modules/.pnpm" -name "cli.js" -path "*/playwright/cli.js" | head -1)
+# Use the playwright CLI bundled with @playwright/mcp so browsers match the MCP-required version.
+# The `playwright` entry inside @playwright/mcp's node_modules is a pnpm symlink, which `find`
+# won't traverse by default — use shell globbing instead.
+shopt -s nullglob
+_cli_paths=(node_modules/.pnpm/@playwright+mcp@*/node_modules/playwright/cli.js)
+shopt -u nullglob
+_playwright_cli="${_cli_paths[0]:-}"
 if [ -z "$_playwright_cli" ]; then
-  echo "Error: playwright cli.js not found in pnpm store" >&2
+  echo "Error: @playwright/mcp's playwright cli.js not found" >&2
   exit 1
 fi
 node "$_playwright_cli" install chromium

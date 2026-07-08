@@ -166,6 +166,8 @@ ENV CARGO_HOME=/home/${USER_NAME}/.cargo
 RUN echo "**** Directory Create ****" && \
 	set -euxo pipefail && \
 	mkdir -p \
+	~/.cache \
+	~/.cache/ms-playwright/ \
 	~/.claude \
 	~/.config \
 	~/.config/gh \

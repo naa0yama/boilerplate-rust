@@ -2,7 +2,6 @@
 	"name": "brust-frontend",
 	"private": true,
 	"devDependencies": {
-		"@playwright/mcp": "0.0.77",
 		"@fontsource/ibm-plex-mono": "5.2.5",
 		"@fontsource/ibm-plex-sans-jp": "5.2.5",
 		"@tailwindcss/cli": "4.3.2",
