@@ -10,7 +10,7 @@ struct IndexTemplate;
 /// Renders the index page as HTML.
 pub async fn handler() -> impl IntoResponse {
     IndexTemplate.render().map_or_else(
-        |_| axum::http::StatusCode::INTERNAL_SERVER_ERROR.into_response(),
+        |_| axum::http::StatusCode::INTERNAL_SERVER_ERROR.into_response(), // NOTEST(unreachable): Askama render() never fails for a compile-validated template
         |html| Html(html).into_response(),
     )
 }

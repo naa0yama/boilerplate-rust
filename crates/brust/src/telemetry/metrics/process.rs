@@ -299,6 +299,17 @@ mod tests {
         (provider, exporter)
     }
 
+    #[test]
+    #[cfg_attr(miri, ignore)]
+    fn process_handles_debug_format() {
+        let (provider, _exporter) = test_provider();
+        let meter = provider.meter("test");
+        let handles = ProcessMetricHandles::register(&meter);
+        let s = format!("{handles:?}");
+        assert!(s.contains("ProcessMetricHandles"), "Debug output was: {s}");
+        provider.shutdown().unwrap();
+    }
+
     fn find_metric_names(
         metrics: &[opentelemetry_sdk::metrics::data::ResourceMetrics],
     ) -> Vec<String> {
@@ -362,7 +373,7 @@ mod tests {
                 .data_points()
                 .map(opentelemetry_sdk::metrics::data::SumDataPoint::value)
                 .sum::<i64>(),
-            other => panic!("unexpected metric type: {other:?}"),
+            other => panic!("unexpected metric type: {other:?}"), // NOTEST(unreachable): exhaustive guard; OTel SDK returns expected type
         };
         assert!(value > 0, "RSS should be positive, got {value}");
 
@@ -396,7 +407,7 @@ mod tests {
                         .map(|kv| kv.value.as_str().into_owned())
                 })
                 .collect(),
-            other => panic!("unexpected metric type: {other:?}"),
+            other => panic!("unexpected metric type: {other:?}"), // NOTEST(unreachable): exhaustive guard; OTel SDK returns expected type
         };
 
         assert!(
@@ -435,7 +446,7 @@ mod tests {
                 .map(opentelemetry_sdk::metrics::data::GaugeDataPoint::value)
                 .next()
                 .expect("no data points"),
-            other => panic!("unexpected metric type: {other:?}"),
+            other => panic!("unexpected metric type: {other:?}"), // NOTEST(unreachable): exhaustive guard; OTel SDK returns expected type
         };
         assert!(value >= 0.0, "uptime should be non-negative, got {value}");
 

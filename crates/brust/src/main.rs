@@ -119,7 +119,6 @@ fn build_resource() -> opentelemetry_sdk::Resource {
         .build()
 }
 
-// NOTEST(cfg): OTel init requires OTLP endpoint — covered by integration trace tests
 /// Initialize `OTel` tracing, logging, and metrics providers.
 #[cfg(feature = "otel")]
 fn init_otel() -> OtelProviders {
@@ -202,27 +201,26 @@ fn init_otel() -> OtelProviders {
     (tp, mp, lp)
 }
 
-// NOTEST(cfg): OTel shutdown requires live providers — covered by integration trace tests
 /// Shut down `OTel` providers in reverse initialization order.
 #[cfg(feature = "otel")]
 fn shutdown_otel((tracer_provider, meter_provider, logger_provider): OtelProviders) {
     if let Some(provider) = tracer_provider
         && let Err(e) = provider.shutdown()
     {
-        tracing::warn!("failed to shutdown OTel tracer provider: {e}");
+        tracing::warn!("failed to shutdown OTel tracer provider: {e}"); // NOTEST(unreachable): provider.shutdown() Err requires broken provider
     }
     if let Some(provider) = meter_provider {
         if let Err(e) = provider.force_flush() {
-            tracing::warn!("failed to flush OTel meter provider: {e}");
+            tracing::warn!("failed to flush OTel meter provider: {e}"); // NOTEST(unreachable): provider.force_flush() Err requires broken provider
         }
         if let Err(e) = provider.shutdown() {
-            tracing::warn!("failed to shutdown OTel meter provider: {e}");
+            tracing::warn!("failed to shutdown OTel meter provider: {e}"); // NOTEST(unreachable): provider.shutdown() Err requires broken provider
         }
     }
     if let Some(provider) = logger_provider
         && let Err(e) = provider.shutdown()
     {
-        tracing::warn!("failed to shutdown OTel logger provider: {e}");
+        tracing::warn!("failed to shutdown OTel logger provider: {e}"); // NOTEST(unreachable): provider.shutdown() Err requires broken provider
     }
 }
 
@@ -244,6 +242,7 @@ pub fn run(name: &str, gender: Option<&str>, meters: &Meters) {
             meters.record_greeting_error("invalid_gender");
         }
         Err(GreetingError::UnknownGender) => {
+            // NOTEST(unreachable): sayhello() never returns UnknownGender; exhaustive guard only
             meters.record_greeting("none");
             meters.record_greeting_error("unknown");
         }

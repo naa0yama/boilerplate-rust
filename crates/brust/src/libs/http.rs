@@ -86,7 +86,7 @@ mod tests {
             .expect("bind failed");
         let addr: SocketAddr = listener.local_addr().expect("local_addr failed");
         tokio::spawn(async move {
-            axum::serve(listener, app).await.expect("server error");
+            axum::serve(listener, app).await.expect("server error"); // NOTEST(unreachable): test server panic path; unreachable in passing tests
         });
 
         let url = format!("http://127.0.0.1:{}/", addr.port());

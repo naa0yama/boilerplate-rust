@@ -51,6 +51,11 @@ templates/
 | `serve [--bind]` | Start Axum HTTP server (default: `0.0.0.0:3000`) |
 | `version`        | Print crate version from `CARGO_PKG_VERSION`     |
 
+On startup, `serve` logs the resolved local socket address (`local_addr`) so
+tests and operators can discover the actual bound port when `--bind` uses
+port `0`. The server shuts down gracefully on `SIGINT` (Ctrl-C) and, on
+Unix targets, `SIGTERM`.
+
 ## build.rs Behavior
 
 1. Checks for `CSS_PIPELINE_STUB=1` env var or pnpm absence → stub mode (empty assets)

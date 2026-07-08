@@ -176,7 +176,7 @@ mod tests {
 
     use super::*;
     use axum::body::Body;
-    use http::{Method, Request};
+    use http::{Method, Request, Version};
 
     #[test]
     fn make_span_does_not_panic_on_minimal_request() {
@@ -231,5 +231,112 @@ mod tests {
             .unwrap();
 
         assert_eq!(response.status().as_u16(), 200);
+    }
+
+    #[test]
+    fn make_span_http_versions() {
+        let mut maker = OtelHttpServerMakeSpan;
+        for version in [Version::HTTP_09, Version::HTTP_2, Version::HTTP_3] {
+            let req = Request::builder()
+                .method(Method::GET)
+                .uri("/")
+                .version(version)
+                .body(Body::empty())
+                .unwrap();
+            let _span = maker.make_span(&req);
+        }
+    }
+
+    #[test]
+    fn on_response_5xx_records_error_type() {
+        let response = http::Response::builder()
+            .status(500)
+            .body(Body::empty())
+            .unwrap();
+        let span = tracing::info_span!("test");
+        OtelOnResponse.on_response(&response, std::time::Duration::ZERO, &span);
+    }
+
+    #[tokio::test]
+    async fn server_metrics_mw_records_5xx() {
+        use axum::{Router, routing::get};
+        use http::StatusCode;
+        use tower::ServiceExt;
+
+        #[cfg(feature = "otel")]
+        {
+            let provider = opentelemetry_sdk::metrics::SdkMeterProvider::builder().build();
+            opentelemetry::global::set_meter_provider(provider);
+        }
+
+        let meters = Arc::new(Meters::new());
+        let app: Router = Router::new()
+            .route(
+                "/error",
+                get(|| async { StatusCode::INTERNAL_SERVER_ERROR }),
+            )
+            .layer(axum::middleware::from_fn_with_state(
+                Arc::clone(&meters),
+                server_metrics_mw,
+            ));
+
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/error")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status().as_u16(), 500);
+    }
+
+    #[cfg(feature = "otel")]
+    #[test]
+    fn header_extractor_get_and_keys() {
+        let mut headers = http::HeaderMap::new();
+        headers.insert("traceparent", "00-abc-def-01".parse().unwrap());
+        headers.insert("tracestate", "vendor=value".parse().unwrap());
+        let extractor = HeaderExtractor(&headers);
+        assert_eq!(extractor.get("traceparent"), Some("00-abc-def-01"));
+        assert!(extractor.get("nonexistent").is_none());
+        let keys = extractor.keys();
+        assert!(keys.contains(&"traceparent"));
+        assert!(keys.contains(&"tracestate"));
+    }
+
+    #[tokio::test]
+    async fn server_metrics_mw_no_matched_path_uses_uri() {
+        use axum::{Router, routing::get};
+        use tower::ServiceExt;
+
+        #[cfg(feature = "otel")]
+        {
+            let provider = opentelemetry_sdk::metrics::SdkMeterProvider::builder().build();
+            opentelemetry::global::set_meter_provider(provider);
+        }
+
+        let meters = Arc::new(Meters::new());
+        let app: Router = Router::new()
+            .route("/health", get(|| async { "ok" }))
+            .layer(axum::middleware::from_fn_with_state(
+                Arc::clone(&meters),
+                server_metrics_mw,
+            ));
+
+        // Request to an unregistered path: MatchedPath is None, fallback uses URI path.
+        let response = app
+            .oneshot(
+                Request::builder()
+                    .uri("/unregistered")
+                    .body(Body::empty())
+                    .unwrap(),
+            )
+            .await
+            .unwrap();
+
+        assert_eq!(response.status().as_u16(), 404);
     }
 }

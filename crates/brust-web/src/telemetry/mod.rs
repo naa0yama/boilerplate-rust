@@ -44,22 +44,21 @@ impl TelemetryGuard {
         } = self
         {
             if let Err(e) = tracer_provider.shutdown() {
-                tracing::warn!("failed to shutdown OTel tracer provider: {e}");
+                tracing::warn!("failed to shutdown OTel tracer provider: {e}"); // NOTEST(unreachable): provider.shutdown() Err requires broken provider
             }
             if let Err(e) = meter_provider.force_flush() {
-                tracing::warn!("failed to flush OTel meter provider: {e}");
+                tracing::warn!("failed to flush OTel meter provider: {e}"); // NOTEST(unreachable): provider.force_flush() Err requires broken provider
             }
             if let Err(e) = meter_provider.shutdown() {
-                tracing::warn!("failed to shutdown OTel meter provider: {e}");
+                tracing::warn!("failed to shutdown OTel meter provider: {e}"); // NOTEST(unreachable): provider.shutdown() Err requires broken provider
             }
             if let Err(e) = logger_provider.shutdown() {
-                tracing::warn!("failed to shutdown OTel logger provider: {e}");
+                tracing::warn!("failed to shutdown OTel logger provider: {e}"); // NOTEST(unreachable): provider.shutdown() Err requires broken provider
             }
         }
     }
 }
 
-// NOTEST(cfg): OTel init requires OTLP endpoint — covered by integration trace tests
 /// Initialise `OTel` tracing, metrics, and logging providers.
 ///
 /// Returns [`TelemetryGuard::Disabled`] when `OTEL_EXPORTER_OTLP_ENDPOINT` is unset.
@@ -181,4 +180,53 @@ fn build_resource(
             opentelemetry::KeyValue::new(attribute::VCS_REF_HEAD_REVISION, git_hash),
         ])
         .build()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn disabled_debug_format() {
+        assert_eq!(
+            format!("{:?}", TelemetryGuard::Disabled),
+            "TelemetryGuard::Disabled",
+        );
+    }
+
+    #[test]
+    fn disabled_shutdown_no_panic() {
+        TelemetryGuard::Disabled.shutdown();
+    }
+
+    #[cfg(feature = "otel")]
+    #[test]
+    fn otlp_debug_format() {
+        use opentelemetry_sdk::logs::SdkLoggerProvider;
+        use opentelemetry_sdk::metrics::SdkMeterProvider;
+        use opentelemetry_sdk::trace::SdkTracerProvider;
+
+        let guard = TelemetryGuard::Otlp {
+            tracer_provider: SdkTracerProvider::builder().build(),
+            meter_provider: SdkMeterProvider::builder().build(),
+            logger_provider: SdkLoggerProvider::builder().build(),
+        };
+        let s = format!("{guard:?}");
+        assert!(s.contains("TelemetryGuard::Otlp"), "unexpected: {s}");
+    }
+
+    #[cfg(feature = "otel")]
+    #[test]
+    fn otlp_shutdown_no_panic() {
+        use opentelemetry_sdk::logs::SdkLoggerProvider;
+        use opentelemetry_sdk::metrics::SdkMeterProvider;
+        use opentelemetry_sdk::trace::SdkTracerProvider;
+
+        let guard = TelemetryGuard::Otlp {
+            tracer_provider: SdkTracerProvider::builder().build(),
+            meter_provider: SdkMeterProvider::builder().build(),
+            logger_provider: SdkLoggerProvider::builder().build(),
+        };
+        guard.shutdown();
+    }
 }

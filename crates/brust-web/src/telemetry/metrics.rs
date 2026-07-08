@@ -106,4 +106,20 @@ mod tests {
         opentelemetry::global::set_meter_provider(provider);
         let _meters = Meters::new();
     }
+
+    #[test]
+    fn meters_debug_format() {
+        let provider = SdkMeterProvider::builder().build();
+        opentelemetry::global::set_meter_provider(provider);
+        let meters = Meters::new();
+        let s = format!("{meters:?}");
+        assert!(s.contains("Meters"), "Debug output was: {s}");
+    }
+
+    #[test]
+    fn meters_default_is_same_as_new() {
+        let provider = SdkMeterProvider::builder().build();
+        opentelemetry::global::set_meter_provider(provider);
+        let _meters = Meters::default();
+    }
 }

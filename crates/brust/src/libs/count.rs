@@ -52,7 +52,7 @@ mod tests {
         assert_eq!(results.len(), 1);
         assert!(
             (1..=5).contains(&results[0].duration_secs),
-            "duration_secs should be between 1 and 5, got {}",
+            "duration_secs should be between 1 and 5, got {}", // NOTEST(unreachable): assertion format arg; only reached when test fails
             results[0].duration_secs
         );
     }

@@ -51,15 +51,16 @@ async fn main() -> anyhow::Result<()> {
             let listener = TcpListener::bind(&args.bind)
                 .await
                 .with_context(|| format!("failed to bind to {}", args.bind))?;
-            tracing::info!(port = %args.bind, "server started");
+            let local_addr = listener
+                .local_addr()
+                .context("failed to get local address")?;
+            tracing::info!(port = %local_addr, "server started");
 
             axum::serve(
                 listener,
                 router.into_make_service_with_connect_info::<SocketAddr>(),
             )
-            .with_graceful_shutdown(async {
-                tokio::signal::ctrl_c().await.ok();
-            })
+            .with_graceful_shutdown(shutdown_signal())
             .await
             .context("server error")?;
 
@@ -67,4 +68,24 @@ async fn main() -> anyhow::Result<()> {
         }
     }
     Ok(())
+}
+
+#[cfg(unix)]
+async fn shutdown_signal() {
+    use tokio::signal::unix::{SignalKind, signal};
+    let mut sigterm = signal(SignalKind::terminate()).ok();
+    tokio::select! {
+        () = async { tokio::signal::ctrl_c().await.ok(); } => {},
+        () = async {
+            match sigterm.as_mut() {
+                Some(st) => { st.recv().await; }
+                None => std::future::pending::<()>().await, // NOTEST(unreachable): signal() only fails on non-unix; cfg(unix) guarantees success
+            }
+        } => {},
+    }
+}
+
+#[cfg(not(unix))]
+async fn shutdown_signal() {
+    tokio::signal::ctrl_c().await.ok();
 }

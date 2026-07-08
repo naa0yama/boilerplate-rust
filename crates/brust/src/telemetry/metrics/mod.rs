@@ -224,6 +224,7 @@ impl Meters {
 mod tests {
     #![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 
+    use super::Meters;
     use crate::telemetry::conventions::{attribute as brust_attr, metric as brust_metric};
     use opentelemetry::metrics::MeterProvider as _;
     use opentelemetry_sdk::metrics::{
@@ -278,7 +279,7 @@ mod tests {
                 .data_points()
                 .map(opentelemetry_sdk::metrics::data::SumDataPoint::value)
                 .sum::<u64>(),
-            other => panic!("unexpected metric type: {other:?}"),
+            other => panic!("unexpected metric type: {other:?}"), // NOTEST(unreachable): exhaustive guard; OTel SDK returns expected type
         };
         assert_eq!(total, 3);
 
@@ -311,7 +312,7 @@ mod tests {
                 let dp = hist.data_points().next().expect("no data points");
                 (dp.count(), dp.sum())
             }
-            other => panic!("unexpected metric type: {other:?}"),
+            other => panic!("unexpected metric type: {other:?}"), // NOTEST(unreachable): exhaustive guard; OTel SDK returns expected type
         };
         assert_eq!(count, 3);
         assert!((sum - 9.0).abs() < f64::EPSILON);
@@ -345,10 +346,20 @@ mod tests {
                 .data_points()
                 .map(opentelemetry_sdk::metrics::data::SumDataPoint::value)
                 .sum::<i64>(),
-            other => panic!("unexpected metric type: {other:?}"),
+            other => panic!("unexpected metric type: {other:?}"), // NOTEST(unreachable): exhaustive guard; OTel SDK returns expected type
         };
         assert_eq!(value, 1);
 
+        provider.shutdown().unwrap();
+    }
+
+    #[test]
+    fn meters_debug_format() {
+        let provider = opentelemetry_sdk::metrics::SdkMeterProvider::builder().build();
+        opentelemetry::global::set_meter_provider(provider.clone());
+        let meters = Meters::new();
+        let s = format!("{meters:?}");
+        assert!(s.contains("Meters"), "Debug output was: {s}");
         provider.shutdown().unwrap();
     }
 
@@ -385,7 +396,7 @@ mod tests {
                 let dp = hist.data_points().next().expect("no data points");
                 (dp.count(), dp.sum())
             }
-            other => panic!("unexpected metric type: {other:?}"),
+            other => panic!("unexpected metric type: {other:?}"), // NOTEST(unreachable): exhaustive guard; OTel SDK returns expected type
         };
         assert_eq!(count, 1);
         assert!((sum - 0.123).abs() < 1e-9);
