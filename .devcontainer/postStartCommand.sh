@@ -97,4 +97,7 @@ mise run o2
 
 mise run setup:playwright
 
+echo "Starting wireframe builder..."
+mise run wireframe:up
+
 # graft:keep-end

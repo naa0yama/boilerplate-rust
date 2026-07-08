@@ -465,9 +465,49 @@ pkill -x openobserve 2>/dev/null && while pgrep -x openobserve > /dev/null; do s
 description = "Setup Traefik as systemd user service for devcontainer routing (run once on host)"
 run = "graft denv traefik setup"
 
-["wireframe"]
-description = "Launch GrapesJS wireframe builder"
-run = "pnpm --dir tools/wireframe exec serve . -l 3001"
+["wireframe:up"]
+description = "Start GrapesJS wireframe builder in background (port 3001)"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+_pidfile="/tmp/wireframe.pid"
+if [ -f "$_pidfile" ] && kill -0 "$(cat "$_pidfile")" 2>/dev/null; then
+  echo "wireframe already running (pid $(cat "$_pidfile"))"
+  exit 0
+fi
+
+_root="$(pwd)"
+setsid bash -c "cd '${_root}' && pnpm --dir tools/wireframe exec serve . -l 3001" \
+  >/tmp/wireframe.log 2>&1 &
+echo $! > "$_pidfile"
+
+timeout 30 bash -c 'until curl -sf --max-time 1 http://localhost:3001/ >/dev/null 2>&1; do sleep 0.3; done' \
+  || { echo "Error: wireframe failed to become ready (see /tmp/wireframe.log)" >&2; exit 1; }
+echo "wireframe started (http://localhost:3001, pid $(cat "$_pidfile"))"
+"""
+
+["wireframe:down"]
+description = "Stop GrapesJS wireframe builder"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+_pidfile="/tmp/wireframe.pid"
+if [ ! -f "$_pidfile" ]; then
+  echo "wireframe not running (no pidfile)"
+  exit 0
+fi
+_pid=$(cat "$_pidfile")
+if kill -0 "$_pid" 2>/dev/null; then
+  # kill process group to reap child node process spawned by setsid
+  kill -TERM -"$_pid" 2>/dev/null || kill -TERM "$_pid" 2>/dev/null || true
+  for _ in $(seq 1 20); do kill -0 "$_pid" 2>/dev/null || break; sleep 0.1; done
+  kill -0 "$_pid" 2>/dev/null && kill -KILL -"$_pid" 2>/dev/null || true
+fi
+rm -f "$_pidfile"
+echo "wireframe stopped"
+"""
 
 ["brust-web:serve"]
 description = "Start brust-web dev server"

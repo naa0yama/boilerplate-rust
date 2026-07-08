@@ -63,6 +63,11 @@
 			"label": "WebGUI",
 			"requireLocalPort": false
 		},
+		"3001": {
+			"onAutoForward": "notify",
+			"label": "wireframe tool",
+			"requireLocalPort": false
+		},
 		"5080": {
 			"onAutoForward": "notify",
 			"label": "OpenObserve UI",
