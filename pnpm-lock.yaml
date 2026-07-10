@@ -10,20 +10,20 @@ importers:
   crates/brust-web:
     devDependencies:
       "@fontsource/ibm-plex-mono":
-        specifier: 5.2.5
-        version: 5.2.5
+        specifier: 5.2.7
+        version: 5.2.7
       "@fontsource/ibm-plex-sans-jp":
-        specifier: 5.2.5
-        version: 5.2.5
+        specifier: 5.2.8
+        version: 5.2.8
       "@tailwindcss/cli":
         specifier: 4.3.2
         version: 4.3.2
       daisyui:
-        specifier: 5.6.5
-        version: 5.6.5
+        specifier: 5.6.14
+        version: 5.6.14
       htmx.org:
-        specifier: 2.0.4
-        version: 2.0.4
+        specifier: 2.0.10
+        version: 2.0.10
       tailwindcss:
         specifier: 4.3.2
         version: 4.3.2
@@ -37,27 +37,27 @@ importers:
         specifier: 4.3.2
         version: 4.3.2
       daisyui:
-        specifier: 5.6.5
-        version: 5.6.5
+        specifier: 5.6.14
+        version: 5.6.14
       grapesjs:
         specifier: 0.23.2
         version: 0.23.2
       playwright:
-        specifier: 1.52.0
-        version: 1.52.0
+        specifier: 1.61.1
+        version: 1.61.1
       serve:
         specifier: 14.2.6
         version: 14.2.6
 
 packages:
-  "@fontsource/ibm-plex-mono@5.2.5":
+  "@fontsource/ibm-plex-mono@5.2.7":
     resolution: {
-      integrity: sha512-G09N3GfuT9qj3Ax2FDZvKqZttzM3v+cco2l8uXamhKyXLdmlaUDH5o88/C3vtTHj2oT7yRKsvxz9F+BXbWKMYA==,
+      integrity: sha512-MKAb8qV+CaiMQn2B0dIi1OV3565NYzp3WN5b4oT6LTkk+F0jR6j0ZN+5BKJiIhffDC3rtBULsYZE65+0018z9w==,
     }
 
-  "@fontsource/ibm-plex-sans-jp@5.2.5":
+  "@fontsource/ibm-plex-sans-jp@5.2.8":
     resolution: {
-      integrity: sha512-UX/RF8hWsdFF1Kp/ceGMh9RLw/UBZyTI/dtPawSrkM0T3TwIXGUoop6UwaiKxONQqGkRAGhBBJI+D9iFsRM9Sg==,
+      integrity: sha512-ULgJLBVJEBIKBddVFla4PiOCHM4a7wjThS9FtMbmc9YehcYmnuMtF8/mi9ItZobHpQGwChzF/7ujoUTs+cYbZw==,
     }
 
   "@jridgewell/gen-mapping@0.3.13":
@@ -532,9 +532,9 @@ packages:
     }
     engines: { node: ">= 8" }
 
-  daisyui@5.6.5:
+  daisyui@5.6.14:
     resolution: {
-      integrity: sha512-pPQf1se8nDymB5uccN0eTFABwpDViYmq4ygN2YNX+/KFZDk9IYKT5Pdn+rkcHkOXowRObCampMjm/ZX1lU5VYg==,
+      integrity: sha512-PFDSzWbCSok8jNFprlJh3qzat1HeigsX8RKChHrjY8UFBB79idGP17Gtmcv5CaH4EyyhvIn8DDtua4sk6dRzOQ==,
     }
 
   debug@2.6.9:
@@ -643,9 +643,9 @@ packages:
       integrity: sha512-8nxjcBcd8wovbeKx7h3wTji4e6+rhaVuPNpMqwWgnHh+N9ToqsCs6XztWRBPQ+UtzsoMAdKZtUENoVzU/EMtZA==,
     }
 
-  htmx.org@2.0.4:
+  htmx.org@2.0.10:
     resolution: {
-      integrity: sha512-HLxMCdfXDOJirs3vBZl/ZLoY+c7PfM4Ahr2Ad4YXh6d22T5ltbTXFFkpx9Tgb2vvmWFMbIc3LqN2ToNkZJvyYQ==,
+      integrity: sha512-kdeJe7ZVwaS6QMz/ebBIVtZdpwen6L0OQ5GOhPV9MKBb196TCZeZu4yA7ZIQsaLKv7EpXz+So7KSXNuHXhj7Cw==,
     }
 
   human-signals@2.1.0:
@@ -939,9 +939,9 @@ packages:
     }
     engines: { node: ">=8.6" }
 
-  playwright-core@1.52.0:
+  playwright-core@1.61.1:
     resolution: {
-      integrity: sha512-l2osTgLXSMeuLZOML9qYODUQoPPnUsKsb5/P6LJ2e6uPKXUdPK5WYhN4z03G+YNbWmGDY4YENauNu4ZKczreHg==,
+      integrity: sha512-h7Qlt6m4REp25qvIdvbDtVmD4LqVXfpRxhORv9L0jzETM05p4fuPJ3dKyuSXQxDSbXnmS79HAgi9589lGSpLkg==,
     }
     engines: { node: ">=18" }
     hasBin: true
@@ -953,9 +953,9 @@ packages:
     engines: { node: ">=18" }
     hasBin: true
 
-  playwright@1.52.0:
+  playwright@1.61.1:
     resolution: {
-      integrity: sha512-JAwMNMBlxJ2oD1kce4KPtMkDeKGHQstdpFPcPH3maElAXon/QZeTvtsfXmTMRyO9TslfoYOXkSsvao2nE1ilTw==,
+      integrity: sha512-DWnY5o3YbLWK4GovuAVwpqL+1VwGNdUGrRr++8j8PtQQzvAVZUIMjKQ90fY689sEJZJBbZVw1rXaOKSTitkzPQ==,
     }
     engines: { node: ">=18" }
     hasBin: true
@@ -1142,9 +1142,9 @@ packages:
     engines: { node: ">=12" }
 
 snapshots:
-  "@fontsource/ibm-plex-mono@5.2.5": {}
+  "@fontsource/ibm-plex-mono@5.2.7": {}
 
-  "@fontsource/ibm-plex-sans-jp@5.2.5": {}
+  "@fontsource/ibm-plex-sans-jp@5.2.8": {}
 
   "@jridgewell/gen-mapping@0.3.13":
     dependencies:
@@ -1431,7 +1431,7 @@ snapshots:
       shebang-command: 2.0.0
       which: 2.0.2
 
-  daisyui@5.6.5: {}
+  daisyui@5.6.14: {}
 
   debug@2.6.9:
     dependencies:
@@ -1496,7 +1496,7 @@ snapshots:
 
   html-entities@1.4.0: {}
 
-  htmx.org@2.0.4: {}
+  htmx.org@2.0.10: {}
 
   human-signals@2.1.0: {}
 
@@ -1632,13 +1632,13 @@ snapshots:
 
   picomatch@2.3.2: {}
 
-  playwright-core@1.52.0: {}
+  playwright-core@1.61.1: {}
 
   playwright-core@1.62.0-alpha-2026-06-29: {}
 
-  playwright@1.52.0:
+  playwright@1.61.1:
     dependencies:
-      playwright-core: 1.52.0
+      playwright-core: 1.61.1
     optionalDependencies:
       fsevents: 2.3.2
 
