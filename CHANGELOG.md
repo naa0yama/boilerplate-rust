@@ -2,6 +2,27 @@
 
 ## What's Changed
 
+### Bug Fixes 🐌
+
+- fix(ci/deps): add pnpm to rust-ci gate and sync daisyui lockfile by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/664
+
+### Development Environment 🔧
+
+- chore(deps): update docker/login-action action to v4.4.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/659
+- chore(deps): update taiki-e/install-action action to v2.82.8 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/661
+- chore(deps): update dependency aqua:ast-grep/ast-grep to v0.44.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/665
+
+### Other Changes
+
+- chore(deps): update dependency daisyui to v5.6.15 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/662
+- chore(deps): update dependency daisyui to v5.6.16 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/663
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.26...v0.1.27
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
 ### Features 🎉
 
 - feat(brust-web): add brust-web crate, wireframe tooling, and coverage boost to 97% by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/645
