@@ -52,6 +52,9 @@ jobs:
                 /^\.github\/workflows\/rust-ci\.yaml$/,
                 /^ast-rules\/.*\.yml$/,
                 /^rust-toolchain\.toml$/,
+                /package\.json$/,
+                /^pnpm-lock\.yaml$/,
+                /^pnpm-workspace\.yaml$/,
               ],
               miri: [
                 /\.rs$/,
