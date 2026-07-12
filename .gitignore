@@ -50,9 +50,6 @@ src-tauri/gen/
 *.msi
 *.nsis
 
-# graft:keep-start
-# Project-specific dependencies are listed here.
-
 # pnpm (brust-web asset pipeline)
 node_modules/
 .pnpm-store/
@@ -60,6 +57,9 @@ node_modules/
 
 # Playwright MCP scratch (page snapshots / console logs / ad-hoc screenshots)
 .playwright-mcp/
+
+# graft:keep-start
+# Project-specific dependencies are listed here.
 
 # graft:keep-end
 
