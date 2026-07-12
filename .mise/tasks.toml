@@ -509,7 +509,7 @@ rm -f "$_pidfile"
 echo "wireframe stopped"
 """
 
-["brust-web:serve"]
+["web:serve"]
 description = "Start brust-web dev server"
 run = 'cargo run -p brust-web -- serve --bind 0.0.0.0:3000'
 
@@ -533,7 +533,7 @@ if [ -z "$_playwright_cli" ]; then
   echo "Error: @playwright/mcp's playwright cli.js not found" >&2
   exit 1
 fi
-node "$_playwright_cli" install chromium
+node "$_playwright_cli" install --with-deps chromium
 
 . .devcontainer/o2-env.sh
 python3 .devcontainer/gen_mcp_json.py

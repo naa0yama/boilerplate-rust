@@ -74,20 +74,22 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
 	libatk-bridge2.0-0 \
 	libatk1.0-0 \
 	libatspi2.0-0 \
+	libcairo2 \
 	libcups2 \
 	libdbus-1-3 \
 	libgbm1 \
 	libnss3 \
+	libpango-1.0-0 \
 	libxcomposite1 \
 	libxdamage1 \
 	libxfixes3 \
 	libxkbcommon0 \
 	libxrandr2
 
-# graft:keep-start
+# graft:keep-start deps packages
 # Project-specific dependencies are listed here.
 
-# graft:keep-end
+# graft:keep-end deps packages
 
 RUN echo "**** Create user ****" && \
 	set -euxo pipefail && \
@@ -231,7 +233,7 @@ alias cc="claude"
 _DOC_
 EOF
 
-# graft:keep-start
+# graft:keep-start end anchor
 # Project-specific dependencies are listed here.
 
-# graft:keep-end
+# graft:keep-end end anchor

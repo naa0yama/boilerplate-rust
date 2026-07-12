@@ -478,6 +478,17 @@ files:
   - path: ast-rules/no-real-ipv6.yml
     strategy: replace
 
+  # tools/wireframe
+  - path: tools/wireframe/README.md
+    strategy: replace
+  - path: tools/wireframe/blocks/daisy-blocks.js
+    strategy: replace
+  - path: tools/wireframe/index.html
+    strategy: replace
+  - path: tools/wireframe/package.json
+    strategy: replace
+    preserve_markers: true
+
   # docs/o2-dashboards
   - path: docs/o2-dashboards/.gitkeep
     strategy: replace
