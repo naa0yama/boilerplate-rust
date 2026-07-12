@@ -301,8 +301,16 @@ jobs:
             | jq -Rsc '{"encoding":"base64","content":.}' \
             | gh api "repos/${GITHUB_REPOSITORY}/git/blobs" --method POST --input - --jq '.sha')
 
-          # Get current badges branch state
-          head_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/refs/heads/badges" --jq '.object.sha')
+          # Get current badges branch state (auto-initialize if branch does not exist)
+          if ! head_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/refs/heads/badges" --jq '.object.sha' 2>/dev/null); then
+            empty_tree=$(printf '{"tree":[]}' \
+              | gh api "repos/${GITHUB_REPOSITORY}/git/trees" --method POST --input - --jq '.sha')
+            init_commit=$(printf '{"message":"Initialize badges branch","tree":"%s","parents":[]}' "$empty_tree" \
+              | gh api "repos/${GITHUB_REPOSITORY}/git/commits" --method POST --input - --jq '.sha')
+            printf '{"ref":"refs/heads/badges","sha":"%s"}' "$init_commit" \
+              | gh api "repos/${GITHUB_REPOSITORY}/git/refs" --method POST --input -
+            head_sha=$init_commit
+          fi
           tree_sha=$(gh api "repos/${GITHUB_REPOSITORY}/git/commits/${head_sha}" --jq '.tree.sha')
 
           # Skip if content unchanged (compare blob SHAs)
