@@ -5,6 +5,9 @@ upstream:
 spec:
   visibility: public
   archived: false
+  topics:
+    - boilerplate
+    - rust
   features:
     issues: true
     projects: false
@@ -296,6 +299,8 @@ files:
   # .devcontainer
   - path: .devcontainer/devcontainer.json
     strategy: replace
+  - path: .devcontainer/gen_mcp_json.py
+    strategy: replace
   - path: .devcontainer/initializeCommand.sh
     strategy: replace
   - path: .devcontainer/o2-env.sh
@@ -521,6 +526,12 @@ files:
   - path: dprint.jsonc
     strategy: replace
   - path: mise.toml
+    strategy: replace
+    preserve_markers: true
+  - path: package.json
+    strategy: replace
+    preserve_markers: true
+  - path: pnpm-workspace.yaml
     strategy: replace
     preserve_markers: true
   - path: renovate.json
