@@ -17,6 +17,8 @@ target
 .claude/*.local.json
 .claude/artifacts/
 .claude/scheduled_tasks.lock
+.claude/skills/cc-plugin-claude-*
+.claude/skills/deps-sync-rust-pwa-stack/
 .claude/skills/lib-*/SKILL.md
 .claude/skills/tool-*/SKILL.md
 
