@@ -9,6 +9,20 @@
 For universal Miri rules and decision flowchart, see
 `~/.claude/skills/rust-implementation/references/testing.md` → "Miri" section.
 
+### Stats (as of 2026-07-12)
+
+- Total test functions: 77
+- `#[cfg_attr(miri, ignore)]` annotations: 25
+- Crate-level Miri exclusions: 0
+
+Breakdown by location:
+
+- `crates/brust/tests/integration_test.rs`: 15 (process spawning + HTTP server)
+- `crates/brust/src/telemetry/metrics/process.rs`: 5 (sysinfo/sysconf)
+- `crates/brust/src/libs/http.rs`: 2 (reqwest blocking)
+- `crates/brust-web/tests/integration_test.rs`: 2 (HTTP server)
+- `crates/brust-web/tests/telemetry_integration.rs`: 2 (OTel + HTTP server)
+
 ### Per-Test Skip Categories
 
 1. **File system (tempfile)** — Tests using `tempfile::tempdir()` or real file I/O. Miri has limited file system support.
