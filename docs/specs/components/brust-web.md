@@ -90,3 +90,8 @@ src/
 
 See [otel-instrumentation.md](../architecture/otel-instrumentation.md) for the full
 3-signal specification.
+
+## Test Coverage
+
+See [testing.md](../architecture/testing.md) for the coverage strategy and
+history (baseline 74.16% → 97.01%, `NOTEST(unreachable)` policy).

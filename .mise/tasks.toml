@@ -41,7 +41,10 @@ rejected=""
 while IFS= read -r f; do
   dir=$(dirname "$f")
   plan="$dir/PLAN.md"
-  # task dir with an active PLAN.md → in progress, skip entire dir
+  # plans/ (at any depth) holds brainstorming specs, never a task-slug dir —
+  # a PLAN.md placed there must not exempt sibling spec files
+  [[ "$dir" == ".claude/artifacts/plans" || "$dir" == .claude/artifacts/plans/* ]] && plan=""
+  # task-slug dir with an active PLAN.md → in progress, skip entire dir
   if [[ -f "$plan" ]] && head -5 "$plan" | grep -q 'status: active'; then
     continue
   fi
