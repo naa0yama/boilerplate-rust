@@ -41,7 +41,10 @@ rejected=""
 while IFS= read -r f; do
   dir=$(dirname "$f")
   plan="$dir/PLAN.md"
-  # task dir with an active PLAN.md → in progress, skip entire dir
+  # plans/ (at any depth) holds brainstorming specs, never a task-slug dir —
+  # a PLAN.md placed there must not exempt sibling spec files
+  [[ "$dir" == ".claude/artifacts/plans" || "$dir" == .claude/artifacts/plans/* ]] && plan=""
+  # task-slug dir with an active PLAN.md → in progress, skip entire dir
   if [[ -f "$plan" ]] && head -5 "$plan" | grep -q 'status: active'; then
     continue
   fi
@@ -83,11 +86,27 @@ curl -sfSL --retry 3 --retry-delay 2 --retry-connrefused https://claude.ai/insta
 
 ["pre-commit"]
 description = "Pre-commit checks (fast)"
-depends = ["clean:sweep", "fmt:check", "clippy:strict", "ast-grep", "lint:gh", "check:no-plans"]
+# `test` (stable toolchain) runs here instead of `pre-push` — stable-toolchain
+# test execution needs to happen somewhere, and `pre-commit` runs on every
+# commit so failures surface immediately, before the slower `pre-push`
+# (instrumented, nightly) stage.
+depends = [
+	"clean:sweep",
+	"fmt:check",
+	"clippy:strict",
+	"ast-grep",
+	"lint:gh",
+	"check:no-plans",
+	"test",
+]
 
 ["pre-push"]
 description = "Pre-push checks (comprehensive)"
-depends = ["lint", "test", "coverage", "build:release", "lint:gh"]
+# `coverage` already runs the full nextest suite (instrumented); depending on
+# `test` too would build and run everything a second time on the stable
+# toolchain, doubling target/ disk usage for no additional signal locally.
+# Stable-toolchain test execution happens in `pre-commit` instead (see above).
+depends = ["lint", "coverage", "build:release", "lint:gh"]
 
 [setup]
 description = "Initial project setup"
@@ -244,25 +263,70 @@ run = """
 set -euo pipefail
 
 rustup component add llvm-tools-preview --toolchain nightly-2026-03-15
-quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
-_cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
-_threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo +nightly-2026-03-15 llvm-cov nextest --all-targets --all-features --fail-under-lines 90 --lcov --output-path target/lcov.info --test-threads "$_threads" $quiet
+source "${MISE_PROJECT_ROOT}/.mise/lib/nextest-env.sh"
+
+# target/llvm-cov-target duplicates target/debug's size (instrumented rebuild
+# of every dependency); discard it once the run finishes — including on
+# failure (fail-under-lines violation, test failure, etc.), since a failed
+# instrumented build isn't worth keeping either — unless the caller opts to
+# keep the raw profile data around (e.g. to regenerate a report manually).
+# WHY-NOT: `llvm-cov clean --workspace` — only removes workspace-member
+# artifacts and deliberately keeps the dependency build cache, so it frees
+# almost none of the directory's size; the plain (no-flag) form removes
+# target/llvm-cov-target entirely.
+if [[ "${COVERAGE_KEEP:-}" != "1" && "${GITHUB_ACTIONS:-}" != "true" ]]; then
+  # WHY-NOT: bare `trap 'cargo ... clean' EXIT` — when this is the last
+  # command bash runs, its own exit status becomes the script's exit status,
+  # so a transient cleanup failure would mask a successful coverage run.
+  trap 'ec=$?; cargo +nightly-2026-03-15 llvm-cov clean || echo "warning: coverage cleanup failed" >&2; exit $ec' EXIT
+fi
+
+# WHY not --fail-under-lines here: under `set -euo pipefail`, a threshold
+# failure would exit before the html report below is generated — exactly
+# when html is most wanted (to see what's uncovered). Threshold enforcement
+# is deferred to the `report` step after html generation.
+cargo +nightly-2026-03-15 llvm-cov nextest --all-targets --all-features --lcov --output-path target/lcov.info --test-threads "$_threads" $_quiet
+# Reuses the profile data from the run above (no test re-run) to also emit an
+# HTML report — `--lcov` and `--html` can't be requested in the same
+# `nextest` invocation (CLI-enforced), but `report` regenerates from the
+# already-collected profraw files, which is fast.
+# WHY --output-dir: the default html location (target/llvm-cov/html) is
+# itself one of the paths `cargo llvm-cov clean` removes — verified
+# empirically — so the cleanup trap above would delete it immediately after
+# generation. A directory outside cargo-llvm-cov's own managed paths
+# survives the trap.
+cargo +nightly-2026-03-15 llvm-cov report --html --output-dir target/coverage-html
+# WHY separate from the --html call above: with --html, `report` routes
+# straight into `llvm-cov show -format=html` and never prints the
+# cargo-llvm-cov summary table to stdout (verified against upstream source)
+# — so a merged single call would silently drop the coverage summary from
+# CI/local logs. This no-format-flag call reuses the same profraw data
+# (still fast) purely to print the summary table and enforce the threshold.
+cargo +nightly-2026-03-15 llvm-cov report --fail-under-lines 90
 """
 
 ["coverage:html"]
-description = "Generate HTML coverage report and open"
-env = { OTEL_EXPORTER_OTLP_ENDPOINT = "http://localhost:19999" }
+description = "Open the HTML coverage report generated by `mise run coverage`"
 run = """
 #!/usr/bin/env bash
 set -euo pipefail
 
-rustup component add llvm-tools-preview --toolchain nightly-2026-03-15
-quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
-_cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
-_threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-cargo +nightly-2026-03-15 llvm-cov nextest --all-targets --all-features --html --open --test-threads "$_threads" $quiet
+# Intentionally does not depend on `coverage` — that would re-run the full
+# suite just to open an already-generated report. Run `mise run coverage`
+# first if no report exists yet.
+report="target/coverage-html/html/index.html"
+if [[ ! -f "$report" ]]; then
+  echo "No coverage report found at $report — run 'mise run coverage' first." >&2
+  exit 1
+fi
+
+if command -v open > /dev/null 2>&1; then
+  open "$report"
+elif command -v xdg-open > /dev/null 2>&1; then
+  xdg-open "$report"
+else
+  echo "No browser opener (open/xdg-open) found. Report is at: $report"
+fi
 """
 
 [deny]
@@ -322,11 +386,8 @@ run = """
 #!/usr/bin/env bash
 set -euo pipefail
 
-quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
-_cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
-_threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo nextest run --all-targets --all-features --test-threads "$_threads" $quiet "$@"
+source "${MISE_PROJECT_ROOT}/.mise/lib/nextest-env.sh"
+cargo nextest run --all-targets --all-features --test-threads "$_threads" $_quiet "$@"
 """
 
 ["test:doc"]
@@ -349,11 +410,8 @@ set -euo pipefail
 mise run o2:stop
 mise run o2
 echo 'OpenObserve restarted with clean state'
-quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
-_cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
-_threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo nextest run --all-targets --all-features --test-threads "$_threads" $quiet
+source "${MISE_PROJECT_ROOT}/.mise/lib/nextest-env.sh"
+cargo nextest run --all-targets --all-features --test-threads "$_threads" $_quiet
 """
 
 ["test:watch"]

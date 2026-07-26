@@ -125,7 +125,7 @@ jobs:
     permissions:
       contents: read # Required to checkout the repository for dependency audit
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
       - uses: ./.github/actions/act-audit
@@ -142,7 +142,7 @@ jobs:
       contents: read # Required to checkout the repository
       packages: write # Required to push container images to registry
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
       - uses: ./.github/actions/act-prebuild-container
@@ -160,7 +160,7 @@ jobs:
     permissions:
       contents: read # Required to checkout the repository
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
       - uses: ./.github/actions/act-docs-ci
@@ -177,7 +177,7 @@ jobs:
       contents: read # Required to checkout the repository for CodeQL analysis
       security-events: write # Required to upload CodeQL analysis results
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
       - uses: ./.github/actions/act-codeql
@@ -194,7 +194,7 @@ jobs:
       contents: read # Required to checkout the repository
       security-events: write # Required to upload SARIF reports
     steps:
-      - uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7
         with:
           persist-credentials: false
       - uses: ./.github/actions/act-actionlint
