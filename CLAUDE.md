@@ -83,7 +83,7 @@ Each task's `PLAN.md` frontmatter (required):
 2. Implement
 3. Run `mise run test` — all tests must pass
 4. Stage only the relevant files
-5. Run `mise run pre-commit` (runs clean:sweep, fmt:check, clippy:strict, ast-grep, lint:gh, check:no-plans)
+5. Run `mise run pre-commit` (runs clean:sweep, fmt:check, clippy:strict, ast-grep, lint:gh, check:no-plans, test)
 6. If errors, fix → re-stage → re-run `mise run pre-commit`
 
 ## Token-Efficient Commands
