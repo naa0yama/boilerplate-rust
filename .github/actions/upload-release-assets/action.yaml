@@ -131,9 +131,17 @@ runs:
         set -euo pipefail
         shopt -s failglob
 
-        # Verify the release exists (release-manager creates it as draft before this workflow runs)
-        release_url="$(gh release view "${TAG}" --json url --jq '.url')"
-        echo "Release found: ${release_url}"
+        # Wait for the draft release to appear (release-manager may still be creating it)
+        release_url=""
+        for i in $(seq 1 12); do
+          release_url="$(gh release view "${TAG}" --json url --jq '.url' 2>/dev/null)" && break
+          echo "Waiting for draft release ${TAG} to appear (attempt ${i}/12)..."
+          sleep 10
+        done
+        if [ -z "${release_url}" ]; then
+          echo "ERROR: Release ${TAG} not found after 120 s"
+          exit 1
+        fi
 
         if ! gh release upload "${TAG}" release-assets/* --clobber 2>upload.err; then
           if grep -qE '(already_exists|immutable|422)' upload.err; then

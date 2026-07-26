@@ -153,7 +153,7 @@ jobs:
 
           # Step 5: Find previous tag via REST API (avoids git history depth issues)
           PREV_TAG=$(gh api "repos/${GITHUB_REPOSITORY}/releases/latest" \
-                     --jq '.tag_name' 2>/dev/null || echo "")
+                     --jq '.tag_name // ""' 2>/dev/null || echo "")
 
           # Step 6: Generate changelog via GitHub Release Notes API
           PREV_TAG_ARG=()
