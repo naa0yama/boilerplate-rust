@@ -17,10 +17,11 @@ target
 .claude/*.local.json
 .claude/artifacts/
 .claude/scheduled_tasks.lock
-.claude/skills/cc-plugin-claude-*
+.claude/skills/cc-plugin-*/
 .claude/skills/deps-sync-rust-pwa-stack/
-.claude/skills/lib-*/SKILL.md
-.claude/skills/tool-*/SKILL.md
+.claude/skills/lib-*/*.md
+.claude/skills/mise-*/*.md
+.claude/skills/tool-*/*.md
 
 # local Lefthook
 lefthook-local.yml

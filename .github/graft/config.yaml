@@ -440,6 +440,8 @@ files:
     strategy: replace
   - path: .mise/config.tagpr.toml
     strategy: delete
+  - path: .mise/lib/nextest-env.sh
+    strategy: replace
   - path: .mise/overrides.toml
     strategy: create_only
   - path: .mise/tasks.toml

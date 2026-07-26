@@ -41,7 +41,10 @@ rejected=""
 while IFS= read -r f; do
   dir=$(dirname "$f")
   plan="$dir/PLAN.md"
-  # task dir with an active PLAN.md → in progress, skip entire dir
+  # plans/ (at any depth) holds brainstorming specs, never a task-slug dir —
+  # a PLAN.md placed there must not exempt sibling spec files
+  [[ "$dir" == ".claude/artifacts/plans" || "$dir" == .claude/artifacts/plans/* ]] && plan=""
+  # task-slug dir with an active PLAN.md → in progress, skip entire dir
   if [[ -f "$plan" ]] && head -5 "$plan" | grep -q 'status: active'; then
     continue
   fi
@@ -87,7 +90,15 @@ depends = ["clean:sweep", "fmt:check", "clippy:strict", "ast-grep", "lint:gh", "
 
 ["pre-push"]
 description = "Pre-push checks (comprehensive)"
-depends = ["lint", "test", "coverage", "build:release", "lint:gh"]
+# `coverage` already runs the full nextest suite (instrumented); depending on
+# `test` too would build and run everything a second time on the stable
+# toolchain, doubling target/ disk usage for no additional signal locally.
+# NOTE: this means stable-toolchain test execution (as opposed to the
+# nightly toolchain `coverage` uses) is no longer exercised anywhere —
+# CI's `test` job also only calls `mise run coverage`, and `cross-check`
+# only runs `cargo check` (compile-only) on stable. Run `mise run test`
+# manually if stable-vs-nightly behavioral parity needs to be checked.
+depends = ["lint", "coverage", "build:release", "lint:gh"]
 
 [setup]
 description = "Initial project setup"
@@ -244,11 +255,25 @@ run = """
 set -euo pipefail
 
 rustup component add llvm-tools-preview --toolchain nightly-2026-03-15
-quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
-_cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
-_threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo +nightly-2026-03-15 llvm-cov nextest --all-targets --all-features --fail-under-lines 90 --lcov --output-path target/lcov.info --test-threads "$_threads" $quiet
+source "${MISE_PROJECT_ROOT}/.mise/lib/nextest-env.sh"
+
+# target/llvm-cov-target duplicates target/debug's size (instrumented rebuild
+# of every dependency); discard it once the run finishes — including on
+# failure (fail-under-lines violation, test failure, etc.), since a failed
+# instrumented build isn't worth keeping either — unless the caller opts to
+# keep it around for a follow-up `coverage:html` run.
+# WHY-NOT: `llvm-cov clean --workspace` — only removes workspace-member
+# artifacts and deliberately keeps the dependency build cache, so it frees
+# almost none of the directory's size; the plain (no-flag) form removes
+# target/llvm-cov-target entirely.
+if [[ "${COVERAGE_KEEP:-}" != "1" && "${GITHUB_ACTIONS:-}" != "true" ]]; then
+  # WHY-NOT: bare `trap 'cargo ... clean' EXIT` — when this is the last
+  # command bash runs, its own exit status becomes the script's exit status,
+  # so a transient cleanup failure would mask a successful coverage run.
+  trap 'ec=$?; cargo +nightly-2026-03-15 llvm-cov clean || echo "warning: coverage cleanup failed" >&2; exit $ec' EXIT
+fi
+
+cargo +nightly-2026-03-15 llvm-cov nextest --all-targets --all-features --fail-under-lines 90 --lcov --output-path target/lcov.info --test-threads "$_threads" $_quiet
 """
 
 ["coverage:html"]
@@ -259,10 +284,8 @@ run = """
 set -euo pipefail
 
 rustup component add llvm-tools-preview --toolchain nightly-2026-03-15
-quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
-_cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
-_threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-cargo +nightly-2026-03-15 llvm-cov nextest --all-targets --all-features --html --open --test-threads "$_threads" $quiet
+source "${MISE_PROJECT_ROOT}/.mise/lib/nextest-env.sh"
+cargo +nightly-2026-03-15 llvm-cov nextest --all-targets --all-features --html --open --test-threads "$_threads" $_quiet
 """
 
 [deny]
@@ -322,11 +345,8 @@ run = """
 #!/usr/bin/env bash
 set -euo pipefail
 
-quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
-_cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
-_threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo nextest run --all-targets --all-features --test-threads "$_threads" $quiet "$@"
+source "${MISE_PROJECT_ROOT}/.mise/lib/nextest-env.sh"
+cargo nextest run --all-targets --all-features --test-threads "$_threads" $_quiet "$@"
 """
 
 ["test:doc"]
@@ -349,11 +369,8 @@ set -euo pipefail
 mise run o2:stop
 mise run o2
 echo 'OpenObserve restarted with clean state'
-quiet=""; [[ "${CLAUDECODE:-}" == "1" ]] && quiet="--cargo-quiet --cargo-quiet --status-level fail"
-_cpus=$(nproc 2>/dev/null || sysctl -n hw.logicalcpu 2>/dev/null || echo 4)
-_threads=$(( _cpus * 7 / 10 < 1 ? 1 : _cpus * 7 / 10 ))
-if [[ "${GITHUB_ACTIONS:-}" == "true" ]]; then _threads="$_cpus"; fi
-cargo nextest run --all-targets --all-features --test-threads "$_threads" $quiet
+source "${MISE_PROJECT_ROOT}/.mise/lib/nextest-env.sh"
+cargo nextest run --all-targets --all-features --test-threads "$_threads" $_quiet
 """
 
 ["test:watch"]
