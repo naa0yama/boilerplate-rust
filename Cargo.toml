@@ -186,10 +186,10 @@ unexpected_cfgs = { level = "warn", check-cfg = ['cfg(coverage_nightly)'] }
 # -
 [profile.dev]
 opt-level = 1 #										Improving debug execution speed (balancing it with compilation time)
-debug = 2 #											Full debugging information for workspace members
+debug = "line-tables-only" #						File:line info for backtraces/panics only, no type/variable info (size reduction; gdb variable inspection not used).
 
 [profile.dev.package."*"]
-debug = 1 #											External dependencies are limited to line tables only (size reduction).
+debug = "line-tables-only" #						Same as above for external dependencies (size reduction).
 
 [profile.release]
 strip = "debuginfo" #								Remove DWARF files, but keep the symbol table (.symtab).
