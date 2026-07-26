@@ -30,7 +30,13 @@ runs:
         path: |
           ~/.rustup/settings.toml
           ~/.rustup/toolchains/1.*
-        key: v0-rust-rustup-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/rust-toolchain.toml') }}
+          ~/.rustup/toolchains/nightly-*
+        # `.mise/tasks.toml` hash is included because it's the sole source of
+        # the pinned nightly toolchain version (`nightly-YYYY-MM-DD`, used by
+        # the `coverage`/`miri` tasks) — `rust-toolchain.toml` only pins the
+        # stable channel, so it wouldn't invalidate this cache on a nightly
+        # bump.
+        key: v0-rust-rustup-${{ runner.os }}-${{ runner.arch }}-${{ hashFiles('**/rust-toolchain.toml', '.mise/tasks.toml') }}
 
     - uses: actions-rust-lang/setup-rust-toolchain@166cdcfd11aee3cb47222f9ddb555ce30ddb9659 # v1.17.0
       with:
