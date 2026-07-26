@@ -568,8 +568,55 @@ echo "wireframe stopped"
 """
 
 ["web:serve"]
-description = "Start brust-web dev server"
-run = 'cargo run -p brust-web -- serve --bind 0.0.0.0:3000'
+description = "Start brust-web dev server in background (restarts if already running)"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+_pidfile="/tmp/brust-web.pid"
+
+# Build first: if this fails, the old server (if any) keeps running instead
+# of leaving the user with no server at all.
+cargo build -p brust-web
+
+# Stop any already-running instance so the latest build always wins.
+# Delegates to web:stop instead of re-inlining the TERM->wait->KILL sequence.
+if [ -f "$_pidfile" ] && kill -0 "$(cat "$_pidfile")" 2>/dev/null; then
+  echo "brust-web already running (pid $(cat "$_pidfile")), restarting..."
+  mise run web:stop
+fi
+
+_root="$(pwd)"
+setsid bash -c "cd '${_root}' && cargo run -p brust-web -- serve --bind 0.0.0.0:3000" \
+  >/tmp/brust-web.log 2>&1 &
+echo $! > "$_pidfile"
+
+timeout 30 bash -c 'until curl -sf --max-time 1 http://localhost:3000/health >/dev/null 2>&1; do sleep 0.3; done' \
+  || { echo "Error: brust-web failed to become ready (see /tmp/brust-web.log)" >&2; exit 1; }
+echo "brust-web started (http://localhost:3000, pid $(cat "$_pidfile"))"
+"""
+
+["web:stop"]
+description = "Stop brust-web dev server"
+run = """
+#!/usr/bin/env bash
+set -euo pipefail
+
+_pidfile="/tmp/brust-web.pid"
+if [ ! -f "$_pidfile" ]; then
+  echo "brust-web not running (no pidfile)"
+  exit 0
+fi
+_pid=$(cat "$_pidfile")
+if kill -0 "$_pid" 2>/dev/null; then
+  # kill process group to reap child cargo/binary processes spawned by setsid
+  kill -TERM -"$_pid" 2>/dev/null || kill -TERM "$_pid" 2>/dev/null || true
+  for _ in $(seq 1 20); do kill -0 "$_pid" 2>/dev/null || break; sleep 0.1; done
+  kill -0 "$_pid" 2>/dev/null && kill -KILL -"$_pid" 2>/dev/null || true
+fi
+rm -f "$_pidfile"
+echo "brust-web stopped"
+"""
 
 ["setup:playwright"]
 description = "Install @playwright/mcp deps and download Chromium browser"

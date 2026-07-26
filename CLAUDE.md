@@ -47,6 +47,7 @@ All tasks use `mise run <task>`:
 | Dev (status)          | `mise run dev:status`         |
 | Traefik setup         | `mise run traefik:setup`      |
 | Web server (start)    | `mise run web:serve`          |
+| Web server (stop)     | `mise run web:stop`           |
 | Wireframe (start)     | `mise run wireframe:up`       |
 | Wireframe (stop)      | `mise run wireframe:down`     |
 
