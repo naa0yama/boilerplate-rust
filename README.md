@@ -136,7 +136,7 @@ mise run ast-grep         # ast-grep カスタムルールチェック
 ### コミット前チェック
 
 ```bash
-mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep + lint:gh + check:no-plans
+mise run pre-commit       # clean:sweep + fmt:check + clippy:strict + ast-grep + lint:gh + check:no-plans + test
 ```
 
 ## プロジェクト構造
