@@ -234,7 +234,7 @@ dependencies = [
 
 [[package]]
 name = "brust"
-version = "0.1.27"
+version = "0.1.28"
 dependencies = [
  "anyhow",
  "assert_cmd",
@@ -263,7 +263,7 @@ dependencies = [
 
 [[package]]
 name = "brust-web"
-version = "0.1.27"
+version = "0.1.28"
 dependencies = [
  "anyhow",
  "askama",
