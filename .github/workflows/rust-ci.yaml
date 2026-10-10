@@ -123,7 +123,7 @@ jobs:
           restore-keys: |
             dprint-v1-${{ runner.os }}-${{ runner.arch }}-
 
-      - uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
         with:
           cache: false
           # renovate: datasource=github-releases packageName=jdx/mise versioning=calver:YYYY.M.D automerge=true
@@ -267,7 +267,7 @@ jobs:
           restore-keys: |
             mise-v1-${{ runner.os }}-${{ runner.arch }}-
 
-      - uses: jdx/mise-action@e6a8b3978addb5a52f2b4cd9d91eafa7f0ab959d # v4.2.0
+      - uses: jdx/mise-action@c2a87611a18de5b3828c5652fe268e992400cb5c # v4.3.0
         with:
           cache: false
           # renovate: datasource=github-releases packageName=jdx/mise versioning=calver:YYYY.M.D automerge=true
@@ -279,7 +279,7 @@ jobs:
           mise run coverage
 
       - name: Upload coverage
-        uses: k1LoW/octocov-action@b3b6ee60482a667950f87553abf1df63217235d9 # v1.5.1
+        uses: k1LoW/octocov-action@a167dc0dee441b7ffc45e1b862ab55ec0d87f278 # v1.5.2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
