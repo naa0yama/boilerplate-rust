@@ -119,7 +119,6 @@ mise run dev:up
 mise run build            # デバッグビルド
 mise run build:release    # リリースビルド
 mise run test             # テスト実行
-mise run test:watch       # TDD ウォッチモード
 mise run test:doc         # ドキュメントテスト
 ```
 

@@ -23,7 +23,6 @@ Never run `cargo` directly. All tasks go through `mise run`:
 | -------------- | ----------------------------------------- |
 | Build          | `mise run build`                          |
 | Test           | `mise run test`                           |
-| TDD watch      | `mise run test:watch`                     |
 | Doc tests      | `mise run test:doc`                       |
 | Trace test     | `mise run test:trace`                     |
 | Format         | `mise run fmt`                            |

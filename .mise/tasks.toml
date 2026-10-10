@@ -414,11 +414,6 @@ source "${MISE_PROJECT_ROOT}/.mise/lib/nextest-env.sh"
 cargo nextest run --all-targets --all-features --test-threads "$_threads" $_quiet
 """
 
-["test:watch"]
-description = "TDD watch mode"
-env = { OTEL_EXPORTER_OTLP_ENDPOINT = "" }
-run = "cargo watch -x 'nextest run --all-targets --all-features'"
-
 # =============================================================================
 # Dev / Infra
 # =============================================================================
