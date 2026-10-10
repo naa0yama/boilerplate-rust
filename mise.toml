@@ -26,7 +26,7 @@ node = "24"
 pnpm = "11.10.0"
 tmux = "3.6a"
 usage = "6.12.0"
-zizmor = "1.27.0"
+zizmor = "1.30.1"
 
 [task_config]
 includes = [".mise/tasks.toml", ".mise/overrides.toml"]
