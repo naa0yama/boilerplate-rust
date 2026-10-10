@@ -32,7 +32,7 @@ clap = { version = "4.5.45", default-features = false, features = ["std", "deriv
 ## Web
 askama = { version = "0.16", default-features = false, features = ["derive"] }
 axum = { version = "0.8", default-features = false, features = ["tokio", "http1", "json", "tracing", "macros", "matched-path"] }
-opentelemetry-http = { version = "0.32", default-features = false }
+opentelemetry-http = { version = "0.33", default-features = false }
 rust-embed = { version = "8", default-features = false, features = ["interpolate-folder-path"] }
 tokio = { version = "1", default-features = false, features = ["rt-multi-thread", "net", "signal", "macros"] }
 tower = { version = "0.5", default-features = false }
@@ -61,17 +61,17 @@ sysinfo = { version = "0.39", default-features = false, features = ["system"] }
 
 ## OpenTelemetry semantic conventions (optional, behind `process-metrics` feature)
 ## semconv_experimental: enables process.* metric name constants (currently experimental)
-opentelemetry-semantic-conventions = { version = "0.32.1", default-features = false, features = ["semconv_experimental"] }
+opentelemetry-semantic-conventions = { version = "0.33.0", default-features = false, features = ["semconv_experimental"] }
 
 ## Hostname (optional, behind `otel` feature)
 gethostname = "1.1.0"
 
 ## OpenTelemetry (optional, behind `otel` feature)
-opentelemetry = { version = "0.32", default-features = false, features = ["trace", "metrics", "logs"] }
-opentelemetry-appender-tracing = { version = "0.32", default-features = false }
-opentelemetry-otlp = { version = "0.32", default-features = false, features = ["trace", "logs", "metrics", "http-proto", "reqwest-blocking-client"] }
-opentelemetry_sdk = { version = "0.32", default-features = false, features = ["trace", "logs", "metrics"] }
-tracing-opentelemetry = { version = "0.33", default-features = false }
+opentelemetry = { version = "0.33", default-features = false, features = ["trace", "metrics", "logs"] }
+opentelemetry-appender-tracing = { version = "0.33", default-features = false }
+opentelemetry-otlp = { version = "0.33", default-features = false, features = ["trace", "logs", "metrics", "http-proto", "reqwest-blocking-client"] }
+opentelemetry_sdk = { version = "0.33", default-features = false, features = ["trace", "logs", "metrics"] }
+tracing-opentelemetry = { version = "0.34", default-features = false }
 
 ## Dev dependencies
 assert_cmd = "=2.2.2"
