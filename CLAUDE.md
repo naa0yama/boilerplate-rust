@@ -16,7 +16,6 @@ All tasks use `mise run <task>`:
 | Build (timings)       | `mise run build:timings`      |
 | Check                 | `mise run check`              |
 | Test                  | `mise run test`               |
-| TDD watch             | `mise run test:watch`         |
 | Doc tests             | `mise run test:doc`           |
 | Trace test            | `mise run test:trace`         |
 | Format                | `mise run fmt`                |
