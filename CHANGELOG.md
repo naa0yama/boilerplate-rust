@@ -2,6 +2,96 @@
 
 ## What's Changed
 
+### Features 🎉
+
+- feat(mise): implement ADR 0004 coverage/pre-commit task consolidation by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/706
+- update: wireframe graft support, web:serve rename, chromium deps, CI fixes by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/669
+- update(mise): background web:serve with auto stop-and-restart by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/708
+- update(cargo): shrink dev profile debug info to line-tables-only by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/709
+- remove: drop cargo-watch and test:watch task by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/744
+
+### Bug Fixes 🐌
+
+- fix(mise): stop check:no-plans exempting all of plans/ via stale PLAN.md by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/705
+- fix(ci): cache nightly rustup toolchain used by coverage/miri by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/707
+
+### Dependency Updates 📦
+
+- chore(deps): update rust crate rust-embed to v8.12.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/678
+- chore(deps): update rust crate sysinfo to v0.39.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/684
+- chore(deps): update rust crate rustls to v0.23.42 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/691
+- chore(deps): update rust crate clap to v4.6.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/700
+- chore(deps): update rust crate tokio to v1.52.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/701
+- chore(deps): update rust crate askama to v0.16.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/721
+- chore(deps): update group:serde (patch) by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/719
+- chore(deps): update rust crate tower-http to v0.7.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/725
+- chore(deps): update rust crate anyhow to v1.0.104 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/720
+- chore(deps): update rust crate reqwest to v0.13.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/724
+- chore(deps): update rust crate clap to v4.6.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/722
+- chore(deps): update rust crate rand to v0.10.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/723
+- chore(deps): update group:opentelemetry (minor) by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/739
+- chore(deps): update rust crate tokio to v1.53.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/741
+- chore(deps): update rust crate http to v1.5.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/740
+
+### Development Environment 🔧
+
+- chore(deps): update taiki-e/install-action action to v2.82.9 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/672
+- chore(deps): update dependency usage to v3.5.4 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/674
+- chore(deps): update taiki-e/install-action action to v2.82.10 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/675
+- chore(deps): update dependency jdx/mise to v2026.7.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/676
+- chore(deps): update dependency jdx/mise to v2026.7.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/677
+- chore(deps): update github/codeql-action action to v4.37.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/679
+- chore(deps): update taiki-e/install-action action to v2.82.11 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/681
+- chore(deps): update dependency jdx/mise to v2026.7.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/680
+- chore(deps): update actions/labeler action to v6.2.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/683
+- chore(deps): update dependency jdx/mise to v2026.7.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/685
+- chore(deps): update dependency aqua:embarkstudios/cargo-deny to v0.20.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/686
+- chore(deps): update taiki-e/install-action action to v2.83.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/687
+- chore(deps): update taiki-e/install-action action to v2.83.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/688
+- chore(deps): update taiki-e/install-action action to v2.83.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/689
+- chore(deps): update actions/checkout digest to 3d3c42e by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/690
+- chore(deps): update dependency zizmor to v1.27.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/692
+- chore(deps): update dependency jdx/mise to v2026.7.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/693
+- chore(deps): update dependency jdx/mise to v2026.7.6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/694
+- chore(deps): update dependency usage to v3.5.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/695
+- chore(deps): update dependency dprint to v0.55.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/696
+- chore(deps): update zizmorcore/zizmor-action action to v0.6.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/697
+- chore(deps): update dependency jdx/mise to v2026.7.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/698
+- chore(deps): update dependency jdx/mise to v2026.7.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/699
+- chore(deps): update taiki-e/install-action action to v2.83.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/702
+- chore(deps): update github/codeql-action action to v4.37.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/703
+- chore(deps): update dependency cargo:cargo-nextest to v0.9.143 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/711
+- chore(deps): update dependency github:rust-secure-code/cargo-auditable to v0.7.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/715
+- chore(deps): update dependency usage to v3.5.7 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/718
+- chore(deps): update dependency cargo:cargo-nextest to v0.9.146 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/714
+- chore(deps): update dependency aqua:ast-grep/ast-grep to v0.45.3 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/727
+- chore(deps): update dependency openobserve/openobserve to v0.91.5 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/717
+- chore(deps): update dependency aqua:cli/cli to v2.102.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/728
+- chore(deps): update dependency dprint to v0.59.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/730
+- chore(deps): update dependency jdx/mise to v2026.7.18 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/712
+- chore(deps): update dependency jdx/mise to v2026.7.18 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/716
+- chore(deps): update dependency aqua:taiki-e/cargo-llvm-cov to v0.9.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/729
+- chore(deps): update all action update by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/726
+- chore(deps): update dependency usage to v6 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/743
+- chore(deps): update dependency mozilla/sccache to v0.18.0 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/733
+- chore(deps): update dependency openobserve/openobserve to v0.92.2 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/734
+- chore(deps): update docker/dockerfile docker tag to v1.27.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/738
+- chore(deps): update dependency zizmor to v1.30.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/737
+- chore(deps): update dependency rui314/mold to v2.42.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/735
+- chore(deps): update dependency jdx/mise to v2026.10.1 by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/732
+
+### Other Changes
+
+- Update .gitignore to restore graft comments by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/666
+- chore: exclude auto-generated skill dirs, update graft config and testing-patterns by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/668
+- chore(deps): update rust crate rustls to v0.23.45 [security] by @renovate[bot] in https://github.com/naa0yama/boilerplate-rust/pull/713
+
+**Full Changelog**: https://github.com/naa0yama/boilerplate-rust/compare/v0.1.27...v0.1.28
+
+<!-- Release notes generated using configuration in .github/release.yml at main -->
+
+## What's Changed
+
 ### Bug Fixes 🐌
 
 - fix(ci/deps): add pnpm to rust-ci gate and sync daisyui lockfile by @naa0yama in https://github.com/naa0yama/boilerplate-rust/pull/664
